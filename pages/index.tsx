@@ -8,14 +8,23 @@ interface Word {
   meaning: string;
 }
 
+interface Result {
+  question: string;
+  // userAnswer: string;
+  correctAnswer: string;
+  isCorrect: boolean;
+}
+
 export default function Home() {
   const [words, setWords] = useState<Word[]>([]);
   const [currentWord, setCurrentWord] = useState<Word | null>(null);
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
+  // const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [choices, setChoices] = useState<string[]>([]);
   const [selectedChoice, setSelectedChoice] = useState<string | null>(null);
   const [isChoosing, setIsChoosing] = useState(true);
   const [score, setScore] = useState(0);
+  const [results, setResults] = useState<Result[]>([]);
   const router = useRouter();
 
   useEffect(() => {
@@ -38,14 +47,19 @@ export default function Home() {
   function pickWord(index: number) {
     console.log(`pickWord called with index: ${index}`);
     console.log(`words.length: ${words.length}`);
+
     if (index >= words.length) {
       console.log("No more words to display.");
-      //router.push(`/results?score=${score}`);
+      // router.push({
+      //   pathname: "/results",
+      //   query: { results: JSON.stringify(results), score: score },
+      // });
       return;
     }
-    setCurrentWordIndex(index);
     const word = words[index];
     setCurrentWord(word);
+    setCurrentWordIndex(index);
+
     const fakeChoices: string[] = [];
     while (fakeChoices.length < 3) {
       const option = words[Math.floor(Math.random() * words.length)];
@@ -59,25 +73,63 @@ export default function Home() {
     setChoices([...fakeChoices, word.meaning].sort(() => Math.random() - 0.5));
     setSelectedChoice(null);
     setIsChoosing(true);
+
     console.log(`isChoosing set to true after picking word: ${word.word}`);
   }
 
-  function handleChoice(choice: string) {
+  const handleChoice = (choice: string) => {
+    // const currentWord = words[currentQuestionIndex];
+    // const isCorrect = currentWord.meaning === choice;
+    // const newResult = {
+    //   question: currentWord.word,
+    //   userAnswer: choice,
+    //   correctAnswer: currentWord.meaning,
+    //   isCorrect,
+    // };
+    // setResults([...results, newResult]);
+
     if (!isChoosing) return; // 選択が有効な場合のみ処理を実行
     setSelectedChoice(choice);
     setIsChoosing(false); // 選択後は他の選択肢をクリックできないようにする
-    if (choice === currentWord?.meaning) {
+    // if (choice === currentWord?.meaning) {
+    //   setScore(score + 1); // 正解の場合はスコアをインクリメント
+    // }
+    const isCorrect = currentWord?.meaning === choice;
+    setResults((prevResults) => [
+      ...prevResults,
+      {
+        question: currentWord?.word || "",
+        correctAnswer: currentWord?.meaning || "",
+        isCorrect,
+      },
+    ]);
+
+    if (isCorrect) {
       setScore(score + 1); // 正解の場合はスコアをインクリメント
     }
-    const nextIndex = currentWordIndex + 1; // 次の問題のインデックスを計算
-    setTimeout(() => {
-      if (nextIndex < words.length) {
-        pickWord(nextIndex); // まだ問題があれば次の問題を表示
-      } else {
-        router.push(`/results?score=${score}`); // 問題がなければ結果ページへ遷移
-      }
-    }, 2000); // 選択後2秒待ってから次の動作へ
-  }
+
+    const nextIndex = currentWordIndex + 1;
+    if (nextIndex < words.length) {
+      setTimeout(() => {
+        pickWord(nextIndex);
+      }, 2000);
+    } else {
+      setTimeout(() => {
+        router.push({
+          pathname: "/results",
+          query: { results: JSON.stringify(results), score: score },
+        });
+      }, 2000);
+    }
+    // const nextIndex = currentWordIndex + 1;
+    // setTimeout(() => {
+    //   if (nextIndex < words.length) {
+    //     pickWord(nextIndex);
+    //   } else {
+    //     router.push(`/results?score=${score}`);
+    //   }
+    // }, 2000);
+  };
 
   function getChoiceClass(choice: string) {
     if (!selectedChoice) return styles.choice;
