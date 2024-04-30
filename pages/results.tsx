@@ -20,9 +20,9 @@ const Results = () => {
       <ul>
         {resultsArray.map((result, index) => (
           <li key={index}>
-            {`${index + 1}. ${result.question} ${result.correctAnswer} ${
-              result.isCorrect ? "◯" : "✕"
-            }`}
+            {`${index + 1}. ${result.isCorrect ? "◯" : "✕"} ${
+              result.question
+            } ${result.correctAnswer}`}
           </li>
         ))}
       </ul>

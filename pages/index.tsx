@@ -146,7 +146,7 @@ export default function Home() {
       <p>{`${currentWordIndex + 1}/${words.length} 問目`}</p>
       {currentWord && (
         <>
-          <p>{`「${currentWord.word}」の意味は何ですか？`}</p>
+          <p>{`${currentWord.word}`}</p>
           <ul>
             {choices.map((choice, index) => (
               <li
