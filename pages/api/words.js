@@ -8,10 +8,15 @@ export default function handler(req, res) {
       res.status(500).json({ message: "ファイルを読み込めませんでした。" });
       return;
     }
-    const words = data.split("\n").map((line) => {
-      const [word, meaning] = line.split(",");
-      return { word, meaning };
-    });
+    let words = data
+      .split("\n")
+      .slice(0, 10)
+      .map((line) => {
+        const [word, meaning] = line.split(",");
+        return { word, meaning };
+      });
+    // 問題をランダムにシャッフル
+    words = words.sort(() => Math.random() - 0.5);
     res.status(200).json(words);
   });
 }
