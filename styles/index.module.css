@@ -1,0 +1,30 @@
+/* index.module.css */
+.container {
+  padding: 20px;
+  background: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+  border-radius: 10px;
+}
+
+.title {
+  color: #333;
+  text-align: center;
+}
+
+.quizList {
+  list-style: none;
+  padding: 0;
+}
+
+.quizItem {
+  padding: 12px;
+  margin-bottom: 8px;
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.quizItem:hover {
+  background-color: #e0e0e0;
+}
