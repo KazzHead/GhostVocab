@@ -1,0 +1,16 @@
+.choice {
+  padding: 12px;
+  margin-bottom: 8px;
+  background-color: #f0f0f0;
+  border: 2px solid transparent; /* 透明の枠を初期状態で設定 */
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.correct {
+  border-color: rgb(0, 255, 0); /* 正解の枠色 */
+}
+
+.incorrect {
+  border-color: rgb(255, 0, 0); /* 不正解の枠色 */
+}
