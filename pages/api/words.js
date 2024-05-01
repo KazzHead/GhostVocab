@@ -11,15 +11,9 @@ export default function handler(req, res) {
     }
     let lines = data.split("\n").slice(Number(start) - 1, Number(end));
 
-    // lines からランダムに10個の項目を選択
-    let chosenLines = [];
-    for (let i = 0; i < 10 && lines.length > 0; i++) {
-      const randomIndex = Math.floor(Math.random() * lines.length);
-      chosenLines.push(lines.splice(randomIndex, 1)[0]); // lines から削除しながら chosenLines に追加
-    }
-
-    let words = chosenLines.map((line) => {
-      const [word, meaning] = line.split("	");
+    // 全ての行を単語と意味に分けて返す。
+    let words = lines.map((line) => {
+      const [word, meaning] = line.split("\t"); // タブで分割
       return { word, meaning };
     });
 

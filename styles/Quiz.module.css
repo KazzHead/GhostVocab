@@ -21,3 +21,29 @@
   background-color: #ffffff;
   border-color: rgb(255, 0, 0); /* 不正解の枠色 */
 }
+
+.fullScreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-size: 24px; /* デフォルトのフォントサイズ */
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+  z-index: 10;
+}
+
+.countdownText {
+  text-align: center;
+  margin-bottom: 20px; /* テキストと数字の間隔 */
+}
+
+.countdownNumber {
+  text-align: center;
+  font-size: 300px; /* 数字のフォントサイズを大きく設定 */
+}

@@ -10,16 +10,19 @@ interface Word {
 
 interface Result {
   question: string;
-  // userAnswer: string;
   correctAnswer: string;
   isCorrect: boolean;
+  // timestampStart: number;
+  // timestampEnd: number;
+  responseTime: number;
 }
 
 export default function Home() {
+  const [allWords, setAllWords] = useState<Word[]>([]);
+  const [quizWords, setQuizWords] = useState<Word[]>([]);
   const [words, setWords] = useState<Word[]>([]);
   const [currentWord, setCurrentWord] = useState<Word | null>(null);
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
-  // const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [choices, setChoices] = useState<string[]>([]);
   const [selectedChoice, setSelectedChoice] = useState<string | null>(null);
   const [isChoosing, setIsChoosing] = useState(true);
@@ -27,52 +30,58 @@ export default function Home() {
   const [results, setResults] = useState<Result[]>([]);
   const router = useRouter();
   const { start, end } = router.query;
-
-  // useEffect(() => {
-  //   async function fetchWords() {
-  //     const response = await fetch("/api/words");
-  //     const data: Word[] = await response.json();
-  //     console.log("Words fetched:", data);
-  //     setWords(data);
-  //     pickWord(0);
-  //   }
-  //   fetchWords();
-  // }, []);
+  const [startTime, setStartTime] = useState<number>(0);
+  const [countdown, setCountdown] = useState(3);
 
   useEffect(() => {
-    if (start && end) {
+    const timer = setInterval(() => {
+      if (countdown > 0) {
+        setCountdown((prevCountdown) => prevCountdown - 1);
+      } else {
+        clearInterval(timer);
+      }
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [countdown]);
+
+  useEffect(() => {
+    if (countdown === 0 && start && end) {
       fetch(`/api/words?start=${start}&end=${end}`)
         .then((response) => response.json())
         .then((data) => {
-          setWords(data);
+          setAllWords(data);
+          const selectedIndices = new Set<number>();
+          while (selectedIndices.size < 10) {
+            selectedIndices.add(Math.floor(Math.random() * data.length));
+          }
+          setQuizWords(Array.from(selectedIndices).map((index) => data[index]));
           pickWord(0);
         });
     }
-  }, [router.query]);
+  }, [countdown, router.query]);
 
   useEffect(() => {
     pickWord(0);
-  }, [words]);
+  }, [quizWords]);
 
   function pickWord(index: number) {
-    console.log(`pickWord called with index: ${index}`);
-    console.log(`words.length: ${words.length}`);
-
-    if (index >= words.length) {
-      // console.log("No more words to display.");
-      // router.push({
-      //   pathname: "/results",
-      //   query: { results: JSON.stringify(results), score: score },
-      // });
+    if (index >= quizWords.length || quizWords.length === 0) {
+      console.log("No more words or word list is empty.");
       return;
     }
-    const word = words[index];
+
+    console.log(`pickWord called with index: ${index}`);
+    // console.log(`words.length: ${words.length}`);
+
+    const word = quizWords[index];
     setCurrentWord(word);
     setCurrentWordIndex(index);
+    setStartTime(Date.now());
 
     const fakeChoices: string[] = [];
     while (fakeChoices.length < 3) {
-      const option = words[Math.floor(Math.random() * words.length)];
+      const option = allWords[Math.floor(Math.random() * allWords.length)];
       if (
         option.meaning !== word.meaning &&
         !fakeChoices.includes(option.meaning)
@@ -88,57 +97,42 @@ export default function Home() {
   }
 
   const handleChoice = (choice: string) => {
-    // const currentWord = words[currentQuestionIndex];
-    // const isCorrect = currentWord.meaning === choice;
-    // const newResult = {
-    //   question: currentWord.word,
-    //   userAnswer: choice,
-    //   correctAnswer: currentWord.meaning,
-    //   isCorrect,
-    // };
-    // setResults([...results, newResult]);
-
     if (!isChoosing) return; // 選択が有効な場合のみ処理を実行
     setSelectedChoice(choice);
-    setIsChoosing(false); // 選択後は他の選択肢をクリックできないようにする
-    // if (choice === currentWord?.meaning) {
-    //   setScore(score + 1); // 正解の場合はスコアをインクリメント
-    // }
+    const endTime = Date.now();
+    const responseTime = endTime - startTime;
     const isCorrect = currentWord?.meaning === choice;
-    setResults((prevResults) => [
-      ...prevResults,
-      {
-        question: currentWord?.word || "",
-        correctAnswer: currentWord?.meaning || "",
-        isCorrect,
-      },
-    ]);
+    const newResult: Result = {
+      question: currentWord!.word,
+      correctAnswer: currentWord!.meaning,
+      isCorrect: isCorrect,
+      // timestampStart: startTime,
+      // timestampEnd: endTime,
+      responseTime: responseTime,
+    };
+    setResults([...results, newResult]);
+    console.log("result:", results);
+
+    setIsChoosing(false);
 
     if (isCorrect) {
       setScore(score + 1); // 正解の場合はスコアをインクリメント
     }
 
     const nextIndex = currentWordIndex + 1;
-    if (nextIndex < words.length) {
+    if (nextIndex < quizWords.length) {
       setTimeout(() => {
         pickWord(nextIndex);
       }, 2000);
     } else {
       setTimeout(() => {
+        saveResultsToServer();
         router.push({
           pathname: "/results",
           query: { results: JSON.stringify(results), score: score },
         });
       }, 2000);
     }
-    // const nextIndex = currentWordIndex + 1;
-    // setTimeout(() => {
-    //   if (nextIndex < words.length) {
-    //     pickWord(nextIndex);
-    //   } else {
-    //     router.push(`/results?score=${score}`);
-    //   }
-    // }, 2000);
   };
 
   function getChoiceClass(choice: string) {
@@ -150,13 +144,38 @@ export default function Home() {
     return styles.choice;
   }
 
+  const saveResultsToServer = async () => {
+    try {
+      const response = await fetch("/api/saveResults", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ results: results }),
+      });
+      if (response.ok) {
+        console.log("Results saved to server.");
+      } else {
+        console.error("Failed to save results.");
+      }
+    } catch (error) {
+      console.error("Error saving results to server:", error);
+    }
+  };
+
   return (
     <div className={styles.container}>
       <h1>{`ターゲット1900 ${start}～${end}`}</h1>
       <p className={styles.container}>{`${currentWordIndex + 1}/${
-        words.length
+        quizWords.length
       } 問目`}</p>
-      {currentWord && (
+      {countdown > 0 && (
+        <div className={styles.fullScreen}>
+          <div className={styles.countdownText}> ( ) に入る単語を選んで</div>
+          <div className={styles.countdownNumber}>{countdown}</div>
+        </div>
+      )}
+      {countdown === 0 && currentWord && (
         <>
           <p>{`${currentWord.word}`}</p>
           <ul>
