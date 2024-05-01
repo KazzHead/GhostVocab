@@ -1,16 +1,23 @@
 .choice {
   padding: 12px;
   margin-bottom: 8px;
-  background-color: #f0f0f0;
+  background-color: #ffffff;
   border: 2px solid transparent; /* 透明の枠を初期状態で設定 */
-  cursor: pointer;
+  /* cursor: pointer; */
   border-radius: 5px;
 }
 
+.choice:hover {
+  text-decoration: none; /* ホバー時の下線を無効化 */
+  color: inherit; /* ホバー時の色変更を無効化 */
+}
+
 .correct {
+  background-color: #ffffff;
   border-color: rgb(0, 255, 0); /* 正解の枠色 */
 }
 
 .incorrect {
+  background-color: #ffffff;
   border-color: rgb(255, 0, 0); /* 不正解の枠色 */
 }

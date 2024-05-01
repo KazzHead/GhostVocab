@@ -26,17 +26,29 @@ export default function Home() {
   const [score, setScore] = useState(0);
   const [results, setResults] = useState<Result[]>([]);
   const router = useRouter();
+  const { start, end } = router.query;
+
+  // useEffect(() => {
+  //   async function fetchWords() {
+  //     const response = await fetch("/api/words");
+  //     const data: Word[] = await response.json();
+  //     console.log("Words fetched:", data);
+  //     setWords(data);
+  //     pickWord(0);
+  //   }
+  //   fetchWords();
+  // }, []);
 
   useEffect(() => {
-    async function fetchWords() {
-      const response = await fetch("/api/words");
-      const data: Word[] = await response.json();
-      console.log("Words fetched:", data);
-      setWords(data);
-      pickWord(0);
+    if (start && end) {
+      fetch(`/api/words?start=${start}&end=${end}`)
+        .then((response) => response.json())
+        .then((data) => {
+          setWords(data);
+          pickWord(0);
+        });
     }
-    fetchWords();
-  }, []);
+  }, [router.query]);
 
   useEffect(() => {
     pickWord(0);
@@ -47,7 +59,7 @@ export default function Home() {
     console.log(`words.length: ${words.length}`);
 
     if (index >= words.length) {
-      console.log("No more words to display.");
+      // console.log("No more words to display.");
       // router.push({
       //   pathname: "/results",
       //   query: { results: JSON.stringify(results), score: score },
@@ -140,8 +152,10 @@ export default function Home() {
 
   return (
     <div className={styles.container}>
-      <h1 className={styles.container}>英単語クイズ</h1>
-      <p>{`${currentWordIndex + 1}/${words.length} 問目`}</p>
+      <h1>{`ターゲット1900 ${start}～${end}`}</h1>
+      <p className={styles.container}>{`${currentWordIndex + 1}/${
+        words.length
+      } 問目`}</p>
       {currentWord && (
         <>
           <p>{`${currentWord.word}`}</p>

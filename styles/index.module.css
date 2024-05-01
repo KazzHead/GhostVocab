@@ -4,16 +4,28 @@
   background: white;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
   border-radius: 10px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  text-decoration: none;
+}
+
+.buttons a {
+  text-decoration: none;
 }
 
 .title {
   color: #333;
   text-align: center;
+  text-decoration: none;
 }
 
 .quizList {
   list-style: none;
   padding: 0;
+  text-decoration: none;
 }
 
 .quizItem {
@@ -23,8 +35,10 @@
   border: 1px solid #ccc;
   cursor: pointer;
   border-radius: 5px;
+  text-decoration: none;
 }
 
 .quizItem:hover {
   background-color: #e0e0e0;
+  text-decoration: none;
 }

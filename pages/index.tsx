@@ -4,7 +4,7 @@ import styles from "../styles/index.module.css";
 const Home = () => {
   return (
     <div className={styles.container}>
-      <h1>英単語クイズ スタート画面</h1>
+      <h1>Vocubulary Quiz</h1>
       <div className={styles.buttons}>
         <Link href="/chapter">
           <button>一人で挑戦</button>
