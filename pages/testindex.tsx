@@ -33,12 +33,16 @@ export default function Home() {
       const data: Word[] = await response.json();
       console.log("Words fetched:", data);
       setWords(data);
+      console.log("Words fetched:", words);
       pickWord(0);
     }
     fetchWords();
   }, []);
 
   useEffect(() => {
+    // if (currentWordIndex >= words.length && words.length > 0) {
+    //   pickWord(0);
+    // }
     pickWord(0);
   }, [words]);
 

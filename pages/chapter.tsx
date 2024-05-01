@@ -1,6 +1,5 @@
-// pages/chapter.tsx
 import Link from "next/link";
-import styles from "./Chapter.module.css";
+import styles from "../styles/index.module.css";
 
 const Chapter = () => {
   return (
