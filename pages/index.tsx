@@ -6,7 +6,7 @@ const Home = () => {
     <div className={styles.container}>
       <h1>Vocubulary Quiz</h1>
       <div className={styles.buttons}>
-        <Link href="/chapter">
+        <Link href="/wordbooks">
           <button>一人で挑戦</button>
         </Link>
         <button>ゴーストと対戦</button>
