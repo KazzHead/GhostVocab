@@ -35,15 +35,15 @@ export default function Home() {
   // useEffect(() => {
   //   console.log("currentWord changed");
   // }, [currentWord]);
-  // useEffect(() => {
-  //   console.log("currentWordIndex changed");
-  // }, [currentWordIndex]);
+  useEffect(() => {
+    console.log("currentWordIndex changed:", currentWordIndex);
+  }, [currentWordIndex]);
   // useEffect(() => {
   //   console.log("choices changed");
   // }, [choices]);
-  // useEffect(() => {
-  //   console.log("results changed");
-  // }, [results]);
+  useEffect(() => {
+    console.log("results changed:", results);
+  }, [results]);
   // useEffect(() => {
   //   console.log("isChoosing changed");
   // }, [isChoosing]);
@@ -131,10 +131,64 @@ export default function Home() {
     // console.log(`isChoosing set to true after picking word: ${word.word}`);
   }
 
-  const handleChoice = (choice: string) => {
-    // console.log("---------chose----------");
+  // const handleChoice = (choice: string) => {
+  //   // console.log("---------chose----------");
 
-    if (!isChoosing) return; // 選択が有効な場合のみ処理を実行
+  //   if (!isChoosing) return; // 選択が有効な場合のみ処理を実行
+  //   setSelectedChoice(choice);
+  //   const endTime = Date.now();
+  //   const responseTime = endTime - startTime;
+  //   const isCorrect = currentWord?.meaning === choice;
+  //   const newResult: Result = {
+  //     question: currentWord!.word,
+  //     correctAnswer: currentWord!.meaning,
+  //     isCorrect: isCorrect,
+  //     responseTime: responseTime,
+  //   };
+
+  //   console.log("before set result:", results);
+  //   setResults((prevResults) => [...prevResults, newResult]);
+  //   console.log("afterset result:", results);
+
+  //   setIsChoosing(false);
+
+  //   if (isCorrect) {
+  //     setScore(score + 1); // 正解の場合はスコアをインクリメント
+  //   }
+
+  //   const nextIndex = currentWordIndex + 1;
+  //   if (nextIndex < quizWords.length) {
+  //     setTimeout(() => {
+  //       pickWord(nextIndex);
+  //     }, 409);
+  //   }
+  //   else {
+  //     setTimeout(() => {
+  //       saveResultsToServer();
+  //       console.log("saving results:", results);
+  //       router.push({
+  //         pathname: "/results",
+  //         query: { results: JSON.stringify(results), score: score },
+  //       });
+  //     }, 409);
+  //   }
+  // };
+
+  useEffect(() => {
+    // もしクイズの問題がすべて終了していたら、結果をサーバーに保存し、結果ページへ遷移する
+    if (!isChoosing && currentWordIndex >= quizWords.length - 1) {
+      saveResultsToServer();
+      console.log("saving results:", results);
+      router.push({
+        pathname: "/results",
+        query: { results: JSON.stringify(results), score: score },
+      });
+    }
+  }, [results]); // results が変わるたびにこの useEffect がトリガーされる
+
+  const handleChoice = (choice: string) => {
+    if (!isChoosing) return;
+
     setSelectedChoice(choice);
     const endTime = Date.now();
     const responseTime = endTime - startTime;
@@ -143,32 +197,21 @@ export default function Home() {
       question: currentWord!.word,
       correctAnswer: currentWord!.meaning,
       isCorrect: isCorrect,
-      // timestampStart: startTime,
-      // timestampEnd: endTime,
       responseTime: responseTime,
     };
-    setResults([...results, newResult]);
-    // console.log("result:", results);
 
+    setResults((prevResults) => [...prevResults, newResult]);
     setIsChoosing(false);
 
     if (isCorrect) {
-      setScore(score + 1); // 正解の場合はスコアをインクリメント
+      setScore(score + 1);
     }
 
     const nextIndex = currentWordIndex + 1;
     if (nextIndex < quizWords.length) {
       setTimeout(() => {
         pickWord(nextIndex);
-      }, 2000);
-    } else {
-      setTimeout(() => {
-        saveResultsToServer();
-        router.push({
-          pathname: "/results",
-          query: { results: JSON.stringify(results), score: score },
-        });
-      }, 2000);
+      }, 409);
     }
   };
 
@@ -183,6 +226,7 @@ export default function Home() {
 
   const saveResultsToServer = async () => {
     try {
+      console.log("saving...");
       const response = await fetch("/api/saveResults", {
         method: "POST",
         headers: {
