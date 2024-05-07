@@ -2,8 +2,10 @@ import fs from "fs";
 import path from "path";
 
 export default function handler(req, res) {
-  const { start, end } = req.query;
-  const filePath = path.join(process.cwd(), "public", "target1900", "EtoJ.csv");
+  console.log("handler起動");
+
+  const { book, mode, start, end } = req.query;
+  const filePath = path.join(process.cwd(), "public", book, `${mode}.csv`);
   fs.readFile(filePath, "utf8", (err, data) => {
     if (err) {
       res.status(500).json({ message: "ファイルを読み込めませんでした。" });

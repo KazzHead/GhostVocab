@@ -4,7 +4,6 @@ import fs from "fs";
 import path from "path";
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
-  console.log("saving...");
   if (req.method === "POST") {
     const { results } = req.body;
     // // const headers =

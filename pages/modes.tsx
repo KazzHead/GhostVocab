@@ -40,7 +40,7 @@ export const getServerSideProps: GetServerSideProps = async (
   };
 };
 
-const Modes: React.FC<ModesProps> = ({ displayName, modes }) => {
+const Modes: React.FC<ModesProps> = ({ bookName, displayName, modes }) => {
   const router = useRouter();
   return (
     <div className={styles.container}>
@@ -48,9 +48,11 @@ const Modes: React.FC<ModesProps> = ({ displayName, modes }) => {
       <button onClick={() => router.push("/")}>ホームに戻る</button>
       {modes.map((mode) => (
         <button
-          key={mode.name}
+          key={mode.name.replace(".csv", "")}
           onClick={() =>
-            router.push(`/chapter?book=${displayName}&mode=${mode.name}`)
+            router.push(
+              `/chapter?book=${bookName}&mode=${mode.name.replace(".csv", "")}`
+            )
           }
         >
           {mode.displayName}

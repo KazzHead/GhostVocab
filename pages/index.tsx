@@ -1,14 +1,14 @@
 import Link from "next/link";
 import styles from "../styles/index.module.css";
+import router from "next/router";
 
 const Home = () => {
   return (
     <div className={styles.container}>
       <h1>Vocubulary Quiz</h1>
       <div className={styles.buttons}>
-        <Link href="/wordbooks">
-          <button>一人で挑戦</button>
-        </Link>
+        <button onClick={() => router.push("/wordbooks")}>練習する</button>
+        <button>テストする</button>
         <button>ゴーストと対戦</button>
       </div>
     </div>
