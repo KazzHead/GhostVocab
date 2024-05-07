@@ -6,6 +6,7 @@ import { useRouter } from "next/router";
 interface Word {
   word: string;
   meaning: string;
+  extra: string[];
 }
 
 interface Result {
@@ -13,6 +14,7 @@ interface Result {
   correctAnswer: string;
   isCorrect: boolean;
   responseTime: number;
+  extra: string[];
 }
 
 export default function Study() {
@@ -51,6 +53,12 @@ export default function Study() {
   // useEffect(() => {
   //   console.log("isChoosing changed");
   // }, [isChoosing]);
+  useEffect(() => {
+    console.log("allWords changed:", allWords);
+  }, [allWords]);
+  useEffect(() => {
+    console.log("quizWords changed:", quizWords);
+  }, [quizWords]);
 
   useEffect(() => {
     //スタート時のカウントダウンを実行
@@ -156,6 +164,7 @@ export default function Study() {
       correctAnswer: currentWord!.meaning,
       isCorrect: isCorrect,
       responseTime: responseTime,
+      extra: currentWord?.extra || [],
     };
 
     setResults((prevResults) => [...prevResults, newResult]);

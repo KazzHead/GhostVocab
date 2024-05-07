@@ -1,9 +1,11 @@
 import { useRouter } from "next/router";
+import "../styles/index.module.css";
 
 interface Result {
   question: string;
   correctAnswer: string;
   isCorrect: boolean;
+  extra: string[];
 }
 
 const Results = () => {
@@ -22,7 +24,7 @@ const Results = () => {
           <li key={index}>
             {`${index + 1}. ${result.isCorrect ? "◯" : "✕"} ${
               result.question
-            } ${result.correctAnswer}`}
+            } \n${result.correctAnswer} ${result.extra?.join(", ")}`}
           </li>
         ))}
       </ul>
