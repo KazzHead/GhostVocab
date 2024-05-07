@@ -10,6 +10,7 @@ const Home = () => {
         <button onClick={() => router.push("/wordbooks")}>練習する</button>
         <button>テストする</button>
         <button>ゴーストと対戦</button>
+        <button onClick={() => router.push("/events")}>イベント</button>
       </div>
     </div>
   );
