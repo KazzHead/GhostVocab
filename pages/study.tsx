@@ -169,7 +169,7 @@ export default function Study() {
     if (nextIndex < quizWords.length) {
       setTimeout(() => {
         pickWord(nextIndex);
-      }, 409);
+      }, 2000);
     }
   };
 
