@@ -61,7 +61,7 @@ const Chapter: React.FC<ChapterProps> = ({
     <div>
       <h1>{`${displayBookName} ${displayModeName}`}</h1>
       <button onClick={() => router.push(`/modes?book=${bookName}`)}>
-        戻る
+        モード選択に戻る
       </button>
       {ranges.map((range, index) => (
         <button

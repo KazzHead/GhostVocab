@@ -38,7 +38,7 @@ const Wordbooks: React.FC<WordbooksProps> = ({ wordbooks }) => {
   return (
     <div className={styles.container}>
       <h1>単語帳</h1>
-      <button onClick={() => router.push("/")}>ホームに戻る</button>
+      <button onClick={() => router.push("/")}>タイトルに戻る</button>
       {wordbooks.map((book) => (
         <button
           key={book.name}

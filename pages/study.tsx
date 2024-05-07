@@ -15,7 +15,7 @@ interface Result {
   responseTime: number;
 }
 
-export default function study() {
+export default function Study() {
   const [allWords, setAllWords] = useState<Word[]>([]); //101-200など100個の単語&意味
   const [quizWords, setQuizWords] = useState<Word[]>([]); //100個の単語から選ばれた10個の出題用単語&意味
   const [currentWord, setCurrentWord] = useState<Word | null>(null);

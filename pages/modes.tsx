@@ -45,7 +45,9 @@ const Modes: React.FC<ModesProps> = ({ bookName, displayName, modes }) => {
   return (
     <div className={styles.container}>
       <h1>{displayName}</h1>
-      <button onClick={() => router.push("/")}>ホームに戻る</button>
+      <button onClick={() => router.push("/wordbooks")}>
+        単語帳選択に戻る
+      </button>
       {modes.map((mode) => (
         <button
           key={mode.name.replace(".csv", "")}
