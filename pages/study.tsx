@@ -143,12 +143,14 @@ export default function Study() {
   useEffect(() => {
     // もしクイズの問題がすべて終了していたら、結果をサーバーに保存し、結果ページへ遷移する
     if (!isChoosing && currentWordIndex >= quizWords.length - 1) {
-      saveResultsToServer();
-      console.log("saving results:", results);
-      router.push({
-        pathname: "/results",
-        query: { results: JSON.stringify(results), score: score },
-      });
+      setTimeout(() => {
+        saveResultsToServer();
+        console.log("saving results:", results);
+        router.push({
+          pathname: "/results",
+          query: { results: JSON.stringify(results), score: score },
+        });
+      }, 2000);
     }
   }, [results]); // results が変わるたびにこの useEffect がトリガーされる
 
