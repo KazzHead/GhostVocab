@@ -246,11 +246,11 @@ export default function Study() {
       {countdown > 0 && (
         <div className={styles.fullScreen}>
           <div className={styles.countdownText}>
-            {mode === "fillBrakets"
+            {mode === "fillBrackets"
               ? " ( ) に入る単語を選んで！"
               : mode === "EtoJ"
               ? " 日本語の意味を選んで！"
-              : "モードを選択してください"}
+              : ""}
           </div>
           <div className={styles.countdownNumber}>{countdown}</div>
         </div>
