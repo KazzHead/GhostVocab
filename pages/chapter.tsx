@@ -4,6 +4,7 @@ import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import { folderDisplayNameMap } from "../utils/folderDisplayNameMap";
 import { fileDisplayNameMap } from "../utils/fileDisplayNameMap";
+import styles from "../styles/index.module.css";
 
 interface ChapterProps {
   bookName: string;
@@ -58,23 +59,25 @@ const Chapter: React.FC<ChapterProps> = ({
   }
 
   return (
-    <div>
-      <h1>{`${displayBookName} ${displayModeName}`}</h1>
+    <div className={styles.container}>
+      <h1>{`${displayBookName} \n${displayModeName}`}</h1>
       <button onClick={() => router.push(`/modes?book=${bookName}`)}>
         モード選択に戻る
       </button>
-      {ranges.map((range, index) => (
-        <button
-          key={index}
-          onClick={() =>
-            router.push(
-              `/study?book=${bookName}&mode=${modeName}&start=${range.start}&end=${range.end}`
-            )
-          }
-        >
-          {`${range.start}～${range.end}`}
-        </button>
-      ))}
+      <div className={styles.buttons}>
+        {ranges.map((range, index) => (
+          <button
+            key={index}
+            onClick={() =>
+              router.push(
+                `/study?book=${bookName}&mode=${modeName}&start=${range.start}&end=${range.end}`
+              )
+            }
+          >
+            {`${range.start}～${range.end}`}
+          </button>
+        ))}
+      </div>
     </div>
   );
 };

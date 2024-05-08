@@ -1,17 +1,35 @@
+html {
+  min-height: 100%;
+
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+}
+
 body {
+  box-sizing: border-box;
   white-space: pre-wrap;
   font-family: "Arial", sans-serif;
-  background-color: #f4f4f4;
-  margin: 0;
-  padding: 20px;
+  /* background-image: linear-gradient(
+    135deg,
+    rgba(103, 126, 250, 1),
+    rgba(142, 84, 219, 1) 61%
+  ); */
+  background-color: #d1d1e9;
+  background-repeat: no-repeat;
+  margin: 0%;
+  padding: 10px;
   display: flex;
   /* width: 100vh; */
   justify-content: center;
   align-items: center;
-  /* height: 100vh; */
+  height: 100%;
+  min-height: 100%;
 }
 
 h1 {
+  text-align: center;
+  font-size: 30px; /* 数字のフォントサイズを大きく設定 */
   color: #333;
 }
 
@@ -35,7 +53,7 @@ ul {
 li {
   padding: 10px;
   margin: 5px 0;
-  background-color: #f8f8f8;
+  background-color: #fffffe;
   border: 1px solid #ddd;
   cursor: pointer;
   border-radius: 5px;
@@ -49,16 +67,16 @@ button {
   display: block; /* ブロックレベル要素として扱う */
   width: 90%; /* 同じ幅、例えば全体の80% */
   margin: 20px auto; /* 上下のマージンと自動で中央揃え */
-  background-color: #007bff;
-  color: white;
+  background-color: #6246ea;
+  color: #fffffe;
   border: none;
-  padding: 30px 20px;
+  padding: 15px 20px;
   font-size: 16px;
   cursor: pointer;
   border-radius: 5px;
   text-decoration: none;
 }
 
-button:hover {
+/* button:hover {
   background-color: #0056b3;
-}
+} */

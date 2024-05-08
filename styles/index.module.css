@@ -1,9 +1,12 @@
 /* index.module.css */
 .container {
+  box-sizing: border-box;
   padding: 20px;
-  background: white;
+  background: #fffffe;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
   border-radius: 10px;
+
+  height: 90%;
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -17,7 +20,7 @@
 }
 
 .title {
-  color: #333;
+  color: #2b2c34;
   text-align: center;
   text-decoration: none;
 }
@@ -31,14 +34,14 @@
 .quizItem {
   padding: 12px;
   margin-bottom: 8px;
-  background-color: #f0f0f0;
-  border: 1px solid #ccc;
+  background-color: #fffffe;
+  border: 1px solid #fffffe;
   cursor: pointer;
   border-radius: 5px;
   text-decoration: none;
 }
 
 .quizItem:hover {
-  background-color: #e0e0e0;
+  background-color: #fffffe;
   text-decoration: none;
 }

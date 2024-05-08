@@ -39,14 +39,16 @@ const Wordbooks: React.FC<WordbooksProps> = ({ wordbooks }) => {
     <div className={styles.container}>
       <h1>単語帳</h1>
       <button onClick={() => router.push("/")}>タイトルに戻る</button>
-      {wordbooks.map((book) => (
-        <button
-          key={book.name}
-          onClick={() => router.push(`/modes?book=${book.name}`)}
-        >
-          {book.displayName}
-        </button>
-      ))}
+      <div className={styles.buttons}>
+        {wordbooks.map((book) => (
+          <button
+            key={book.name}
+            onClick={() => router.push(`/modes?book=${book.name}`)}
+          >
+            {book.displayName}
+          </button>
+        ))}
+      </div>
     </div>
   );
 };

@@ -1,8 +1,23 @@
+.container {
+  box-sizing: border-box;
+  padding: 20px;
+  background: #fffffe;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+  border-radius: 10px;
+  height: 90%;
+  width: 100%;
+  /* display: flex;
+  flex-direction: column;
+  align-items: center; */
+  text-align: left;
+  text-decoration: none;
+}
+
 .choice {
   padding: 12px;
   margin-bottom: 8px;
   background-color: #ffffff;
-  border: 2px solid transparent; /* 透明の枠を初期状態で設定 */
+  border: 2px solid #ddd; /* 透明の枠を初期状態で設定 */
   /* cursor: pointer; */
   border-radius: 5px;
 }
@@ -14,12 +29,12 @@
 
 .correct {
   background-color: #ffffff;
-  border-color: rgb(0, 255, 0); /* 正解の枠色 */
+  border-color: rgb(21, 189, 21); /* 正解の枠色 */
 }
 
 .incorrect {
   background-color: #ffffff;
-  border-color: rgb(255, 0, 0); /* 不正解の枠色 */
+  border-color: rgb(234, 44, 44); /* 不正解の枠色 */
 }
 
 .fullScreen {
@@ -57,6 +72,7 @@
 
 .progressBar {
   height: 100%;
-  background-color: blue;
+  background-color: #6246ea;
+  color: #fffffe;
   border-radius: 10px;
 }
