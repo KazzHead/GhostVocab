@@ -2,7 +2,7 @@ import fs from "fs";
 import path from "path";
 
 export default function handler(req, res) {
-  console.log("handler起動");
+  console.log("words.handler起動");
 
   const { book, mode, start, end } = req.query;
   const filePath = path.join(process.cwd(), "public", book, `${mode}.csv`);

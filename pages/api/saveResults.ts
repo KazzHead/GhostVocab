@@ -4,6 +4,7 @@ import fs from "fs";
 import path from "path";
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
+  console.log("saveResults.handler起動");
   if (req.method === "POST") {
     const { results } = req.body;
     // // const headers =
@@ -11,7 +12,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     const csvContent = results
       .map(
         (result: any) =>
-          `${result.question},${result.correctAnswer},${result.isCorrect},${result.responseTime}`
+          `${result.name},${result.question},${result.choices},${result.selectedChoice},${result.isCorrect},${result.responseTime},${result.extra}`
       )
       .join("\n");
     if (!fs.existsSync(path.join(process.cwd(), "data"))) {

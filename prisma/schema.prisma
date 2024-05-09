@@ -1,0 +1,25 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider          = "postgresql"
+  url               = env("POSTGRES_PRISMA_URL")
+  directUrl         = env("POSTGRES_URL_NON_POOLING")
+  shadowDatabaseUrl = env("POSTGRES_URL_NON_POOLING") 
+}
+
+model QuizResult {
+  id            Int      @id @default(autoincrement())
+  book          String
+  mode          String
+  start         Int
+  end           Int
+  question      String
+  correctAnswer String
+  isCorrect     Boolean
+  responseTime  Int
+  extra         Json
+  updatedAt     DateTime @updatedAt
+  user          String
+}
