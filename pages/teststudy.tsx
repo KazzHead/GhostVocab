@@ -217,7 +217,7 @@ export default function Study() {
     <div className={styles.container}>
       {countdown === 0 && (
         <>
-          <h1 font-size="10px">{`ターゲット1900 ${start}～${end}`}</h1>
+          <h1>{`ターゲット1900 ${start}～${end}`}</h1>
           <p>{`${currentWordIndex + 1}/${quizWords.length} 問目`}</p>
           <div className={styles.progressBarContainer}>
             <div

@@ -11,15 +11,23 @@ datasource db {
 
 model QuizResult {
   id            Int      @id @default(autoincrement())
+  name          String
   book          String
   mode          String
   start         Int
   end           Int
+  contents      Contents[]
+  updatedAt     DateTime @updatedAt
+}
+
+model Contents {
+  id            Int      @id @default(autoincrement())
+  quizResultId   Int       // QuizResultへの参照ID
+  quizResult     QuizResult @relation(fields: [quizResultId], references: [id])
   question      String
-  correctAnswer String
+  choices       String[]
+  selectedChoice String
   isCorrect     Boolean
   responseTime  Int
   extra         Json
-  updatedAt     DateTime @updatedAt
-  user          String
 }

@@ -9,14 +9,36 @@ interface Word {
   extra: string[];
 }
 
-interface Result {
-  name: string;
-  question: string;
-  choices: string[];
-  selectedChoice: string;
-  isCorrect: boolean;
-  responseTime: number;
-  extra: string[];
+// interface Result {
+//   name: string;
+//   book: string;
+//   mode: string;
+//   start: number;
+//   end: number;
+//   question: string;
+//   choices: string[];
+//   selectedChoice: string;
+//   isCorrect: boolean;
+//   responseTime: number;
+//   extra: string[];
+// }
+
+interface result {
+  name: string; // ユーザー名
+  book: string; // 書籍名
+  mode: string; // クイズモード（例: "easy", "hard"）
+  start: number; // 開始時間（unix timestamp）
+  end: number; // 終了時間（unix timestamp）
+  contents: content[]; // クイズの内容配列
+}
+
+interface content {
+  question: string; // 問題文
+  choices: string[]; // 選択肢配列
+  selectedChoice: string; // 選択した選択肢
+  isCorrect: boolean; // 正解かどうか
+  responseTime: number; // 回答時間（秒）
+  extra: any; // その他の情報（Json形式）
 }
 
 export default function Test() {
@@ -30,10 +52,16 @@ export default function Test() {
   const [selectedChoice, setSelectedChoice] = useState<string | null>(null);
   const [isChoosing, setIsChoosing] = useState(true);
   const [score, setScore] = useState(0);
-  const [results, setResults] = useState<Result[]>([]);
+  const [result, setResult] = useState<result[]>([]);
+  const [content, setContent] = useState<content[]>([]);
   const [timerProgress, setTimerProgress] = useState(100); // タイマー進行状態
   const router = useRouter();
-  const { book, mode, start, end } = router.query;
+  const { book, mode, start, end } = router.query as {
+    book: string;
+    mode: string;
+    start: string;
+    end: string;
+  };
   const [startTime, setStartTime] = useState<number>(0);
   const [countdown, setCountdown] = useState(3);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
@@ -45,18 +73,21 @@ export default function Test() {
   // useEffect(() => {
   //   console.log("currentWord changed");
   // }, [currentWord]);
-  useEffect(() => {
-    console.log("hasStarted changed:", hasStarted);
-  }, [hasStarted]);
+  // useEffect(() => {
+  //   console.log("hasStarted changed:", hasStarted);
+  // }, [hasStarted]);
   // useEffect(() => {
   //   console.log("currentWordIndex changed:", currentWordIndex);
   // }, [currentWordIndex]);
   // useEffect(() => {
   //   console.log("choices changed");
   // }, [choices]);
-  // useEffect(() => {
-  //   console.log("results changed:", results);
-  // }, [results]);
+  useEffect(() => {
+    console.log("result changed:", result);
+  }, [result]);
+  useEffect(() => {
+    console.log("content changed:", content);
+  }, [content]);
   // useEffect(() => {
   //   console.log("isChoosing changed");
   // }, [isChoosing]);
@@ -72,7 +103,7 @@ export default function Test() {
     if (hasStarted && countdown > 0) {
       const timer = setInterval(() => {
         setCountdown((prevCountdown) => prevCountdown - 1);
-      }, 1000);
+      }, 1);
       return () => clearInterval(timer);
     }
   }, [hasStarted, countdown]);
@@ -151,16 +182,31 @@ export default function Test() {
   useEffect(() => {
     // もしクイズの問題がすべて終了していたら、結果をサーバーに保存し、結果ページへ遷移する
     if (!isChoosing && currentWordIndex >= quizWords.length - 1) {
+      const newResult: result = {
+        name: username,
+        book: book,
+        mode: mode,
+        start: parseInt(start, 10),
+        end: parseInt(end, 10),
+        contents: content,
+      };
+      setResult((prevResult) => [...prevResult, newResult]);
+    }
+  }, [content]);
+
+  useEffect(() => {
+    // もしクイズの問題がすべて終了していたら、結果をサーバーに保存し、結果ページへ遷移する
+    if (!isChoosing && currentWordIndex >= quizWords.length - 1) {
       setTimeout(() => {
-        saveResultsToServer();
-        console.log("saving results:", results);
+        saveResultToServer();
+        console.log("saving result:", result);
         router.push({
           pathname: "/results",
-          query: { results: JSON.stringify(results), score: score },
+          query: { result: JSON.stringify(result), score: score },
         });
       }, 10);
     }
-  }, [results]); // results が変わるたびにこの useEffect がトリガーされる
+  }, [result]);
 
   const handleChoice = (choice: string) => {
     if (!isChoosing) return;
@@ -173,17 +219,27 @@ export default function Test() {
     console.log("chices:", [...choices]);
     console.log("chice:", choice);
 
-    const newResult: Result = {
-      name: username,
+    const newContent: content = {
       question: currentWord!.word,
       choices: [...choices],
       selectedChoice: choice,
       isCorrect: isCorrect,
       responseTime: responseTime,
-      extra: currentWord?.extra || [],
+      extra: currentWord?.extra || {},
     };
+    setContent((prevContent) => [...prevContent, newContent]);
 
-    setResults((prevResults) => [...prevResults, newResult]);
+    // const newResult: result = {
+    //   name: username,
+    //   book: book,
+    //   mode: mode,
+    //   start: parseInt(start, 10),
+    //   end: parseInt(end, 10),
+    //   contents: [newContent],
+    //   updatedAt: new Date(),
+    // };
+    // setResults((prevResults) => [...prevResults, newResult]);
+
     setIsChoosing(false);
 
     if (isCorrect) {
@@ -207,31 +263,34 @@ export default function Test() {
     return styles.choice;
   }
 
-  const saveResultsToServer = async () => {
-    try {
-      console.log("saving...");
-      const response = await fetch("/api/saveResults", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ results: results }),
-      });
-      if (response.ok) {
-        console.log("Results saved to server.");
-      } else {
-        console.error("Failed to save results.");
-      }
-    } catch (error) {
-      console.error("Error saving results to server:", error);
-    }
+  const saveResultToServer = async () => {
+    console.log(
+      "JSON.stringify({ result: result }):",
+      JSON.stringify({ result: result })
+    );
+    const response = await fetch("/api/testsaveResults", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ result: result }),
+    });
+
+    // if (!response.ok) {
+    //   console.error("HTTP error:", response.status);
+    //   // レスポンスボディをログに出力することで、サーバー側でのエラーの詳細を得る
+    //   const errorResponse = await response.text(); // JSONと仮定する場合はresponse.json()を使用
+    //   console.error("Error response body:", errorResponse);
+    // } else {
+    //   console.log("Results saved successfully:", await response.json());
+    // }
   };
 
   return (
     <div className={styles.container}>
       {countdown === 0 && (
         <>
-          <h1 font-size="10px">{`ターゲット1900 ${start}～${end}`}</h1>
+          <h1>{`ターゲット1900 ${start}～${end}`}</h1>
           <p>{`${currentWordIndex + 1}/${quizWords.length} 問目`}</p>
           <div className={styles.progressBarContainer}>
             <div

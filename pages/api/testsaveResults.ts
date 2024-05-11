@@ -2,49 +2,58 @@ import { PrismaClient } from "@prisma/client";
 import { NextApiRequest, NextApiResponse } from "next";
 
 const prisma = new PrismaClient();
+console.log("testsaveResults起動");
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  console.log("testsaveResults.handler起動");
-
   try {
-    const data = await prisma.quizResult.create({
-      data: {
-        book: "kinhure",
-        mode: "EtoJ",
-        start: 1, // 仮の値
-        end: 2, // 仮の値
-        question: "What is the capital of France?", // 仮の質問
-        correctAnswer: "Paris", // 仮の正解
-        isCorrect: true, // 仮の結果
-        responseTime: 30, // 仮の応答時間
-        extra: {}, // 必要に応じて追加情報をJson形式で
-        user: "Aoi", // 適切なユーザーID
-      },
-    });
+    console.log("req.body:", req.body);
+    const { result } = req.body;
+    console.log("testsaveResults.handler起動");
+    console.log("result:", result);
 
-    return res.status(200).json({ data });
-  } catch (error) {
-    return res.status(500).json({ error });
+    for (const item of result) {
+      const quizResult = await prisma.quizResult.create({
+        data: {
+          name: item.name,
+          book: item.book,
+          mode: item.mode,
+          start: item.start,
+          end: item.end,
+          contents: {
+            create: item.contents.map((content: any) => ({
+              question: content.question,
+              selectedChoice: content.selectedChoice,
+              isCorrect: content.isCorrect,
+              responseTime: content.responseTime,
+              extra: content.extra,
+              choices: content.choices,
+            })),
+          },
+        },
+      });
+      console.log(
+        "QuizResult and related data created successfully",
+        quizResult
+      );
+    }
+    res.status(200).json({ message: "Results saved successfully." });
+  } catch (error: unknown) {
+    // unknown型として明示
+    if (error instanceof Error) {
+      // Errorインスタンスであるかチェック
+      console.error("エラー発生:", error);
+      res
+        .status(500)
+        .json({ message: "Internal Server Error", error: error.message });
+    } else {
+      // エラーがErrorインスタンスでない場合のハンドリング
+      console.error("非Error型のエラー発生:", error);
+      res
+        .status(500)
+        .json({ message: "Internal Server Error", error: "Unknown error" });
+    }
   }
-
-  // if (req.method === "POST") {
-  //   const { results } = req.body;
-  //   try {
-  //     await prisma.quizResult.createMany({
-  //       data: results.map((result: any) => ({
-  //         ...result,
-  //         userId: "777", // ユーザーIDを適切に設定する必要があります
-  //       })),
-  //     });
-  //     res.status(200).json({ message: "Results saved successfully." });
-  //   } catch (error) {
-  //     res.status(500).json({ message: "Failed to save results.", error });
-  //   }
-  // } else {
-  //   res.setHeader("Allow", ["POST"]);
-  //   res.status(405).end(`Method ${req.method} Not Allowed`);
-  // }
 }
