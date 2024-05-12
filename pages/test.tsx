@@ -278,7 +278,10 @@ export default function Test() {
           <div className={styles.progressBarContainer}>
             <div
               className={styles.progressBar}
-              style={{ width: `${timerProgress}%` }}
+              style={{
+                width: `${timerProgress}%`,
+                backgroundColor: timerProgress > 50 ? "#6246ea" : "#ff8e3c",
+              }}
             />
           </div>
           {currentWord && (
