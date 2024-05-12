@@ -11,14 +11,15 @@ git add *
 git commit -m "バックアップ"
 git push origin main
 
-npx prisma studio
+
+
 
 npx prisma migrate reset
-
 npx prisma migrate dev --create-only --name newMigration
 npx prisma migrate deploy
+npx prisma generate
 
-
+npx prisma studio
 
 
 npm run dev        

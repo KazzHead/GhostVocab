@@ -29,5 +29,6 @@ model Contents {
   selectedChoice String
   isCorrect     Boolean
   responseTime  Int
+  correctAnswer String
   extra         Json
 }

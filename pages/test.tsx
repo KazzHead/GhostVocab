@@ -38,6 +38,7 @@ interface content {
   selectedChoice: string; // 選択した選択肢
   isCorrect: boolean; // 正解かどうか
   responseTime: number; // 回答時間（秒）
+  correctAnswer: string;
   extra: any; // その他の情報（Json形式）
 }
 
@@ -109,12 +110,10 @@ export default function Test() {
   }, [hasStarted, countdown]);
 
   const handleStartQuiz = () => {
-    setHasStarted(true); // クイズ開始状態をtrueに設定
+    setHasStarted(true);
   };
 
   useEffect(() => {
-    //スタート時のカウントダウン後問題をセット
-    // if (countdown === 0 && book && mode && start && end) {
     if (book && mode && start && end) {
       fetch(`/api/words?book=${book}&mode=${mode}&start=${start}&end=${end}`)
         .then((response) => response.json())
@@ -150,10 +149,7 @@ export default function Test() {
   }, [quizWords]);
 
   function pickWord(index: number) {
-    // console.log("---------changed----------");
-
     if (index >= quizWords.length || quizWords.length === 0) {
-      // console.log("No more words or word list is empty.");
       return;
     }
 
@@ -161,7 +157,6 @@ export default function Test() {
     setCurrentWord(word);
 
     setCurrentWordIndex(index);
-    // console.log("currentWordIndex:", currentWordIndex);
     setStartTime(Date.now());
 
     const fakeChoices: string[] = [];
@@ -180,7 +175,6 @@ export default function Test() {
   }
 
   useEffect(() => {
-    // もしクイズの問題がすべて終了していたら、結果をサーバーに保存し、結果ページへ遷移する
     if (!isChoosing && currentWordIndex >= quizWords.length - 1) {
       const newResult: result = {
         name: username,
@@ -195,14 +189,13 @@ export default function Test() {
   }, [content]);
 
   useEffect(() => {
-    // もしクイズの問題がすべて終了していたら、結果をサーバーに保存し、結果ページへ遷移する
     if (!isChoosing && currentWordIndex >= quizWords.length - 1) {
       setTimeout(() => {
         saveResultToServer();
         console.log("saving result:", result);
         router.push({
           pathname: "/results",
-          query: { result: JSON.stringify(result), score: score },
+          query: { content: JSON.stringify(content), score: score },
         });
       }, 10);
     }
@@ -225,21 +218,10 @@ export default function Test() {
       selectedChoice: choice,
       isCorrect: isCorrect,
       responseTime: responseTime,
+      correctAnswer: currentWord!.meaning,
       extra: currentWord?.extra || {},
     };
     setContent((prevContent) => [...prevContent, newContent]);
-
-    // const newResult: result = {
-    //   name: username,
-    //   book: book,
-    //   mode: mode,
-    //   start: parseInt(start, 10),
-    //   end: parseInt(end, 10),
-    //   contents: [newContent],
-    //   updatedAt: new Date(),
-    // };
-    // setResults((prevResults) => [...prevResults, newResult]);
-
     setIsChoosing(false);
 
     if (isCorrect) {
@@ -275,15 +257,6 @@ export default function Test() {
       },
       body: JSON.stringify({ result: result }),
     });
-
-    // if (!response.ok) {
-    //   console.error("HTTP error:", response.status);
-    //   // レスポンスボディをログに出力することで、サーバー側でのエラーの詳細を得る
-    //   const errorResponse = await response.text(); // JSONと仮定する場合はresponse.json()を使用
-    //   console.error("Error response body:", errorResponse);
-    // } else {
-    //   console.log("Results saved successfully:", await response.json());
-    // }
   };
 
   return (

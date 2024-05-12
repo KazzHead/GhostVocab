@@ -20,6 +20,7 @@ CREATE TABLE "Contents" (
     "selectedChoice" TEXT NOT NULL,
     "isCorrect" BOOLEAN NOT NULL,
     "responseTime" INTEGER NOT NULL,
+    "correctAnswer" TEXT NOT NULL,
     "extra" JSONB NOT NULL,
 
     CONSTRAINT "Contents_pkey" PRIMARY KEY ("id")

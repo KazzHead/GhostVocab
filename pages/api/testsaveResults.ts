@@ -28,6 +28,7 @@ export default async function handler(
               selectedChoice: content.selectedChoice,
               isCorrect: content.isCorrect,
               responseTime: content.responseTime,
+              correctAnswer: content.correctAnswer,
               extra: content.extra,
               choices: content.choices,
             })),
