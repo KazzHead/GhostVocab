@@ -200,6 +200,7 @@ export default function Test() {
           pathname: "/results",
           query: {
             book: book,
+            mode: mode,
             start: start,
             end: end,
             score: score,

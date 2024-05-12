@@ -18,15 +18,15 @@ const Results = () => {
   console.log("content:", content);
   const resultsArray: content[] = content ? JSON.parse(content as string) : [];
   console.log("resultsArray:", resultsArray);
-  const { book, start, end } = router.query as {
+  const { book, mode, start, end } = router.query as {
     book: string;
+    mode: string;
     start: string;
     end: string;
   };
   const displayBookName = folderDisplayNameMap[book];
 
   const calculateRank = (score: number, results: content[]) => {
-    if (score === 0) return "E";
     if (score <= 3) return "D";
     if (score <= 5) return "C";
     if (score <= 7) return "B";
@@ -45,8 +45,17 @@ const Results = () => {
     <div>
       <h1>{`${displayBookName} ${start}～${end}`}</h1>
       <h1>
-        得点: {score} /10 ランク: {rank}
+        得点: {score} /10 {rank}ランク
       </h1>
+      <button
+        onClick={() =>
+          router.push(
+            `/study?book=${book}&mode=${mode}&start=${start}&end=${end}`
+          )
+        }
+      >
+        もう一度挑戦
+      </button>
       <button onClick={() => router.push("/")}>ホームに戻る</button>
       <ul>
         {resultsArray.map((content, index) => (
