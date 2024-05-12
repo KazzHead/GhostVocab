@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 //import styles from "C:/Users/onlyb/quiz-app/styles/index.module.css";
 import styles from "../styles/Quiz.module.css";
 import { useRouter } from "next/router";
+import { folderDisplayNameMap } from "../utils/folderDisplayNameMap";
 
 interface Word {
   word: string;
@@ -67,6 +68,8 @@ export default function Test() {
   const [countdown, setCountdown] = useState(3);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
+  const displayBookName = folderDisplayNameMap[book];
+
   // console.log("book:", book);
   // console.log("mode:", mode);
   // console.log("start:", start);
@@ -104,7 +107,7 @@ export default function Test() {
     if (hasStarted && countdown > 0) {
       const timer = setInterval(() => {
         setCountdown((prevCountdown) => prevCountdown - 1);
-      }, 1);
+      }, 1000);
       return () => clearInterval(timer);
     }
   }, [hasStarted, countdown]);
@@ -124,14 +127,19 @@ export default function Test() {
             selectedIndices.add(Math.floor(Math.random() * data.length));
           }
           setQuizWords(Array.from(selectedIndices).map((index) => data[index]));
-          pickWord(0);
+          // pickWord(0);
         });
     }
   }, [router.query]);
 
   useEffect(() => {
-    // タイマーを管理
+    if (countdown == 0) {
+      pickWord(0);
+    }
+  }, [countdown]);
 
+  useEffect(() => {
+    // タイマーを管理
     if (countdown == 0 && isChoosing && currentWord) {
       setTimerProgress(100);
       clearInterval(timerRef.current!);
@@ -144,9 +152,9 @@ export default function Test() {
     return () => clearInterval(timerRef.current!);
   }, [isChoosing, currentWord, countdown]);
 
-  useEffect(() => {
-    pickWord(0);
-  }, [quizWords]);
+  // useEffect(() => {
+  //   pickWord(0);
+  // }, [quizWords]);
 
   function pickWord(index: number) {
     if (index >= quizWords.length || quizWords.length === 0) {
@@ -158,6 +166,7 @@ export default function Test() {
 
     setCurrentWordIndex(index);
     setStartTime(Date.now());
+    console.log("--------StartTime set----------");
 
     const fakeChoices: string[] = [];
     while (fakeChoices.length < 3) {
@@ -195,7 +204,13 @@ export default function Test() {
         console.log("saving result:", result);
         router.push({
           pathname: "/testresults",
-          query: { content: JSON.stringify(content), score: score },
+          query: {
+            book: book,
+            start: start,
+            end: end,
+            score: score,
+            content: JSON.stringify(content),
+          },
         });
       }, 10);
     }
@@ -270,7 +285,7 @@ export default function Test() {
     <div className={styles.container}>
       {countdown === 0 && (
         <>
-          <h1>{`ターゲット1900 ${start}～${end}`}</h1>
+          <h1>{`${displayBookName} ${start}～${end}`}</h1>
           <p>{`${currentWordIndex + 1}/${quizWords.length} 問目`}</p>
           <div className={styles.progressBarContainer}>
             <div

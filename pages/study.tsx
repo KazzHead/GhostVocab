@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 //import styles from "C:/Users/onlyb/quiz-app/styles/index.module.css";
 import styles from "../styles/Quiz.module.css";
 import { useRouter } from "next/router";
+import { folderDisplayNameMap } from "../utils/folderDisplayNameMap";
 
 interface Word {
   word: string;
@@ -66,6 +67,8 @@ export default function Test() {
   const [startTime, setStartTime] = useState<number>(0);
   const [countdown, setCountdown] = useState(3);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+
+  const displayBookName = folderDisplayNameMap[book];
 
   // console.log("book:", book);
   // console.log("mode:", mode);
@@ -196,7 +199,13 @@ export default function Test() {
         console.log("saving result:", result);
         router.push({
           pathname: "/results",
-          query: { content: JSON.stringify(content), score: score },
+          query: {
+            book: book,
+            start: start,
+            end: end,
+            score: score,
+            content: JSON.stringify(content),
+          },
         });
       }, 2000);
     }
@@ -272,7 +281,7 @@ export default function Test() {
     <div className={styles.container}>
       {countdown === 0 && (
         <>
-          <h1>{`ターゲット1900 ${start}～${end}`}</h1>
+          <h1>{`${displayBookName} ${start}～${end}`}</h1>
           <p>{`${currentWordIndex + 1}/${quizWords.length} 問目`}</p>
           <div className={styles.progressBarContainer}>
             <div

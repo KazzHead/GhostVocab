@@ -12,12 +12,14 @@ git commit -m "バックアップ"
 git push origin main
 
 
-
-
+//studyを修正
+//saveResultsを修正
 npx prisma migrate reset
 npx prisma migrate dev --create-only --name newMigration
 npx prisma migrate deploy
 npx prisma generate
+
+
 
 npx prisma studio
 
