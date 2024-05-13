@@ -88,15 +88,41 @@
   border-radius: 10px;
 }
 
-.powerBarContainer {
-  width: 100%;
-  background-color: #ddd;
-  height: 10px;
-  border-radius: 10px;
-  margin-top: 20px;
+.circleContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 10px; /* パワーバーとの間隔 */
 }
 
-.powerBar {
+.circle {
+  width: 30px; /* 小さい丸のサイズ */
+  height: 30px;
+  border-radius: 50%;
+  background-color: #ddd; /* 初期色 */
+  margin: 0 5px; /* 丸同士の間隔 */
+}
+
+.largeCircle {
+  width: 70px; /* 大きい丸のサイズ */
+  height: 70px;
+}
+
+.powerBarContainer {
+  width: 100%;
+  height: 20px;
+  background-color: #ddd; /* 背景色 */
+  display: flex;
+}
+
+.powerBarPlayer {
+  background-color: #6246ea; /* プレイヤーの色 */
   height: 100%;
-  border-radius: 10px;
+  transition: width 0.5s ease;
+}
+
+.powerBarGhost {
+  background-color: #ff8e3c; /* CPUの色 */
+  height: 100%;
+  transition: width 0.5s ease;
 }

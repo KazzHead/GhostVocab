@@ -63,7 +63,13 @@ export default function Test() {
   const [choices, setChoices] = useState<string[]>([]);
   const [selectedChoice, setSelectedChoice] = useState<string | null>(null);
   const [isChoosing, setIsChoosing] = useState(true);
+
+  const [pContent, setPContent] = useState<content[]>([]);
+  const [gContent, setGContent] = useState<content[]>([]);
   const [score, setScore] = useState(0);
+  const [pScore, setPScore] = useState(0);
+  const [gScore, setGScore] = useState(0);
+
   const [result, setResult] = useState<result[]>([]);
   const [content, setContent] = useState<content[]>([]);
   const [timerProgress, setTimerProgress] = useState(100); // タイマー進行状態
@@ -83,7 +89,13 @@ export default function Test() {
   // };
   const [startTime, setStartTime] = useState<number>(0);
   const [countdown, setCountdown] = useState(3);
-  const [quizResultId, setQuizResultId] = useState(1);
+  const [quizResultId, setQuizResultId] = useState(15);
+
+  const [circleColors, setCircleColors] = useState({
+    leftSmall: "#ddd",
+    large: "#ddd",
+    rightSmall: "#ddd",
+  });
 
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -106,9 +118,65 @@ export default function Test() {
       setStart(question.start);
       setEnd(question.end);
       setContent(question.contents); // クイズの内容を設定
+      setGContent(question.contents);
       pickQuestion(0);
     }
   }, [question]);
+
+  // useEffect(() => {
+  //   console.log("----start----");
+  //   if (currentWordIndex) {
+  //     setTimeout(() => {
+  //       if (
+  //         isChoosing == true &&
+  //         gContent[currentWordIndex].isCorrect == true
+  //       ) {
+  //         console.log(
+  //           "----setColor----:",
+  //           gContent[currentWordIndex].responseTime
+  //         );
+  //         setCircleColors({
+  //           leftSmall: "#ddd",
+  //           large: "#ff8e3c",
+  //           rightSmall: "#ff8e3c",
+  //         });
+  //       }
+  //     }, gContent[currentWordIndex].responseTime);
+  //   }
+  // }, [startTime]);
+
+  useEffect(() => {
+    console.log("----start----");
+    // gContent が存在し、currentWordIndex が gContent の範囲内であることを確認
+    if (
+      gContent &&
+      currentWordIndex >= 0 &&
+      currentWordIndex < gContent.length &&
+      gContent[currentWordIndex].responseTime
+    ) {
+      const timer = setTimeout(() => {
+        if (
+          isChoosing === true &&
+          gContent[currentWordIndex].isCorrect === true
+        ) {
+          console.log(
+            "----setColor----:",
+            gContent[currentWordIndex].responseTime
+          );
+          setCircleColors({
+            leftSmall: "#ddd",
+            large: "#ff8e3c",
+            rightSmall: "#ff8e3c",
+          });
+        }
+      }, gContent[currentWordIndex].responseTime);
+
+      return () => {
+        clearTimeout(timer);
+        console.log("Timer cleared!"); // タイマーがクリアされたことをコンソールに出力
+      };
+    }
+  }, [startTime, currentWordIndex, gContent, isChoosing]); // 依存配列に currentWordIndex と gContent も追加
 
   function pickQuestion(index: number) {
     if (index >= content.length || content.length === 0) {
@@ -126,6 +194,11 @@ export default function Test() {
     setCurrentWord(wordObject);
     setChoices(currentContent.choices);
     setCurrentWordIndex(index); // 現在の問題のインデックス
+    setCircleColors({
+      leftSmall: "#ddd",
+      large: "#ddd",
+      rightSmall: "#ddd",
+    });
 
     setStartTime(Date.now()); // 回答開始時間の記録
 
@@ -156,11 +229,23 @@ export default function Test() {
     console.log("content changed:", content);
   }, [content]);
   useEffect(() => {
-    console.log("question changed:", question);
-  }, [question]);
+    console.log("pContent changed:", pContent);
+  }, [pContent]);
+  useEffect(() => {
+    console.log("gContent changed:", gContent);
+  }, [gContent]);
   // useEffect(() => {
-  //   console.log("isChoosing changed");
-  // }, [isChoosing]);
+  //   console.log("question changed:", question);
+  // }, [question]);
+  useEffect(() => {
+    console.log("pScore changed:", pScore);
+  }, [pScore]);
+  useEffect(() => {
+    console.log("gScore changed:", gScore);
+  }, [gScore]);
+  useEffect(() => {
+    console.log("isChoosing changed:", isChoosing);
+  }, [isChoosing]);
   // useEffect(() => {
   //   console.log("allWords changed:", allWords);
   // }, [allWords]);
@@ -173,7 +258,7 @@ export default function Test() {
     if (hasStarted && countdown > 0) {
       const timer = setInterval(() => {
         setCountdown((prevCountdown) => prevCountdown - 1);
-      }, 1000);
+      }, 100);
       return () => clearInterval(timer);
     }
   }, [hasStarted, countdown]);
@@ -261,7 +346,7 @@ export default function Test() {
       };
       setResult((prevResult) => [...prevResult, newResult]);
     }
-  }, [content]);
+  }, [pContent]);
 
   useEffect(() => {
     if (!isChoosing && currentWordIndex >= content.length - 1) {
@@ -286,6 +371,7 @@ export default function Test() {
   const handleChoice = (choice: string) => {
     if (!isChoosing) return;
 
+    let newColors = { ...circleColors };
     setSelectedChoice(choice);
     const endTime = Date.now();
     const responseTime = endTime - startTime;
@@ -298,12 +384,62 @@ export default function Test() {
       isCorrect: isCorrect,
       responseTime: responseTime,
     };
-    setContent((prevContent) => [
+    setPContent((prevContent) => [
       ...prevContent.slice(0, currentWordIndex),
       newContent,
       ...prevContent.slice(currentWordIndex + 1),
     ]);
     setIsChoosing(false);
+
+    if (isCorrect == true && gContent[currentWordIndex].isCorrect == true) {
+      if (responseTime <= gContent[currentWordIndex].responseTime) {
+        setPScore(pScore + 2);
+        setGScore(gScore + 1);
+        newColors = {
+          leftSmall: "#6246ea",
+          large: "#6246ea",
+          rightSmall: "#ff8e3c",
+        };
+      } else {
+        setPScore(pScore + 1);
+        setGScore(gScore + 2);
+        newColors = {
+          leftSmall: "#6246ea",
+          large: "#ff8e3c",
+          rightSmall: "#ff8e3c",
+        };
+      }
+    } else if (
+      isCorrect == true &&
+      gContent[currentWordIndex].isCorrect == false
+    ) {
+      setPScore(pScore + 2);
+      setGScore(gScore + 0);
+      newColors = {
+        leftSmall: "#6246ea",
+        large: "#6246ea",
+        rightSmall: "#ddd",
+      };
+    } else if (
+      isCorrect == false &&
+      gContent[currentWordIndex].isCorrect == true
+    ) {
+      setPScore(pScore + 0);
+      setGScore(gScore + 2);
+      newColors = {
+        leftSmall: "#ddd",
+        large: "#ff8e3c",
+        rightSmall: "#ff8e3c",
+      };
+    } else if (
+      isCorrect == false &&
+      gContent[currentWordIndex].isCorrect == false
+    ) {
+      setPScore(pScore + 0);
+      setGScore(gScore + 0);
+    }
+
+    setCircleColors(newColors);
 
     if (isCorrect) {
       setScore(score + 1);
@@ -445,9 +581,46 @@ export default function Test() {
           <div className={styles.countdownNumber}>{countdown}</div>
         </div>
       )}
-
-      <div className={styles.powerBarContainer}>
-        <div className={styles.powerBar} style={{}} />
+      <div className={styles.circleContainer}>
+        <div
+          className={styles.circle}
+          style={{ backgroundColor: circleColors.leftSmall }}
+        ></div>
+        <div
+          className={`${styles.circle} ${styles.largeCircle}`}
+          style={{ backgroundColor: circleColors.large }}
+        ></div>
+        <div
+          className={styles.circle}
+          style={{ backgroundColor: circleColors.rightSmall }}
+        ></div>
+      </div>
+      <div
+        className={styles.powerBarContainer}
+        style={{ position: "relative" }}
+      >
+        <div
+          className={styles.powerBarPlayer}
+          style={{
+            width: `${
+              pScore + gScore > 0 ? (pScore * 100) / (pScore + gScore) : 50
+            }%`,
+            // height: pScore >= gScore ? "15px" : "10px",
+          }}
+        >
+          <div className={styles.scoreLabel}>{pScore}</div>
+        </div>
+        <div
+          className={styles.powerBarGhost}
+          style={{
+            width: `${
+              pScore + gScore > 0 ? (gScore * 100) / (pScore + gScore) : 50
+            }%`,
+            // height: gScore > pScore ? "15px" : "10px",
+          }}
+        >
+          <div className={styles.scoreLabel}>{gScore}</div>
+        </div>
       </div>
     </div>
   );

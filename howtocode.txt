@@ -11,6 +11,9 @@ git add *
 git commit -m "バックアップ"
 git push origin main
 
+public/書名/モード.csvに単語帳保存
+utils/folderDisplayNameMap.tsを変更
+
 
 //studyを修正
 //saveResultsを修正
