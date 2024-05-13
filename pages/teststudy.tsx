@@ -24,6 +24,16 @@ interface Word {
 //   extra: string[];
 // }
 
+interface question {
+  id: number;
+  name: string; // ユーザー名
+  book: string; // 書籍名
+  mode: string; // クイズモード（例: "easy", "hard"）
+  start: number; // 開始時間（unix timestamp）
+  end: number; // 終了時間（unix timestamp）
+  contents: content[];
+}
+
 interface result {
   name: string; // ユーザー名
   book: string; // 書籍名
@@ -58,17 +68,70 @@ export default function Test() {
   const [content, setContent] = useState<content[]>([]);
   const [timerProgress, setTimerProgress] = useState(100); // タイマー進行状態
   const router = useRouter();
-  const { book, mode, start, end } = router.query as {
-    book: string;
-    mode: string;
-    start: string;
-    end: string;
-  };
+
+  const [question, setQuestion] = useState<question | null>(null);
+
+  const [book, setBook] = useState("");
+  const [mode, setMode] = useState("");
+  const [start, setStart] = useState(0);
+  const [end, setEnd] = useState(0);
+  // const { book, mode, start, end } = router.query as {
+  //   book: string;
+  //   mode: string;
+  //   start: string;
+  //   end: string;
+  // };
   const [startTime, setStartTime] = useState<number>(0);
   const [countdown, setCountdown] = useState(3);
+  const [quizResultId, setQuizResultId] = useState(1);
+
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   const displayBookName = folderDisplayNameMap[book];
+
+  useEffect(() => {
+    const fetchQuizResult = async () => {
+      const response = await fetch(`/api/quizResult/${quizResultId}`);
+      const data = await response.json();
+      console.log("Fetched data:", data);
+      setQuestion(data);
+    };
+    fetchQuizResult();
+  }, [quizResultId]);
+
+  useEffect(() => {
+    if (question) {
+      setBook(question.book);
+      setMode(question.mode);
+      setStart(question.start);
+      setEnd(question.end);
+      setContent(question.contents); // クイズの内容を設定
+      pickQuestion(0);
+    }
+  }, [question]);
+
+  function pickQuestion(index: number) {
+    if (index >= content.length || content.length === 0) {
+      return; // 問題がない場合は何もしない
+    }
+
+    const currentContent = content[index];
+
+    const wordObject: Word = {
+      word: currentContent.question,
+      meaning: currentContent.correctAnswer,
+      extra: currentContent.extra,
+    };
+
+    setCurrentWord(wordObject);
+    setChoices(currentContent.choices);
+    setCurrentWordIndex(index); // 現在の問題のインデックス
+
+    setStartTime(Date.now()); // 回答開始時間の記録
+
+    setSelectedChoice(null);
+    setIsChoosing(true);
+  }
 
   // console.log("book:", book);
   // console.log("mode:", mode);
@@ -92,6 +155,9 @@ export default function Test() {
   useEffect(() => {
     console.log("content changed:", content);
   }, [content]);
+  useEffect(() => {
+    console.log("question changed:", question);
+  }, [question]);
   // useEffect(() => {
   //   console.log("isChoosing changed");
   // }, [isChoosing]);
@@ -116,25 +182,25 @@ export default function Test() {
     setHasStarted(true);
   };
 
-  useEffect(() => {
-    if (book && mode && start && end) {
-      fetch(`/api/words?book=${book}&mode=${mode}&start=${start}&end=${end}`)
-        .then((response) => response.json())
-        .then((data) => {
-          setAllWords(data);
-          const selectedIndices = new Set<number>();
-          while (selectedIndices.size < 10) {
-            selectedIndices.add(Math.floor(Math.random() * data.length));
-          }
-          setQuizWords(Array.from(selectedIndices).map((index) => data[index]));
-          // pickWord(0);
-        });
-    }
-  }, [router.query]);
+  // useEffect(() => {
+  //   if (book && mode && start && end) {
+  //     fetch(`/api/words?book=${book}&mode=${mode}&start=${start}&end=${end}`)
+  //       .then((response) => response.json())
+  //       .then((data) => {
+  //         setAllWords(data);
+  //         const selectedIndices = new Set<number>();
+  //         while (selectedIndices.size < 10) {
+  //           selectedIndices.add(Math.floor(Math.random() * data.length));
+  //         }
+  //         setQuizWords(Array.from(selectedIndices).map((index) => data[index]));
+  //         // pickWord(0);
+  //       });
+  //   }
+  // }, [question]);
 
   useEffect(() => {
     if (countdown == 0) {
-      pickWord(0);
+      pickQuestion(0);
     }
   }, [countdown]);
 
@@ -184,13 +250,13 @@ export default function Test() {
   }
 
   useEffect(() => {
-    if (!isChoosing && currentWordIndex >= quizWords.length - 1) {
+    if (!isChoosing && currentWordIndex >= content.length - 1) {
       const newResult: result = {
         name: username,
         book: book,
         mode: mode,
-        start: parseInt(start, 10),
-        end: parseInt(end, 10),
+        start: start,
+        end: end,
         contents: content,
       };
       setResult((prevResult) => [...prevResult, newResult]);
@@ -198,9 +264,9 @@ export default function Test() {
   }, [content]);
 
   useEffect(() => {
-    if (!isChoosing && currentWordIndex >= quizWords.length - 1) {
+    if (!isChoosing && currentWordIndex >= content.length - 1) {
       setTimeout(() => {
-        saveResultToServer();
+        // saveResultToServer();
         console.log("saving result:", result);
         router.push({
           pathname: "/testresults",
@@ -223,21 +289,20 @@ export default function Test() {
     setSelectedChoice(choice);
     const endTime = Date.now();
     const responseTime = endTime - startTime;
-    const isCorrect = currentWord?.meaning === choice;
-
-    console.log("chices:", [...choices]);
-    console.log("chice:", choice);
+    const currentContent = content[currentWordIndex];
+    const isCorrect = currentContent.correctAnswer === choice;
 
     const newContent: content = {
-      question: currentWord!.word,
-      choices: [...choices],
+      ...currentContent,
       selectedChoice: choice,
       isCorrect: isCorrect,
       responseTime: responseTime,
-      correctAnswer: currentWord!.meaning,
-      extra: currentWord?.extra || {},
     };
-    setContent((prevContent) => [...prevContent, newContent]);
+    setContent((prevContent) => [
+      ...prevContent.slice(0, currentWordIndex),
+      newContent,
+      ...prevContent.slice(currentWordIndex + 1),
+    ]);
     setIsChoosing(false);
 
     if (isCorrect) {
@@ -245,12 +310,47 @@ export default function Test() {
     }
 
     const nextIndex = currentWordIndex + 1;
-    if (nextIndex < quizWords.length) {
+    if (nextIndex < content.length) {
       setTimeout(() => {
-        pickWord(nextIndex);
+        pickQuestion(nextIndex);
       }, 1000);
     }
   };
+
+  // const handleChoice = (choice: string) => {
+  //   if (!isChoosing) return;
+
+  //   setSelectedChoice(choice);
+  //   const endTime = Date.now();
+  //   const responseTime = endTime - startTime;
+  //   const isCorrect = currentWord?.meaning === choice;
+
+  //   console.log("chices:", [...choices]);
+  //   console.log("chice:", choice);
+
+  //   const newContent: content = {
+  //     question: currentWord!.word,
+  //     choices: [...choices],
+  //     selectedChoice: choice,
+  //     isCorrect: isCorrect,
+  //     responseTime: responseTime,
+  //     correctAnswer: currentWord!.meaning,
+  //     extra: currentWord?.extra || {},
+  //   };
+  //   setContent((prevContent) => [...prevContent, newContent]);
+  //   setIsChoosing(false);
+
+  //   if (isCorrect) {
+  //     setScore(score + 1);
+  //   }
+
+  //   const nextIndex = currentWordIndex + 1;
+  //   if (nextIndex < quizWords.length) {
+  //     setTimeout(() => {
+  //       pickWord(nextIndex);
+  //     }, 1000);
+  //   }
+  // };
 
   function getChoiceClass(choice: string) {
     if (selectedChoice === "") {
@@ -287,7 +387,7 @@ export default function Test() {
       {countdown === 0 && (
         <>
           <h1>{`${displayBookName} ${start}～${end}`}</h1>
-          <p>{`${currentWordIndex + 1}/${quizWords.length} 問目`}</p>
+          <p>{`${currentWordIndex + 1}/${content.length} 問目`}</p>
           <div className={styles.progressBarContainer}>
             <div
               className={styles.progressBar}
@@ -345,6 +445,10 @@ export default function Test() {
           <div className={styles.countdownNumber}>{countdown}</div>
         </div>
       )}
+
+      <div className={styles.powerBarContainer}>
+        <div className={styles.powerBar} style={{}} />
+      </div>
     </div>
   );
 }
