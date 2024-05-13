@@ -126,3 +126,47 @@
   height: 100%;
   transition: width 0.5s ease;
 }
+
+.feedbackContainer {
+  position: relative;
+  width: 100%; /* コンテナの幅を画面全体に */
+  height: 100%; /* コンテナの高さも画面全体に */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+.feedbackBox {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+  border-radius: 50%;
+  background-color: transparent;
+  color: black;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.correctFeedback {
+  color: green;
+}
+
+.incorrectFeedback {
+  color: red;
+}

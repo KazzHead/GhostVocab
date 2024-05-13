@@ -147,14 +147,14 @@ export default function Test() {
 
   useEffect(() => {
     console.log("----start----");
-    // gContent が存在し、currentWordIndex が gContent の範囲内であることを確認
+
     if (
       gContent &&
       currentWordIndex >= 0 &&
       currentWordIndex < gContent.length &&
       gContent[currentWordIndex].responseTime
     ) {
-      const timer = setTimeout(() => {
+      const gtimer = setTimeout(() => {
         if (
           isChoosing === true &&
           gContent[currentWordIndex].isCorrect === true
@@ -172,13 +172,14 @@ export default function Test() {
       }, gContent[currentWordIndex].responseTime);
 
       return () => {
-        clearTimeout(timer);
-        console.log("Timer cleared!"); // タイマーがクリアされたことをコンソールに出力
+        clearTimeout(gtimer);
+        console.log("gTimer cleared!");
       };
     }
-  }, [startTime, currentWordIndex, gContent, isChoosing]); // 依存配列に currentWordIndex と gContent も追加
+  }, [startTime, currentWordIndex, gContent, isChoosing]);
 
   function pickQuestion(index: number) {
+    console.log("pickQuestion called");
     if (index >= content.length || content.length === 0) {
       return; // 問題がない場合は何もしない
     }
@@ -246,6 +247,9 @@ export default function Test() {
   useEffect(() => {
     console.log("isChoosing changed:", isChoosing);
   }, [isChoosing]);
+  useEffect(() => {
+    console.log("currentWord changed:", currentWord);
+  }, [currentWord]);
   // useEffect(() => {
   //   console.log("allWords changed:", allWords);
   // }, [allWords]);
@@ -254,12 +258,14 @@ export default function Test() {
   // }, [quizWords]);
 
   useEffect(() => {
-    // クイズのカウントダウンを管理
+    // 3秒カウントダウンを管理
     if (hasStarted && countdown > 0) {
       const timer = setInterval(() => {
         setCountdown((prevCountdown) => prevCountdown - 1);
-      }, 100);
-      return () => clearInterval(timer);
+      }, 1000);
+      return () => {
+        clearTimeout(timer);
+      };
     }
   }, [hasStarted, countdown]);
 
@@ -290,7 +296,7 @@ export default function Test() {
   }, [countdown]);
 
   useEffect(() => {
-    // タイマーを管理
+    // 10秒タイマーを管理
     if (countdown == 0 && isChoosing && currentWord) {
       setTimerProgress(100);
       clearInterval(timerRef.current!);
@@ -302,10 +308,6 @@ export default function Test() {
     }
     return () => clearInterval(timerRef.current!);
   }, [isChoosing, currentWord, countdown]);
-
-  // useEffect(() => {
-  //   pickWord(0);
-  // }, [quizWords]);
 
   function pickWord(index: number) {
     if (index >= quizWords.length || quizWords.length === 0) {
@@ -453,41 +455,6 @@ export default function Test() {
     }
   };
 
-  // const handleChoice = (choice: string) => {
-  //   if (!isChoosing) return;
-
-  //   setSelectedChoice(choice);
-  //   const endTime = Date.now();
-  //   const responseTime = endTime - startTime;
-  //   const isCorrect = currentWord?.meaning === choice;
-
-  //   console.log("chices:", [...choices]);
-  //   console.log("chice:", choice);
-
-  //   const newContent: content = {
-  //     question: currentWord!.word,
-  //     choices: [...choices],
-  //     selectedChoice: choice,
-  //     isCorrect: isCorrect,
-  //     responseTime: responseTime,
-  //     correctAnswer: currentWord!.meaning,
-  //     extra: currentWord?.extra || {},
-  //   };
-  //   setContent((prevContent) => [...prevContent, newContent]);
-  //   setIsChoosing(false);
-
-  //   if (isCorrect) {
-  //     setScore(score + 1);
-  //   }
-
-  //   const nextIndex = currentWordIndex + 1;
-  //   if (nextIndex < quizWords.length) {
-  //     setTimeout(() => {
-  //       pickWord(nextIndex);
-  //     }, 1000);
-  //   }
-  // };
-
   function getChoiceClass(choice: string) {
     if (selectedChoice === "") {
       if (choice === currentWord?.meaning) {
@@ -536,17 +503,21 @@ export default function Test() {
           {currentWord && (
             <>
               <p>{`${currentWord.word}`}</p>
-              <ul>
-                {choices.map((choice, index) => (
-                  <li
-                    key={index}
-                    className={getChoiceClass(choice)}
-                    onClick={() => handleChoice(choice)}
-                  >
-                    {choice}
-                  </li>
-                ))}
-              </ul>
+              <div className={styles.feedbackContainer}>
+                <div className={styles.ChoicesContainer}>
+                  <ul>
+                    {choices.map((choice, index) => (
+                      <li
+                        key={index}
+                        className={getChoiceClass(choice)}
+                        onClick={() => handleChoice(choice)}
+                      >
+                        {choice}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
               <li
                 key="unknown"
                 className={styles.idk}
