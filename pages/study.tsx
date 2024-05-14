@@ -25,12 +25,13 @@ interface Word {
 // }
 
 interface result {
-  name: string; // ユーザー名
-  book: string; // 書籍名
-  mode: string; // クイズモード（例: "easy", "hard"）
-  start: number; // 開始時間（unix timestamp）
-  end: number; // 終了時間（unix timestamp）
-  contents: content[]; // クイズの内容配列
+  name: string;
+  book: string;
+  mode: string;
+  start: number;
+  end: number;
+  rank: string;
+  contents: content[];
 }
 
 interface content {
@@ -179,14 +180,15 @@ export default function Test() {
 
   useEffect(() => {
     if (!isChoosing && currentWordIndex >= quizWords.length - 1) {
+      const rank = calculateRank(score, content);
       const newResult: result = {
-        //10問以上なら
         name: "studyMode",
         book: book,
         mode: mode,
         start: parseInt(start, 10),
         end: parseInt(end, 10),
         contents: content,
+        rank: rank,
       };
       setResult((prevResult) => [...prevResult, newResult]);
     }
@@ -211,6 +213,19 @@ export default function Test() {
       }, 2000);
     }
   }, [result]);
+
+  const calculateRank = (score: number, results: content[]) => {
+    if (score <= 3) return "D";
+    if (score <= 5) return "C";
+    if (score <= 7) return "B";
+    if (score <= 9) return "A";
+
+    // スコアが10の場合、responseTimeを確認
+    const fastResponses = results.filter((c) => c.responseTime < 5000).length;
+    if (fastResponses === 10) return "SS";
+    if (fastResponses >= 5) return "S";
+    return "A"; // デフォルトでAを返す
+  };
 
   const handleChoice = (choice: string) => {
     if (!isChoosing) return;
@@ -269,7 +284,7 @@ export default function Test() {
       "JSON.stringify({ result: result }):",
       JSON.stringify({ result: result })
     );
-    const response = await fetch("/api/testsaveResults", {
+    const response = await fetch("/api/saveResults", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

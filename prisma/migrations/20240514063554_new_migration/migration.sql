@@ -6,6 +6,7 @@ CREATE TABLE "QuizResult" (
     "mode" TEXT NOT NULL,
     "start" INTEGER NOT NULL,
     "end" INTEGER NOT NULL,
+    "rank" TEXT NOT NULL,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "QuizResult_pkey" PRIMARY KEY ("id")

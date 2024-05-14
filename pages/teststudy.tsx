@@ -37,9 +37,10 @@ interface question {
 interface result {
   name: string; // ユーザー名
   book: string; // 書籍名
-  mode: string; // クイズモード（例: "easy", "hard"）
+  mode: string;
   start: number; // 開始時間（unix timestamp）
   end: number; // 終了時間（unix timestamp）
+  rank: string;
   contents: content[]; // クイズの内容配列
 }
 
@@ -107,7 +108,12 @@ export default function Test() {
       const response = await fetch(`/api/quizResult/${quizResultId}`);
       const data = await response.json();
       console.log("Fetched data:", data);
-      setQuestion(data);
+      // レスポンスが成功した場合のみ setQuestion を呼び出す
+      if (response.ok) {
+        setQuestion(data);
+      } else {
+        console.error("Failed to fetch data:", data);
+      }
     };
     fetchQuizResult();
   }, [quizResultId]);
@@ -121,6 +127,7 @@ export default function Test() {
       setContent(question.contents); // クイズの内容を設定
       setGContent(question.contents);
       pickQuestion(0);
+      setHasStarted(true);
     }
   }, [question]);
 
@@ -339,6 +346,7 @@ export default function Test() {
 
   useEffect(() => {
     if (!isChoosing && currentWordIndex >= content.length - 1) {
+      const rank = calculateRank(score, content);
       const newResult: result = {
         name: username,
         book: book,
@@ -346,6 +354,7 @@ export default function Test() {
         start: start,
         end: end,
         contents: content,
+        rank: rank,
       };
       setResult((prevResult) => [...prevResult, newResult]);
     }
@@ -355,6 +364,7 @@ export default function Test() {
     if (!isChoosing && currentWordIndex >= content.length - 1) {
       setTimeout(() => {
         // saveResultToServer();
+
         console.log("saving result:", result);
         router.push({
           pathname: "/testresults",
@@ -370,6 +380,19 @@ export default function Test() {
       }, 2000);
     }
   }, [result]);
+
+  const calculateRank = (score: number, results: content[]) => {
+    if (score <= 3) return "D";
+    if (score <= 5) return "C";
+    if (score <= 7) return "B";
+    if (score <= 9) return "A";
+
+    // スコアが10の場合、responseTimeを確認
+    const fastResponses = results.filter((c) => c.responseTime < 5000).length;
+    if (fastResponses === 10) return "SS";
+    if (fastResponses >= 5) return "S";
+    return "A"; // デフォルトでAを返す
+  };
 
   const handleChoice = (choice: string) => {
     if (!isChoosing) return;
@@ -477,7 +500,7 @@ export default function Test() {
       "JSON.stringify({ result: result }):",
       JSON.stringify({ result: result })
     );
-    const response = await fetch("/api/testsaveResults", {
+    const response = await fetch("/api/saveResults", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -490,7 +513,7 @@ export default function Test() {
     <div className={styles.container}>
       {countdown === 0 && (
         <>
-          <h1>{`${displayBookName} ${start}～${end}`}</h1>
+          <h1>{`${displayBookName} ${start}～${end} VS ${question?.name}`}</h1>
           <p>{`${currentWordIndex + 1}/${content.length} 問目`}</p>
           <div className={styles.progressBarContainer}>
             <div
@@ -530,7 +553,7 @@ export default function Test() {
           )}
         </>
       )}
-      {!hasStarted && (
+      {/* {!hasStarted && (
         <div className={styles.fullScreen}>
           <input
             type="text"
@@ -540,17 +563,23 @@ export default function Test() {
           />
           <button onClick={handleStartQuiz}>クイズを始める</button>
         </div>
-      )}
-      {countdown > 0 && hasStarted && (
+      )} */}
+      {countdown > 0 && (
         <div className={styles.fullScreen}>
           <div className={styles.countdownText}>
+            {`正解で+1点\n相手より早く正解でさらに+1点\n\n`}
             {mode === "fillBrackets"
               ? " ( ) に入る単語を選んで！"
               : mode === "EtoJ"
               ? " 日本語の意味を選んで！"
               : ""}
           </div>
-          <div className={styles.countdownNumber}>{countdown}</div>
+          <div
+            className={styles.countdownNumber}
+            style={{ fontSize: hasStarted ? "300px" : "100px" }}
+          >
+            {hasStarted === true ? countdown : "Loading..."}
+          </div>
         </div>
       )}
       <div className={styles.circleContainer}>
@@ -565,7 +594,7 @@ export default function Test() {
           className={`${styles.circle} ${styles.largeCircle}`}
           style={{ backgroundColor: circleColors.large }}
         >
-          <div className={`${styles.circleText}`}>+1</div>
+          <div className={`${styles.circleText}`}>ボーナス+1</div>
         </div>
         <div
           className={styles.circle}

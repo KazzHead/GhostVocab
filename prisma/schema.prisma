@@ -16,6 +16,7 @@ model QuizResult {
   mode          String
   start         Int
   end           Int
+  rank          String
   contents      Contents[]
   updatedAt     DateTime @updatedAt
 }
