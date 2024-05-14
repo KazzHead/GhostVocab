@@ -56,7 +56,9 @@ const Results = () => {
       >
         もう一度挑戦
       </button>
-      <button onClick={() => router.push("/")}>ホームに戻る</button>
+      <button onClick={() => router.push(`/chapter?book=${book}&mode=${mode}`)}>
+        範囲選択に戻る
+      </button>
       <ul>
         {resultsArray.map((content, index) => (
           <li key={index}>
