@@ -69,6 +69,7 @@ export default function Test() {
   const [score, setScore] = useState(0);
   const [pScore, setPScore] = useState(0);
   const [gScore, setGScore] = useState(0);
+  const [winner, setWinner] = useState<string[]>([]);
 
   const [result, setResult] = useState<result[]>([]);
   const [content, setContent] = useState<content[]>([]);
@@ -366,7 +367,7 @@ export default function Test() {
             content: JSON.stringify(content),
           },
         });
-      }, 10);
+      }, 2000);
     }
   }, [result]);
 
@@ -451,7 +452,7 @@ export default function Test() {
     if (nextIndex < content.length) {
       setTimeout(() => {
         pickQuestion(nextIndex);
-      }, 1000);
+      }, 2000);
     }
   };
 
@@ -553,18 +554,26 @@ export default function Test() {
         </div>
       )}
       <div className={styles.circleContainer}>
+        <div className={styles.playerNameText}>あなた</div>
         <div
           className={styles.circle}
           style={{ backgroundColor: circleColors.leftSmall }}
-        ></div>
+        >
+          <div className={`${styles.circleText}`}>+1</div>
+        </div>
         <div
           className={`${styles.circle} ${styles.largeCircle}`}
           style={{ backgroundColor: circleColors.large }}
-        ></div>
+        >
+          <div className={`${styles.circleText}`}>+1</div>
+        </div>
         <div
           className={styles.circle}
           style={{ backgroundColor: circleColors.rightSmall }}
-        ></div>
+        >
+          <div className={`${styles.circleText}`}>+1</div>
+        </div>
+        <div className={styles.ghostNameText}>{question?.name}</div>
       </div>
       <div
         className={styles.powerBarContainer}
@@ -579,7 +588,7 @@ export default function Test() {
             // height: pScore >= gScore ? "15px" : "10px",
           }}
         >
-          <div className={styles.scoreLabel}>{pScore}</div>
+          <div className={styles.scoreLabelPlayer}>{pScore}</div>
         </div>
         <div
           className={styles.powerBarGhost}
@@ -590,7 +599,7 @@ export default function Test() {
             // height: gScore > pScore ? "15px" : "10px",
           }}
         >
-          <div className={styles.scoreLabel}>{gScore}</div>
+          <div className={styles.scoreLabelGhost}>{gScore}</div>
         </div>
       </div>
     </div>
