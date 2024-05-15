@@ -53,6 +53,7 @@ const QuizResultsList: React.FC = () => {
   return (
     <div>
       <h1>ゴースト一覧</h1>
+      <button onClick={() => router.push("/")}>タイトルに戻る</button>
       {isLoading ? (
         <div>
           <h1>Loading...</h1>
