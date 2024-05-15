@@ -51,7 +51,7 @@ const Results = () => {
       <button
         onClick={() =>
           router.push(
-            `/study?book=${book}&mode=${mode}&start=${start}&end=${end}`
+            `/test?book=${book}&mode=${mode}&start=${start}&end=${end}`
           )
         }
       >
