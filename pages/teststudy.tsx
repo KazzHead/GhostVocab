@@ -219,8 +219,10 @@ export default function Test() {
   }, [isChoosing, currentWord, countdown]);
 
   useEffect(() => {
-    pickWord(0);
-  }, [quizWords]);
+    if (countdown == 0) {
+      pickWord(0);
+    }
+  }, [countdown]);
 
   function pickWord(index: number) {
     if (index >= quizWords.length || quizWords.length === 0) {

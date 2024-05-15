@@ -22,9 +22,23 @@ npx prisma migrate dev --create-only --name newMigration
 npx prisma migrate deploy
 npx prisma generate
 
-
-
 npx prisma studio
+
+
+SELECT * FROM pg_tables WHERE schemaname = 'public';
+
+
+BEGIN;
+
+DELETE FROM users WHERE user_id = 5;
+
+-- 確認した後でコミットする
+COMMIT;
+
+-- もし削除をやり直したい場合はロールバックする
+ROLLBACK;
+
+
 
 
 npm run dev        
