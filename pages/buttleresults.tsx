@@ -49,10 +49,10 @@ const Results = () => {
       <h1>{`あなた |  ${pScore} : ${gScore}  | ${gName}`}</h1>
       <h1>
         {parseInt(pScore) > parseInt(gScore)
-          ? "勝利！"
+          ? `${gName} に勝利！`
           : parseInt(pScore) == parseInt(gScore)
           ? "引き分け"
-          : "敗北…"}
+          : `${gName} に敗北...`}
       </h1>
       <button
         onClick={() =>

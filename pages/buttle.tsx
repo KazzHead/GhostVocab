@@ -519,7 +519,7 @@ export default function Test() {
         <>
           <h1>{`${displayBookName} ${start}～${end} VS ${question?.name}`}</h1>
           <p>{`${currentWordIndex + 1}/${content.length} 問目`}</p>
-          <div className={styles.progressBarContainer}>
+          {/* <div className={styles.progressBarContainer}>
             <div
               className={styles.progressBar}
               style={{
@@ -527,6 +527,33 @@ export default function Test() {
                 backgroundColor: timerProgress > 50 ? "#6246ea" : "#ff8e3c",
               }}
             />
+          </div> */}
+          <div
+            className={styles.powerBarContainer}
+            style={{ position: "relative" }}
+          >
+            <div
+              className={styles.powerBarPlayer}
+              style={{
+                width: `${
+                  pScore + gScore > 0 ? (pScore * 100) / (pScore + gScore) : 50
+                }%`,
+                // height: pScore >= gScore ? "15px" : "10px",
+              }}
+            >
+              <div className={styles.scoreLabelPlayer}>{pScore}点</div>
+            </div>
+            <div
+              className={styles.powerBarGhost}
+              style={{
+                width: `${
+                  pScore + gScore > 0 ? (gScore * 100) / (pScore + gScore) : 50
+                }%`,
+                // height: gScore > pScore ? "15px" : "10px",
+              }}
+            >
+              <div className={styles.scoreLabelGhost}>{gScore}点</div>
+            </div>
           </div>
           {currentWord && (
             <>
@@ -580,7 +607,7 @@ export default function Test() {
           </div>
           <div
             className={styles.countdownNumber}
-            style={{ fontSize: hasStarted ? "300px" : "100px" }}
+            style={{ fontSize: hasStarted ? "300px" : "70px" }}
           >
             {hasStarted === true ? countdown : "Loading..."}
           </div>
@@ -607,33 +634,6 @@ export default function Test() {
           <div className={`${styles.circleText}`}>+1</div>
         </div>
         <div className={styles.ghostNameText}>{question?.name}</div>
-      </div>
-      <div
-        className={styles.powerBarContainer}
-        style={{ position: "relative" }}
-      >
-        <div
-          className={styles.powerBarPlayer}
-          style={{
-            width: `${
-              pScore + gScore > 0 ? (pScore * 100) / (pScore + gScore) : 50
-            }%`,
-            // height: pScore >= gScore ? "15px" : "10px",
-          }}
-        >
-          <div className={styles.scoreLabelPlayer}>{pScore}点</div>
-        </div>
-        <div
-          className={styles.powerBarGhost}
-          style={{
-            width: `${
-              pScore + gScore > 0 ? (gScore * 100) / (pScore + gScore) : 50
-            }%`,
-            // height: gScore > pScore ? "15px" : "10px",
-          }}
-        >
-          <div className={styles.scoreLabelGhost}>{gScore}点</div>
-        </div>
       </div>
     </div>
   );

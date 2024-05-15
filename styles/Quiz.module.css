@@ -183,16 +183,48 @@
 
 .tabs {
   display: flex;
+  margin-top: 10px;
+  box-sizing: border-box;
 }
 
 .tabs button {
+  margin: 0;
+  border-radius: 10px 10px 0 0;
+}
+
+.tabcontents {
+  border: #6246ea solid 5px;
   padding: 10px;
-  border: none;
-  background-color: #6246ea;
-  cursor: pointer;
-  outline: none;
+  text-align: center;
+  box-sizing: border-box;
+  border-radius: 0 0 10px 10px;
 }
 
 .activeTab {
-  background-color: #6246ea; /* アクティブなタブの色 */
+  background-color: #6246ea;
+  box-sizing: border-box;
+}
+
+.inactiveTab {
+  background-color: #ddd;
+  box-sizing: border-box;
+}
+
+.tabcontents select {
+  border: #999 solid 2px;
+  margin: 10px;
+  height: 30px;
+  width: 80%;
+  box-sizing: border-box;
+  border-radius: 5px;
+}
+
+.tabcontents input {
+  border: #999 solid 2px;
+  margin: 10px;
+  padding: 5px;
+  height: 30px;
+  width: 80%;
+  box-sizing: border-box;
+  border-radius: 5px;
 }

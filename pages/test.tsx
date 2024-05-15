@@ -24,6 +24,14 @@ interface Word {
 //   extra: string[];
 // }
 
+interface Item {
+  name: string;
+}
+
+interface ApiResponse {
+  name: string;
+}
+
 interface result {
   name: string;
   book: string;
@@ -45,6 +53,13 @@ interface content {
 }
 
 export default function Test() {
+  const [inputName, setInputName] = useState("");
+  const [selectedName, setSelectedName] = useState("");
+
+  const [userList, setUserList] = useState<string[]>([]);
+  const [warning, setWarning] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+
   const [username, setUsername] = useState(""); // ユーザー名を保存するための状態
   const [hasStarted, setHasStarted] = useState(false); // クイズが開始されたかの状態
   const [allWords, setAllWords] = useState<Word[]>([]); //101-200など100個の単語&意味
@@ -71,10 +86,18 @@ export default function Test() {
 
   const displayBookName = folderDisplayNameMap[book];
 
+  const [activeTab, setActiveTab] = useState("registered"); // 'new' または 'registered'
+
   // console.log("book:", book);
   // console.log("mode:", mode);
   // console.log("start:", start);
   // console.log("end:", end);
+  useEffect(() => {
+    console.log("activeTab changed:", activeTab);
+  }, [activeTab]);
+  useEffect(() => {
+    console.log("username changed:", username);
+  }, [username]);
   // useEffect(() => {
   //   console.log("currentWord changed");
   // }, [currentWord]);
@@ -103,19 +126,66 @@ export default function Test() {
   //   console.log("quizWords changed:", quizWords);
   // }, [quizWords]);
 
+  function handleInputChange(e: any) {
+    const name = e.target.value;
+    setUsername(name);
+    setInputName(name); // 新規登録用のステートも更新
+  }
+
+  function handleSelectChange(e: any) {
+    const name = e.target.value;
+    setUsername(name);
+    setSelectedName(name); // 既に登録されている人用のステートも更新
+  }
+
+  useEffect(() => {
+    // APIからユーザリストを取得する
+    fetch("/api/quizResults")
+      .then((response) => response.json())
+      .then((data: ApiResponse[]) => {
+        const users = data.map((item: { name: string }) => item.name); // itemの型を明示
+        setUserList([...new Set(users)]); // Setを使用して重複を削除
+        setIsLoading(false);
+      })
+      .catch((error) => console.error("Error fetching user data:", error));
+  }, []);
+
+  useEffect(() => {
+    setIsLoading(true); // データの取得を開始
+    fetch("/api/quizResults")
+      .then((response) => response.json())
+      .then((data: ApiResponse[]) => {
+        const users = data.map((item: { name: string }) => item.name); // itemの型を明示
+        setUserList([...new Set(users)]); // Setを使用して重複を削除
+        setIsLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error fetching user data:", error);
+        setIsLoading(false); // エラーが発生した場合もローディングを終了
+      });
+  }, []);
+
+  const handleStartQuiz = () => {
+    if (!username) {
+      setWarning("名前を入力してください。");
+    } else if (userList.includes(inputName) && activeTab == "new") {
+      setWarning("選択した名前は既に存在します。別の名前を入力してください。");
+    } else {
+      setWarning("");
+      console.log("Starting quiz for:", username);
+      setHasStarted(true);
+    }
+  };
+
   useEffect(() => {
     // クイズのカウントダウンを管理
     if (hasStarted && countdown > 0) {
       const timer = setInterval(() => {
         setCountdown((prevCountdown) => prevCountdown - 1);
-      }, 1);
+      }, 1000);
       return () => clearInterval(timer);
     }
   }, [hasStarted, countdown]);
-
-  const handleStartQuiz = () => {
-    setHasStarted(true);
-  };
 
   useEffect(() => {
     if (book && mode && start && end) {
@@ -200,7 +270,7 @@ export default function Test() {
         saveResultToServer();
         console.log("saving result:", result);
         router.push({
-          pathname: "/results",
+          pathname: "/testresults",
           query: {
             book: book,
             mode: mode,
@@ -210,7 +280,7 @@ export default function Test() {
             content: JSON.stringify(content),
           },
         });
-      }, 10);
+      }, 2000);
     }
   }, [result]);
 
@@ -258,7 +328,7 @@ export default function Test() {
     if (nextIndex < quizWords.length) {
       setTimeout(() => {
         pickWord(nextIndex);
-      }, 10);
+      }, 2000);
     }
   };
 
@@ -318,9 +388,10 @@ export default function Test() {
           )}
         </>
       )}
+
       {!hasStarted && (
         <div>
-          <h1>{`${displayBookName} ${start}～${end} テスト`}</h1>
+          <h1>{`${displayBookName} ${start}～${end}`}</h1>
           <button
             onClick={() =>
               router.push(`/chapter?state=test&book=${book}&mode=${mode}`)
@@ -328,13 +399,58 @@ export default function Test() {
           >
             範囲選択に戻る
           </button>
-          <input
-            type="text"
-            placeholder="名前を入力してください"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          />
-          <button onClick={handleStartQuiz}>クイズを始める</button>
+          テストモードではあなたのゴーストが記録され，誰もがあなたと対戦することができるようになります！
+          <div className={styles.tabs}>
+            <button
+              onClick={() => setActiveTab("registered")}
+              className={
+                activeTab === "registered"
+                  ? styles.activeTab
+                  : styles.inactiveTab
+              }
+            >
+              テストしたことがある人
+            </button>
+            <button
+              onClick={() => setActiveTab("new")}
+              className={
+                activeTab === "new" ? styles.activeTab : styles.inactiveTab
+              }
+            >
+              はじめてテストをする人
+            </button>
+          </div>
+          {activeTab === "new" ? (
+            <div className={styles.tabcontents}>
+              公開する名前
+              <input
+                type="text"
+                placeholder="名前を入力してください"
+                value={inputName}
+                onChange={handleInputChange}
+              />
+            </div>
+          ) : (
+            <div className={styles.tabcontents}>
+              公開する名前
+              <select
+                value={selectedName}
+                onChange={handleSelectChange}
+                onBlur={handleSelectChange}
+              >
+                <option value="">名前を選択してください</option>
+                {userList.map((user, index) => (
+                  <option key={index} value={user}>
+                    {user}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+          {warning && <div className={styles.warning}>{warning}</div>}
+          <button onClick={handleStartQuiz}>テストを始める</button>
+          {/* {warning && <div className={styles.warning}>{warning}</div>} */}
+          {/* <button onClick={handleStartQuiz}>クイズを始める</button> */}
         </div>
       )}
       {countdown > 0 && hasStarted && (

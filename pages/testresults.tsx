@@ -47,6 +47,7 @@ const Results = () => {
       <h1>
         得点: {score} /10 {rank}ランク
       </h1>
+      <p>あなたのゴーストが記録されました！</p>
       <button
         onClick={() =>
           router.push(

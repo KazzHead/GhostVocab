@@ -182,7 +182,7 @@ export default function Test() {
     if (hasStarted && countdown > 0) {
       const timer = setInterval(() => {
         setCountdown((prevCountdown) => prevCountdown - 1);
-      }, 1);
+      }, 1000);
       return () => clearInterval(timer);
     }
   }, [hasStarted, countdown]);
@@ -270,7 +270,7 @@ export default function Test() {
         saveResultToServer();
         console.log("saving result:", result);
         router.push({
-          pathname: "/results",
+          pathname: "/testresults",
           query: {
             book: book,
             mode: mode,
@@ -280,7 +280,7 @@ export default function Test() {
             content: JSON.stringify(content),
           },
         });
-      }, 10);
+      }, 2000);
     }
   }, [result]);
 
@@ -328,7 +328,7 @@ export default function Test() {
     if (nextIndex < quizWords.length) {
       setTimeout(() => {
         pickWord(nextIndex);
-      }, 10);
+      }, 2000);
     }
   };
 
@@ -388,43 +388,51 @@ export default function Test() {
           )}
         </>
       )}
-      <button
-        onClick={() =>
-          router.push(`/chapter?state=test&book=${book}&mode=${mode}`)
-        }
-      >
-        範囲選択に戻る
-      </button>
+
       {!hasStarted && (
-        <div className={styles.fullScreen}>
+        <div>
+          <h1>{`${displayBookName} ${start}～${end}`}</h1>
+          <button
+            onClick={() =>
+              router.push(`/chapter?state=test&book=${book}&mode=${mode}`)
+            }
+          >
+            範囲選択に戻る
+          </button>
+          テストモードではあなたのゴーストが記録され，誰もがあなたと対戦することができるようになります！
           <div className={styles.tabs}>
             <button
               onClick={() => setActiveTab("registered")}
-              className={activeTab === "registered" ? styles.activeTab : ""}
+              className={
+                activeTab === "registered"
+                  ? styles.activeTab
+                  : styles.inactiveTab
+              }
             >
               テストしたことがある人
             </button>
             <button
               onClick={() => setActiveTab("new")}
-              className={activeTab === "new" ? styles.activeTab : ""}
+              className={
+                activeTab === "new" ? styles.activeTab : styles.inactiveTab
+              }
             >
-              初めてテストする人
+              はじめてテストをする人
             </button>
           </div>
-
           {activeTab === "new" ? (
-            <div>
+            <div className={styles.tabcontents}>
+              公開する名前
               <input
                 type="text"
                 placeholder="名前を入力してください"
                 value={inputName}
                 onChange={handleInputChange}
               />
-              {warning && <div className={styles.warning}>{warning}</div>}
-              <button onClick={handleStartQuiz}>クイズを始める</button>
             </div>
           ) : (
-            <div>
+            <div className={styles.tabcontents}>
+              公開する名前
               <select
                 value={selectedName}
                 onChange={handleSelectChange}
@@ -437,11 +445,10 @@ export default function Test() {
                   </option>
                 ))}
               </select>
-              {warning && <div className={styles.warning}>{warning}</div>}
-              <button onClick={handleStartQuiz}>クイズを始める</button>
             </div>
           )}
-
+          {warning && <div className={styles.warning}>{warning}</div>}
+          <button onClick={handleStartQuiz}>テストを始める</button>
           {/* {warning && <div className={styles.warning}>{warning}</div>} */}
           {/* <button onClick={handleStartQuiz}>クイズを始める</button> */}
         </div>
