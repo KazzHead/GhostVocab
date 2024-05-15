@@ -92,9 +92,6 @@ export default function Test() {
   const [startTime, setStartTime] = useState<number>(0);
   const [countdown, setCountdown] = useState(3);
 
-  const [playerImage, setPlayerImage] = useState("/images/none.png");
-  const [ghostImage, setGhostImage] = useState("/images/none.png");
-
   // const [quizResultId, setQuizResultId] = useState(1);
   const quizResultId = router.query.quizResultId as string;
 
@@ -213,8 +210,7 @@ export default function Test() {
       large: "#ddd",
       rightSmall: "#ddd",
     });
-    setPlayerImage("/images/none.png");
-    setGhostImage("/images/none.png");
+
     setStartTime(Date.now()); // 回答開始時間の記録
 
     setSelectedChoice(null);
@@ -374,7 +370,7 @@ export default function Test() {
 
         console.log("saving result:", result);
         router.push({
-          pathname: "/testresults",
+          pathname: "/buttleresults",
           query: {
             book: book,
             mode: mode,
@@ -429,8 +425,6 @@ export default function Test() {
       if (responseTime <= gContent[currentWordIndex].responseTime) {
         setPScore(pScore + 2);
         setGScore(gScore + 1);
-        setPlayerImage("/images/d_circle.png");
-        setGhostImage("/images/circle.png");
         newColors = {
           leftSmall: "#6246ea",
           large: "#6246ea",
@@ -439,8 +433,6 @@ export default function Test() {
       } else {
         setPScore(pScore + 1);
         setGScore(gScore + 2);
-        setPlayerImage("/images/circle.png");
-        setGhostImage("/images/d_circle.png");
         newColors = {
           leftSmall: "#6246ea",
           large: "#ff8e3c",
@@ -453,8 +445,6 @@ export default function Test() {
     ) {
       setPScore(pScore + 2);
       setGScore(gScore + 0);
-      setPlayerImage("/images/d_circle.png");
-      setGhostImage("/images/cross.png");
       newColors = {
         leftSmall: "#6246ea",
         large: "#6246ea",
@@ -466,8 +456,6 @@ export default function Test() {
     ) {
       setPScore(pScore + 0);
       setGScore(gScore + 2);
-      setPlayerImage("/images/cross.png");
-      setGhostImage("/images/d_circle.png");
       newColors = {
         leftSmall: "#ddd",
         large: "#ff8e3c",
@@ -479,8 +467,6 @@ export default function Test() {
     ) {
       setPScore(pScore + 0);
       setGScore(gScore + 0);
-      setPlayerImage("/images/cross.png");
-      setGhostImage("/images/cross.png");
     }
 
     setCircleColors(newColors);
@@ -601,12 +587,6 @@ export default function Test() {
         </div>
       )}
       <div className={styles.circleContainer}>
-        <img
-          src={playerImage}
-          alt="Player"
-          className={styles.playerImage}
-          style={{ width: "50px", height: "50px" }}
-        />
         <div className={styles.playerNameText}>あなた</div>
         <div
           className={styles.circle}
@@ -627,12 +607,6 @@ export default function Test() {
           <div className={`${styles.circleText}`}>+1</div>
         </div>
         <div className={styles.ghostNameText}>{question?.name}</div>
-        <img
-          src={ghostImage}
-          alt="Ghost"
-          className={styles.ghostImage}
-          style={{ width: "50px", height: "50px" }}
-        />
       </div>
       <div
         className={styles.powerBarContainer}

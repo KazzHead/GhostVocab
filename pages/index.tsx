@@ -9,7 +9,7 @@ const Home = () => {
       <div className={styles.buttons}>
         <button onClick={() => router.push("/wordbooks")}>練習する</button>
         <button disabled>テストする</button>
-        <button disabled>ゴーストと対戦</button>
+        <button onClick={() => router.push("/ghosts")}>ゴーストと対戦</button>
         <button onClick={() => router.push("/events")}>イベント</button>
       </div>
     </div>
