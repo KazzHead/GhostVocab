@@ -16,6 +16,7 @@ interface ModesProps {
   bookName: string;
   modes: Mode[];
   displayName: string;
+  state: string;
 }
 
 export const getServerSideProps: GetServerSideProps = async (
@@ -23,7 +24,9 @@ export const getServerSideProps: GetServerSideProps = async (
 ) => {
   const { query } = context;
   const bookName = query.book as string;
-  const bookPath = path.join(process.cwd(), "public", bookName);
+  const state = query.state as string;
+  const bookPath = path.join(process.cwd(), "public", "wordbooks", bookName);
+
   const files = fs
     .readdirSync(bookPath)
     .filter((file) => path.extname(file) === ".csv");
@@ -36,16 +39,21 @@ export const getServerSideProps: GetServerSideProps = async (
   const displayName = folderDisplayNameMap[bookName] || bookName;
 
   return {
-    props: { bookName, displayName, modes },
+    props: { state, bookName, displayName, modes },
   };
 };
 
-const Modes: React.FC<ModesProps> = ({ bookName, displayName, modes }) => {
+const Modes: React.FC<ModesProps> = ({
+  state,
+  bookName,
+  displayName,
+  modes,
+}) => {
   const router = useRouter();
   return (
     <div className={styles.container}>
       <h1>{displayName}</h1>
-      <button onClick={() => router.push("/wordbooks")}>
+      <button onClick={() => router.push(`/wordbooks?state=${state}`)}>
         単語帳選択に戻る
       </button>
       {modes.map((mode) => (
@@ -53,7 +61,10 @@ const Modes: React.FC<ModesProps> = ({ bookName, displayName, modes }) => {
           key={mode.name.replace(".csv", "")}
           onClick={() =>
             router.push(
-              `/chapter?book=${bookName}&mode=${mode.name.replace(".csv", "")}`
+              `/chapter?state=${state}&book=${bookName}&mode=${mode.name.replace(
+                ".csv",
+                ""
+              )}`
             )
           }
         >

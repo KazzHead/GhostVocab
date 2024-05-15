@@ -56,7 +56,11 @@ const Results = () => {
       >
         もう一度挑戦
       </button>
-      <button onClick={() => router.push(`/chapter?book=${book}&mode=${mode}`)}>
+      <button
+        onClick={() =>
+          router.push(`/chapter?state=study&book=${book}&mode=${mode}`)
+        }
+      >
         範囲選択に戻る
       </button>
       <ul>

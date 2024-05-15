@@ -5,7 +5,13 @@ export default function handler(req, res) {
   console.log("words.handler起動");
 
   const { book, mode, start, end } = req.query;
-  const filePath = path.join(process.cwd(), "public", book, `${mode}.csv`);
+  const filePath = path.join(
+    process.cwd(),
+    "public",
+    "wordbooks",
+    book,
+    `${mode}.csv`
+  );
   fs.readFile(filePath, "utf8", (err, data) => {
     if (err) {
       res.status(500).json({ message: "ファイルを読み込めませんでした。" });

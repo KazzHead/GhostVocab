@@ -175,3 +175,24 @@
     opacity: 0;
   }
 }
+
+.warning {
+  color: red;
+  margin-top: 10px;
+}
+
+.tabs {
+  display: flex;
+}
+
+.tabs button {
+  padding: 10px;
+  border: none;
+  background-color: #6246ea;
+  cursor: pointer;
+  outline: none;
+}
+
+.activeTab {
+  background-color: #6246ea; /* アクティブなタブの色 */
+}

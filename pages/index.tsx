@@ -7,8 +7,12 @@ const Home = () => {
     <div className={styles.container}>
       <h1>Vocubulary Quiz</h1>
       <div className={styles.buttons}>
-        <button onClick={() => router.push("/wordbooks")}>練習する</button>
-        <button disabled>テストする</button>
+        <button onClick={() => router.push("/wordbooks?state=study")}>
+          練習する
+        </button>
+        <button onClick={() => router.push("/wordbooks?state=test")}>
+          テストする
+        </button>
         <button onClick={() => router.push("/ghosts")}>ゴーストと対戦</button>
         <button onClick={() => router.push("/events")}>イベント</button>
       </div>

@@ -319,7 +319,15 @@ export default function Test() {
         </>
       )}
       {!hasStarted && (
-        <div className={styles.fullScreen}>
+        <div>
+          <h1>{`${displayBookName} ${start}～${end} テスト`}</h1>
+          <button
+            onClick={() =>
+              router.push(`/chapter?state=test&book=${book}&mode=${mode}`)
+            }
+          >
+            範囲選択に戻る
+          </button>
           <input
             type="text"
             placeholder="名前を入力してください"

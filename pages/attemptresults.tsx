@@ -18,11 +18,14 @@ const Results = () => {
   console.log("content:", content);
   const resultsArray: content[] = content ? JSON.parse(content as string) : [];
   console.log("resultsArray:", resultsArray);
-  const { book, mode, start, end } = router.query as {
+  const { book, mode, start, end, pScore, gScore, gName } = router.query as {
     book: string;
     mode: string;
     start: string;
     end: string;
+    pScore: string;
+    gScore: string;
+    gName: string;
   };
   const displayBookName = folderDisplayNameMap[book];
 
@@ -43,9 +46,13 @@ const Results = () => {
 
   return (
     <div>
-      <h1>{`${displayBookName} ${start}～${end}`}</h1>
+      <h1>{`あなた |  ${pScore} : ${gScore}  | ${gName}`}</h1>
       <h1>
-        得点: {score} /10 {rank}ランク
+        {parseInt(pScore) > parseInt(gScore)
+          ? "勝利！"
+          : parseInt(pScore) == parseInt(gScore)
+          ? "引き分け"
+          : "敗北…"}
       </h1>
       <button
         onClick={() =>
@@ -56,13 +63,7 @@ const Results = () => {
       >
         もう一度挑戦
       </button>
-      <button
-        onClick={() =>
-          router.push(`/chapter?state=test&book=${book}&mode=${mode}`)
-        }
-      >
-        範囲選択に戻る
-      </button>
+      <button onClick={() => router.push("/ghosts")}>ゴースト選択に戻る</button>
       <ul>
         {resultsArray.map((content, index) => (
           <li key={index}>

@@ -16,7 +16,7 @@ interface WordbooksProps {
 }
 
 export const getStaticProps: GetStaticProps = async () => {
-  const wordbooksDirectory = path.join(process.cwd(), "public");
+  const wordbooksDirectory = path.join(process.cwd(), "public", "wordbooks");
   const folders = fs
     .readdirSync(wordbooksDirectory)
     .filter((file) =>
@@ -35,6 +35,9 @@ export const getStaticProps: GetStaticProps = async () => {
 
 const Wordbooks: React.FC<WordbooksProps> = ({ wordbooks }) => {
   const router = useRouter();
+  const { state } = router.query as {
+    state: string;
+  };
   return (
     <div className={styles.container}>
       <h1>単語帳</h1>
@@ -43,7 +46,9 @@ const Wordbooks: React.FC<WordbooksProps> = ({ wordbooks }) => {
         {wordbooks.map((book) => (
           <button
             key={book.name}
-            onClick={() => router.push(`/modes?book=${book.name}`)}
+            onClick={() =>
+              router.push(`/modes?state=${state}&book=${book.name}`)
+            }
           >
             {book.displayName}
           </button>
