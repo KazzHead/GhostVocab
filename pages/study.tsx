@@ -202,7 +202,7 @@ export default function Test() {
         //10問以上なら
         console.log("saving result:", result);
         router.push({
-          pathname: "/results",
+          pathname: "/studyresults",
           query: {
             book: book,
             mode: mode,
