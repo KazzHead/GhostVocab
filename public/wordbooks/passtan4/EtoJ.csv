@@ -1,0 +1,680 @@
+go	行く,進む;去る
+buy	を買う
+get	を手に入れる
+see	を見る,会う
+come	来る,（相手の方に）行く
+take	を取る,を持っていく
+make	を作る
+visit	を訪問する,を訪れる
+look	（注意して）見る
+meet	（に）会う
+talk	（を）話す
+stay	とどまる,滞在する
+live	住む,暮らす,生きる
+clean	を掃除する
+work	働く
+eat	を食べる
+need	を必要とする
+read	を読む
+call	を呼ぶ,（に）電話する
+cook	（を）料理する
+ask	（を）尋ねる,質問する
+thank	に感謝する
+write	を書く;（に）手紙を書く
+swim	泳ぐ
+enjoy	を楽しむ
+know	（を）知っている
+show	を見せる,を展示する
+find	を見つける;と気づく
+learn	（を）学ぶ,習う
+wash	（を）洗う
+finish	を終える;終わる
+sing	（を）歌う
+love	を愛する;が大好きである
+put	を置く
+leave	（を）去る,出発する;（物）を残す
+drink	（を）飲む
+bring	を持ってくる;を連れてくる
+give	を与える,あげる
+wait	待つ
+think	（と）思う,考える
+answer	（に）答える;（電話/訪問）に応じる
+listen	（注意して）聞く
+say	（と）言う;話す
+speak	（を）話す;演説する
+teach	（を）教える
+wear	を着ている,身につけている
+hear	が聞こえる
+tell	（を）話す,言う,伝える
+stop	を止める;をやめる;止める
+become	になる
+try	をためす,試みる;（～しようと）努力する
+send	を送る
+sleep	眠る
+hope	を望む;～だといいと思う
+worry	を心配させる
+dance	踊る
+catch	を捕まえる
+run	走る
+fall	落ちる;転ぶ
+sit	座る
+check	をチェックする,点検する
+forget	（を）忘れる
+join	（に）加わる,参加する
+remember	（を）思い出す;（を）覚えている
+drive	（車など）を運転する
+change	を変える;変わる
+move	を動かす;動く
+plant	を植える
+hurry	を急がせる;急ぐ
+smile	ほほえむ
+win	（に）勝つ;を勝ち取る
+turn	をまわす;の向きを変える;まわる
+begin	を始める;始まる
+carry	を運ぶ;を持ち歩く
+feel	（を）感じる;（と）思う
+keep	（を）保つ;を持ち続ける;ずっと～である
+understand	（を）理解する
+restaurant	レストラン
+park	公園;駐車場
+movie	映画
+train	列車,電車
+store	店
+station	駅
+zoo	動物園
+bike	自転車
+boat	ボート
+hotel	ホテル
+garden	庭,庭園
+supermarket	スーパーマーケット
+mountain	山
+town	町
+farm	農場,農園
+hospital	病院
+place	場所
+museum	博物館,美術館
+plane	飛行機
+street	（市街地にある）通り
+stadium	スタジアム,競技場,野球場
+road	道,道路
+hall	会館,ホール,玄関,廊下
+bridge	橋
+homework	宿題
+club	クラブ,部
+library	図書館
+class	クラス,学級;授業
+test	テスト,試験
+subject	教科,科目,話題
+math	数学
+college	大学,単科大学
+notebook	ノート
+history	歴史
+science	科学;理科
+cafeteria	カフェテリア
+floor	（建物の）～階
+course	進路,コース;課程
+map	地図
+question	質問;問題
+gym	体育館
+classmate	クラスメート,同級生
+paper	紙,新聞,答案用紙
+quiz	小テスト;クイズ
+uniform	制服,ユニフォーム
+classroom	教室
+tomorrow	明日
+now	今
+weekend	週末
+month	月、一か月
+year	年,歳
+hour	一時間;時刻
+date	日付;日時;デート
+minute	分;瞬間
+moment	瞬間,ちょっとの間
+noon	正午,真昼
+party	パーティー
+game	遊び,ゲーム;試合
+shopping	買い物
+present	贈り物,プレゼント
+trip	（短期間の）旅行
+festival	祭り,～祭
+vacation	休み,休暇
+program	番組,計画
+camp	キャンプ,キャンプ場
+travel	旅行
+camera	カメラ
+holiday	祝日,休暇
+gift	贈り物
+grandmother	祖母
+uncle	おじ
+people	人々
+son	息子
+daughter	娘
+doctor	医者
+job	仕事,職
+children	子供たち
+aunt	おば
+grandfather	祖父
+member	一員,会員,部員
+singer	歌手
+volunteer	ボランティア,志願者
+teeth	歯（複数形）
+farmer	農場主,農場経営者
+face	顔
+hair	髪の毛,毛
+picture	絵,写真
+computer	コンピューター
+piano	ピアノ
+kitchen	台所
+newspaper	新聞
+letter	手紙,文字
+e-mail	電子メール,Eメール
+table	テーブル,食卓
+phone	電話;電話機
+brush	ブラシ
+door	ドア,戸
+key	かぎ
+video	ビデオ;ビデオテープ
+bath	入浴,浴室,風呂
+window	窓;窓ガラス
+comic	漫画本
+toy	おもちゃ
+food	食べ物,食物
+cookie	クッキー
+pizza	ピザ
+sandwich	サンドイッチ
+fruit	果物
+juice	ジュース
+dish	皿;料理
+coffee	コーヒー
+soup	スープ
+cherry	サクランボ
+toast	トースト
+bread	パン
+meet	肉
+noodle	（細長く平たい）麺類;ヌードル
+rice	米;ごはん
+animal	動物
+weather	天気,天候
+rain	雨
+flower	花
+snow	雪
+water	水
+season	季節
+lake	湖
+river	川,河
+sea	海
+star	星,恒星
+rock	岩
+sky	空
+lion	ライオン
+zebra	シマウマ
+practice	練習
+music	音楽;楽譜
+guitar	ギター
+sound	音
+flute	フルート
+musician	音楽家;ミュージシャン
+watch	腕時計
+umbrella	傘,雨傘
+shirt	ワイシャツ,シャツ
+clothes	衣服
+color	色
+Japan	日本
+Canada	カナダ
+America	アメリカ（合衆国）
+Australia	オーストラリア
+China	中国
+country	国,(theをつけて)国民,田舎
+world	世界
+London	ロンドン
+soccer	サッカー
+basketball	バスケットボール
+volleyball	バレーボール
+football	フットボール
+racket	ラケット
+kind	種類 (形)親切な,優しい
+dollar	ドル
+problem	問題
+fun	楽しみ
+idea	考え,思いつき
+future	未来,将来
+thing	物,事
+money	お金
+story	物語,話
+meeting	会,会合
+way	道,方向,方法
+word	語,単語;言葉
+end	終わり;末端
+size	大きさ,寸法
+language	言語,言葉
+card	カード,はがき,トランプの札
+care	注意;世話
+dream	夢
+example	例
+information	情報
+life	生命;一生;人生
+part	部分;役割
+plan	計画
+late	遅い;遅れた
+last	最後の;この前の
+good	良い;親切な;楽しい;上手な
+next	次の,今度の
+favorite	お気に入りの,大好きな
+sure	確信して
+sorry	すまないと思って,気の毒で
+happy	幸福な,楽しい,嬉しい
+ready	用意ができて
+right	正しい,正確な;右の
+great	偉大な;素晴らしい
+busy	忙しい;にぎやかな
+fine	すばらしい,晴れた;健康で
+hungry	空腹の
+early	早い,初期の
+free	自由な;ひまな;無料の
+open	開いた,(動)開く,開ける
+welcome	歓迎される,(動)を歓迎する
+dear	親愛なる;～様
+special	特別の,特殊な
+tired	疲れた;飽きた
+difficult	難しい
+only	ただ一つの
+sick	病気の,病気で
+different	違った,異なる
+famous	有名な
+beautiful	美しい
+close	ごく近い;親密な
+cloudy	くもった
+cute	かわいい
+little	小さい,(小さくて)かわいらしい
+small	小さい
+interesting	面白い,興味深い
+rainy	雨の,雨降りの
+sad	悲しい
+short	短い,背の低い
+bad	悪い,腐った,下手な
+difficult	難しい;固い,熱心な
+junior	年下の
+warm	暖かい
+popular	人気のある,流行の
+fast	速い
+large	大きい,多数[量]の
+wonderful	素晴らしい,素敵な
+other	他の,それ以外の
+snowy	雪の降る;雪の積もった
+useful	役に立つ,有益な
+delicious	非常においしい
+exciting	（人を）興奮させる,ハラハラさせる
+own	自分自身の
+quiet	静かな
+sleepy	眠い
+each	それぞれの,各自の
+excited	（人が）興奮した
+both	両方の
+dark	暗い;（色が）濃い
+far	遠い
+interested	興味を持った
+strange	奇妙な;見知らぬ
+such	そのような,こんな
+sorry	とても;それほど;非常に;そのように
+really	本当に
+near	近くに
+often	しばしば,よく,たびたび
+back	後ろへ[に];もとの所へ
+well	上手に,十分に
+ago	（今から）～前に
+together	一緒に,ともに
+soon	まもなく,すぐに
+usually	いつもは,ふつう
+just	ちょうど;ただ
+again	再び,また
+once	一度,一回;かつて
+later	もっと遅く;後で
+also	～もまた
+sometimes	ときどき,ときには
+always	いつも,常に
+away	離れて;あちらへ;留守で
+maybe	多分,ひょっとすると
+easily	簡単に,たやすく
+off	離れて,去って;脱いで
+out	外へ[に];不在で
+enough	十分に,(形)十分な
+still	今でも,まだ
+yet	(否定文で)まだ（～でない）;(疑問文で)もう
+at	～に,～で;～に向かって, 【点】
+in	～の中に,～に,～経つ間に,【空間】
+for	～のために;～に向かって【方向/利益】
+on	～の上に,～で;～に面して【上/接触】
+like	～のような[に],～に似た
+with	～と一緒に,～を使って
+about	～について（の）
+of	(所有・所属を表して)～の
+after	～の後に,(接)～した後で
+by	～のそばに,～によって（理由）,～までに
+before	～の前に,(接)～する前に
+over	～の上に;～を超えて
+under	～の下に[を];～未満
+around	～の周りを[に];～のまわりを回って,～中を
+into	～の中へ
+across	～を横切って;～の反対側に
+among	(3つ以上のもの)の間に[で]
+until	～まで（ずっと）
+and	～と;そして;それで
+but	しかし
+because	（なぜなら）～だから
+or	...か～,...かあるいは～
+will	～するつもりだ,～だろう
+may	～してもよい,かもしれない
+should	～すべきである
+could	(canの過去形)～することができた,～していただけませんか
+must	～しなければならない[義務]
+shall	～しましょうか
+one	もの,1つ(形)１つの
+our	私たちの
+mine	私のもの
+anything	何か,何も;何でも
+everyone	誰でも,みんな
+another	もうひとつ;別のもの[人]
+something	何か,あるもの
+everything	何もかも,みんな
+much	(形)たくさんの,(副)たいへん
+best	(good,wellの最上級)最もよい
+more	(many,muchの比較級)もっと多い
+better	(goodの比較級)よりよい,(wellの比較級)よくなって
+than	(接)(比較級の後において)～よりも
+most	(many,muchの最上級)最も多い
+draw	(線)を引く,(絵/図)をかく
+arrive	付く,到着する
+ride	(に)乗る
+paint	(絵の具で)描く;にペンキを塗る
+cut	を切る
+invite	を招待する
+sell	を売る
+wake	目が覚める;を起こす
+drop	を落とす;落ちる
+record	を記録する
+beach	浜,海辺
+airport	空港,飛行場
+pool	プール;水たまり
+bike	自転車
+south	南
+theater	劇場
+apartment	アパート
+bank	銀行
+post	郵便;(theをつけて)郵便ポスト
+company	会社;仲間,友達
+corner	角,曲がり角
+tent	テント
+airplane	飛行機
+building	建物,ビル
+hometown	生まれ故郷
+mailbox	郵便受け;郵便ポスト
+north	北
+pond	池
+subway	地下鉄;地下道
+tower	塔,タワー
+lesson	授業;(教科書などの)課
+dictionary	辞書,辞典
+contest	競技会,コンテスト
+speech	話すこと;演説,スピーチ
+drama	劇,演劇
+report	報告(書),レポート;成績表
+schoolyard	校庭;運動場
+elementary school	小学校
+textbook	教科書
+blackboard	黒板
+eraser	消しゴム,黒板消し
+grade	学年;成績;級
+page	(本の)ページ
+picnic	ピクニック,遠足
+fishing	魚釣り;漁業
+camping	キャンプすること
+Halloween	ハロウィン
+hobby	趣味
+painting	絵,絵画;絵をかくこと
+parent	親,(複数形で)両親
+group	集団,グループ
+grandparent	祖父,祖母,(複数形で)祖父母
+writer	筆者,作家
+artist	芸術家,画家
+actor	(男性の)俳優
+wife	妻,夫人
+cousin	いとこ
+husband	夫
+driver	運転手,ドライバー
+pianist	ピアニスト
+pilot	パイロット
+salesclerk	店員
+scientist	科学者,自然科学者
+king	王,国王
+shoulder	肩
+waitress	ウェイトレス
+dancer	ダンスをする人,舞踊家
+dentist	歯科医
+guest	客
+waiter	ウェイター
+pet	ペット
+shower	シャワー
+DVD	DVD
+telephone	電話
+glass	ガラス;コップ;(複数形で)眼鏡
+magazine	雑誌
+oven	オーブン
+bathroom	浴室;(遠回しに)トイレ
+sofa	ソファ
+calendar	カレンダー
+radio	ラジオ
+album	アルバム
+bedroom	寝室
+chopstick	（食事用の）はし
+brush	歯ブラシ
+cooking	料理,料理法
+chocolate	チョコレート
+pie	パイ
+vegetable	野菜
+salad	サラダ
+spaghetti	スパゲティ
+beef	牛肉
+tomato	トマト
+chicken	鶏肉,ニワトリ
+desert	デザート
+snack	スナック,軽食
+stew	シチュー
+hamburger	ハンバーガー
+onion	タマネギ
+sausage	ソーセージ
+steak	ステーキ
+watermelon	スイカ
+salt	塩
+butter	バター
+sugar	砂糖
+rose	バラ
+whale	クジラ
+dolphine	イルカ
+elephant	ゾウ
+hamster	ハムスター
+penguin	ペンギン
+tulip	チューリップ
+puppy	子犬
+air	空気
+horse	馬
+moon	月;(惑星の)衛星
+concert	音楽会,コンサート
+band	バンド,楽団
+drum	ドラム
+instrument	楽器
+trumpet	トランペット
+clarinet	クラリネット
+musical	ミュージカル
+coat	コート,上着
+shoes	くつ
+dress	ドレス;服装
+socks	くつ下,ソックス[基本的に複数形]
+costume	衣装,服装
+ring	指輪
+skirt	スカート
+swerter	セーター
+tie	ネクタイ
+Hawaii	(アメリカの)ハワイ州;ハワイ島
+Italy	イタリア
+Chicago	シカゴ
+Spain	スペイン
+Thai	タイ(王国)
+golf	ゴルフ
+ice skating	アイススケート
+badminton	バドミントン
+cycling	サイクリング
+hockey	ホッケー.アイスホッケー
+jogging	ジョギング
+office	会社,事務所;役所
+ticket	切符,チケット
+sale	販売;特売,バーゲンセール
+front	正面,前面
+center	中心,中央
+line	線;(文章の行;行列;(電車などの)路線
+postcard	郵便はがき
+parade	パレード,行進
+passport	パスポート
+poster	ポスター
+price	値段,価格
+top	頂上;首位,トップ
+step	一歩,歩み
+action	行動;動作
+haircut	散髪,髪のカット
+hairstyle	髪型,ヘアスタイル
+luck	運,幸運
+monster	怪物,化け物
+seat	座席
+stamp	切手;印
+title	(本などの)タイトル,表題
+full	いっぱいの;満腹の
+wrong	悪い;間違った;故障して
+easy	易しい,簡単な,気楽な
+heavy	重い;大量の
+professional	専門職の;プロの
+same	同じ,同一の
+angry	怒った,腹を立てた
+dirty	汚い,汚れた
+rich	金持ちの;豊かな
+slow	遅い,のろい
+social	社会の;社交的な
+windy	風の吹く,風の強い
+expensive	高価な
+low	低い
+lucky	運のよい,幸運な
+quick	(速度/動きが)速い,すばやい
+safe	安全な,無事な
+simple	単純な,簡単な
+strong	強い
+sweet	甘い,快い
+usual	いつもの,ふつうの
+tonight	今夜(は)
+o'clock	～時
+twice	２度,２回;２倍
+outside	外に,外側に
+someday	(未来の)いつか,そのうちに
+slowly	遅く,ゆっくりと
+sometime	(過去/未来の)いつか,そのうち
+already	すでに,もう
+would	(willの過去形)～だろう
+herself	彼女自身を[に]
+himself	彼自身を[に]
+kilometer	キロメートル
+medium	中くらいの
+gram	グラム
+half	半分,２分の１
+p.m.	(時刻の後において)午後
+a.m.	(時刻の後において)午前
+Jr.	(juniorの省略形)年下の
+Re	(メール等のタイトルで)～に関して
+want to do	～したいと思う
+like doing[to do]	～するのが好きだ,～したい
+stay in [at] ~	(場所)に泊まる,滞在する
+leave (A) for B	Bに向かって(A)を出発する,離れる,去る
+have a good time	楽しい時を過ごす
+wait for ~	～を待つ
+wake up	目が覚める
+get (back) home	家に帰る
+get up	起きる,立ち上がる
+look for	～を探す
+go on a trip	旅行に行く
+help A with B	AをB（のこと）で助ける,手伝う
+arrive at [in]	～に着く
+have a cold	風邪をひいている
+speak to	～に話しかける,～と話す
+enjoy doing	～するのを楽しむ,楽しんで～する
+get to ~	～に着く,～に到着する
+listen to ~	～を聞く,～に耳を傾ける
+look like ~	～に似ている;～のように見える
+stop doing	～することをやめる
+take a picture	写真をとる
+come back (to ~)	～から帰ってくる,～に戻る
+start doing [to do]	～し始める
+stay with	（人）の所に泊まる,滞在する
+take a bath	入浴する
+walk to	～まで歩いて行く
+become friends	友だちになる
+finish doing	～し終える
+hurry up	急ぐ
+leave A for B	AをBのために残しておく
+say goodbye to ~	～にさよならをと言う
+say hello to ~	～によろしくと言う
+take a shower	シャワーを浴びる
+take a walk	散歩をする
+give up (~)	（～を）あきらめる,やめる
+go around [round] ~	～のまわりを回る
+go back to ~	～へ帰る,～に戻る
+have a good time	つらい時を過ごす
+move to A (from B)	(Bから)Aに引っ越す
+play catch	キャッチボールをする
+slow down (~)	～を遅くする;速度を落とす
+worry about ~	～のことを心配する
+write to ~	～に手紙を書く
+ask ~ for help	～に助けを頼む
+catch a cold	風邪をひく
+get into	～の中に入る,～に乗り込む
+get off	～から降りる
+get on	～に乗る
+go for a drive	ドライブに行く
+have a good idea	よい考えがある
+hear about ~	～について聞く
+look around (~)	～を探し回る;周囲を見回す
+make friends with ~	～と親しくなる,友だちになる
+take a plane	飛行機に乗る
+write back	返事を書く
+be late for ~	～に遅れる,遅刻する
+a lot of ~	たくさんの
+be good at ~	～が上手だ,得意だ
+a glass of ~	（コップ）１杯の～
+be ready for ~	～の用意ができている
+be sick in bed	病気で寝ている
+be glad to do	～して嬉しい,喜んで～する
+be happy to do	～して嬉しい,喜んで～する
+be kind to ~	～に親切だ
+in the future	将来
+all day (long)	一日中
+as ～ as...	...と同じくらい～
+for a long time	長い間
+for example	たとえば
+from A to B	AからBへ,AからBまで
+at once	ただちに,すぐに,同時に
+right now	今すぐに,現在,たった今
+again and again	何度も何度も,繰り返して
+all over ~	～中で[に];～の一面に
+at first	最初は,最初のうちは
+both A and B	AもBも両方とも
+in front of ~	～の前に[で]
+in those days	当時は,あの頃は
+more and more	ますます,だんだん,ますます多くの
+once again	もう一度
+(on) the [one's] first day	第一日目に,初日に
+all (the) year round	１年中,１年を通して
+at last	ついに,とうとう,最後に
+at the same time	同時に
+at work	仕事で,職場で
+by the way	ところで
+first of all	まず第一に,まず何よりも
+for a moment	少しの間,ほんの少し
+one day	(過去の)ある日,(未来の)いつか
+out of ~	～から外へ
+some day	(未来の)いつか,そのうちに
+the other day	先日,この間
