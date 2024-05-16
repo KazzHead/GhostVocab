@@ -166,12 +166,12 @@
 
 .playerImage {
   width: 90%;
-  height: 90%;
+  height: auto;
 }
 
 .ghostImage {
   width: 90%;
-  height: 90%;
+  height: auto;
 }
 
 .nameContainer {
