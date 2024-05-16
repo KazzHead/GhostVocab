@@ -24,22 +24,24 @@ interface Word {
 //   extra: string[];
 // }
 
-interface Item {
-  name: string;
-}
-
-interface ApiResponse {
-  name: string;
+interface question {
+  id: number;
+  name: string; // ユーザー名
+  book: string; // 書籍名
+  mode: string; // クイズモード（例: "easy", "hard"）
+  start: number; // 開始時間（unix timestamp）
+  end: number; // 終了時間（unix timestamp）
+  contents: content[];
 }
 
 interface result {
-  name: string;
-  book: string;
+  name: string; // ユーザー名
+  book: string; // 書籍名
   mode: string;
-  start: number;
-  end: number;
+  start: number; // 開始時間（unix timestamp）
+  end: number; // 終了時間（unix timestamp）
   rank: string;
-  contents: content[];
+  contents: content[]; // クイズの内容配列
 }
 
 interface content {
@@ -53,13 +55,6 @@ interface content {
 }
 
 export default function Test() {
-  const [inputName, setInputName] = useState("");
-  const [selectedName, setSelectedName] = useState("");
-
-  const [userList, setUserList] = useState<string[]>([]);
-  const [warning, setWarning] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
-
   const [username, setUsername] = useState(""); // ユーザー名を保存するための状態
   const [hasStarted, setHasStarted] = useState(false); // クイズが開始されたかの状態
   const [allWords, setAllWords] = useState<Word[]>([]); //101-200など100個の単語&意味
@@ -69,35 +64,170 @@ export default function Test() {
   const [choices, setChoices] = useState<string[]>([]);
   const [selectedChoice, setSelectedChoice] = useState<string | null>(null);
   const [isChoosing, setIsChoosing] = useState(true);
+
+  const [pContent, setPContent] = useState<content[]>([]);
+  const [gContent, setGContent] = useState<content[]>([]);
   const [score, setScore] = useState(0);
+  const [pScore, setPScore] = useState(0);
+  const [gScore, setGScore] = useState(0);
+  const [winner, setWinner] = useState<string[]>([]);
+
   const [result, setResult] = useState<result[]>([]);
   const [content, setContent] = useState<content[]>([]);
   const [timerProgress, setTimerProgress] = useState(100); // タイマー進行状態
   const router = useRouter();
-  const { book, mode, start, end } = router.query as {
-    book: string;
-    mode: string;
-    start: string;
-    end: string;
-  };
+
+  const [question, setQuestion] = useState<question | null>(null);
+
+  const [book, setBook] = useState("");
+  const [mode, setMode] = useState("");
+  const [start, setStart] = useState(0);
+  const [end, setEnd] = useState(0);
+  // const { book, mode, start, end } = router.query as {
+  //   book: string;
+  //   mode: string;
+  //   start: string;
+  //   end: string;
+  // };
   const [startTime, setStartTime] = useState<number>(0);
   const [countdown, setCountdown] = useState(3);
+
+  // const [quizResultId, setQuizResultId] = useState(1);
+  const quizResultId = router.query.quizResultId as string;
+
+  const [playerImage, setPlayerImage] = useState("/images/none.png");
+  const [ghostImage, setGhostImage] = useState("/images/none.png");
+
+  const [circleColors, setCircleColors] = useState({
+    leftSmall: "#ddd",
+    large: "#ddd",
+    rightSmall: "#ddd",
+  });
+
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   const displayBookName = folderDisplayNameMap[book];
 
-  const [activeTab, setActiveTab] = useState("registered"); // 'new' または 'registered'
+  useEffect(() => {
+    const fetchQuizResult = async () => {
+      const response = await fetch(`/api/quizResult/${quizResultId}`);
+      const data = await response.json();
+      console.log("Fetched data:", data);
+      // レスポンスが成功した場合のみ setQuestion を呼び出す
+      if (response.ok) {
+        setQuestion(data);
+      } else {
+        console.error("Failed to fetch data:", data);
+      }
+    };
+    fetchQuizResult();
+  }, [quizResultId]);
+
+  useEffect(() => {
+    if (question) {
+      setBook(question.book);
+      setMode(question.mode);
+      setStart(question.start);
+      setEnd(question.end);
+      setContent(question.contents); // クイズの内容を設定
+      setGContent(question.contents);
+      pickQuestion(0);
+      setHasStarted(true);
+    }
+  }, [question]);
+
+  // useEffect(() => {
+  //   console.log("----start----");
+  //   if (currentWordIndex) {
+  //     setTimeout(() => {
+  //       if (
+  //         isChoosing == true &&
+  //         gContent[currentWordIndex].isCorrect == true
+  //       ) {
+  //         console.log(
+  //           "----setColor----:",
+  //           gContent[currentWordIndex].responseTime
+  //         );
+  //         setCircleColors({
+  //           leftSmall: "#ddd",
+  //           large: "#ff8e3c",
+  //           rightSmall: "#ff8e3c",
+  //         });
+  //       }
+  //     }, gContent[currentWordIndex].responseTime);
+  //   }
+  // }, [startTime]);
+
+  useEffect(() => {
+    console.log("----start----");
+
+    if (
+      gContent &&
+      currentWordIndex >= 0 &&
+      currentWordIndex < gContent.length &&
+      gContent[currentWordIndex].responseTime
+    ) {
+      const gtimer = setTimeout(() => {
+        if (
+          isChoosing === true &&
+          gContent[currentWordIndex].isCorrect === true
+        ) {
+          console.log(
+            "----setColor----:",
+            gContent[currentWordIndex].responseTime
+          );
+          setGhostImage("/images/d_circle.png");
+          setCircleColors({
+            leftSmall: "#ddd",
+            large: "#ff8e3c",
+            rightSmall: "#ff8e3c",
+          });
+        }
+      }, gContent[currentWordIndex].responseTime);
+
+      return () => {
+        clearTimeout(gtimer);
+        console.log("gTimer cleared!");
+      };
+    }
+  }, [startTime, currentWordIndex, gContent, isChoosing]);
+
+  function pickQuestion(index: number) {
+    console.log("pickQuestion called");
+    if (index >= content.length || content.length === 0) {
+      return; // 問題がない場合は何もしない
+    }
+
+    const currentContent = content[index];
+
+    const wordObject: Word = {
+      word: currentContent.question,
+      meaning: currentContent.correctAnswer,
+      extra: currentContent.extra,
+    };
+
+    setPlayerImage("/images/none.png");
+    setGhostImage("/images/none.png");
+
+    setCurrentWord(wordObject);
+    setChoices(currentContent.choices);
+    setCurrentWordIndex(index); // 現在の問題のインデックス
+    setCircleColors({
+      leftSmall: "#ddd",
+      large: "#ddd",
+      rightSmall: "#ddd",
+    });
+
+    setStartTime(Date.now()); // 回答開始時間の記録
+
+    setSelectedChoice(null);
+    setIsChoosing(true);
+  }
 
   // console.log("book:", book);
   // console.log("mode:", mode);
   // console.log("start:", start);
   // console.log("end:", end);
-  useEffect(() => {
-    console.log("activeTab changed:", activeTab);
-  }, [activeTab]);
-  useEffect(() => {
-    console.log("username changed:", username);
-  }, [username]);
   // useEffect(() => {
   //   console.log("currentWord changed");
   // }, [currentWord]);
@@ -116,9 +246,27 @@ export default function Test() {
   useEffect(() => {
     console.log("content changed:", content);
   }, [content]);
+  useEffect(() => {
+    console.log("pContent changed:", pContent);
+  }, [pContent]);
+  useEffect(() => {
+    console.log("gContent changed:", gContent);
+  }, [gContent]);
   // useEffect(() => {
-  //   console.log("isChoosing changed");
-  // }, [isChoosing]);
+  //   console.log("question changed:", question);
+  // }, [question]);
+  useEffect(() => {
+    console.log("pScore changed:", pScore);
+  }, [pScore]);
+  useEffect(() => {
+    console.log("gScore changed:", gScore);
+  }, [gScore]);
+  useEffect(() => {
+    console.log("isChoosing changed:", isChoosing);
+  }, [isChoosing]);
+  useEffect(() => {
+    console.log("currentWord changed:", currentWord);
+  }, [currentWord]);
   // useEffect(() => {
   //   console.log("allWords changed:", allWords);
   // }, [allWords]);
@@ -126,86 +274,46 @@ export default function Test() {
   //   console.log("quizWords changed:", quizWords);
   // }, [quizWords]);
 
-  function handleInputChange(e: any) {
-    const name = e.target.value;
-    setUsername(name);
-    setInputName(name); // 新規登録用のステートも更新
-  }
-
-  function handleSelectChange(e: any) {
-    const name = e.target.value;
-    setUsername(name);
-    setSelectedName(name); // 既に登録されている人用のステートも更新
-  }
-
   useEffect(() => {
-    // APIからユーザリストを取得する
-    fetch("/api/quizResults")
-      .then((response) => response.json())
-      .then((data: ApiResponse[]) => {
-        const users = data.map((item: { name: string }) => item.name); // itemの型を明示
-        setUserList([...new Set(users)]); // Setを使用して重複を削除
-        setIsLoading(false);
-      })
-      .catch((error) => console.error("Error fetching user data:", error));
-  }, []);
-
-  useEffect(() => {
-    setIsLoading(true); // データの取得を開始
-    fetch("/api/quizResults")
-      .then((response) => response.json())
-      .then((data: ApiResponse[]) => {
-        const users = data.map((item: { name: string }) => item.name); // itemの型を明示
-        setUserList([...new Set(users)]); // Setを使用して重複を削除
-        setIsLoading(false);
-      })
-      .catch((error) => {
-        console.error("Error fetching user data:", error);
-        setIsLoading(false); // エラーが発生した場合もローディングを終了
-      });
-  }, []);
-
-  const handleStartQuiz = () => {
-    if (!username) {
-      setWarning("名前を入力してください。");
-    } else if (userList.includes(inputName) && activeTab == "new") {
-      setWarning("選択した名前は既に存在します。別の名前を入力してください。");
-    } else {
-      setWarning("");
-      console.log("Starting quiz for:", username);
-      setHasStarted(true);
-    }
-  };
-
-  useEffect(() => {
-    // クイズのカウントダウンを管理
+    // 3秒カウントダウンを管理
     if (hasStarted && countdown > 0) {
       const timer = setInterval(() => {
         setCountdown((prevCountdown) => prevCountdown - 1);
       }, 1000);
-      return () => clearInterval(timer);
+      return () => {
+        clearTimeout(timer);
+      };
     }
   }, [hasStarted, countdown]);
 
+  const handleStartQuiz = () => {
+    setHasStarted(true);
+  };
+
+  // useEffect(() => {
+  //   if (book && mode && start && end) {
+  //     fetch(`/api/words?book=${book}&mode=${mode}&start=${start}&end=${end}`)
+  //       .then((response) => response.json())
+  //       .then((data) => {
+  //         setAllWords(data);
+  //         const selectedIndices = new Set<number>();
+  //         while (selectedIndices.size < 10) {
+  //           selectedIndices.add(Math.floor(Math.random() * data.length));
+  //         }
+  //         setQuizWords(Array.from(selectedIndices).map((index) => data[index]));
+  //         // pickWord(0);
+  //       });
+  //   }
+  // }, [question]);
+
   useEffect(() => {
-    if (book && mode && start && end) {
-      fetch(`/api/words?book=${book}&mode=${mode}&start=${start}&end=${end}`)
-        .then((response) => response.json())
-        .then((data) => {
-          setAllWords(data);
-          const selectedIndices = new Set<number>();
-          while (selectedIndices.size < 10) {
-            selectedIndices.add(Math.floor(Math.random() * data.length));
-          }
-          setQuizWords(Array.from(selectedIndices).map((index) => data[index]));
-          pickWord(0);
-        });
+    if (countdown == 0) {
+      pickQuestion(0);
     }
-  }, [router.query]);
+  }, [countdown]);
 
   useEffect(() => {
-    // タイマーを管理
-
+    // 10秒タイマーを管理
     if (countdown == 0 && isChoosing && currentWord) {
       setTimerProgress(100);
       clearInterval(timerRef.current!);
@@ -218,12 +326,6 @@ export default function Test() {
     return () => clearInterval(timerRef.current!);
   }, [isChoosing, currentWord, countdown]);
 
-  useEffect(() => {
-    if (countdown == 0) {
-      pickWord(0);
-    }
-  }, [countdown]);
-
   function pickWord(index: number) {
     if (index >= quizWords.length || quizWords.length === 0) {
       return;
@@ -234,6 +336,7 @@ export default function Test() {
 
     setCurrentWordIndex(index);
     setStartTime(Date.now());
+    console.log("--------StartTime set----------");
 
     const fakeChoices: string[] = [];
     while (fakeChoices.length < 3) {
@@ -251,35 +354,41 @@ export default function Test() {
   }
 
   useEffect(() => {
-    if (!isChoosing && currentWordIndex >= quizWords.length - 1) {
-      const rank = calculateRank(score, content);
+    if (!isChoosing && currentWordIndex >= content.length - 1) {
+      const rank = calculateRank(score, pContent);
       const newResult: result = {
         name: username,
         book: book,
         mode: mode,
-        start: parseInt(start, 10),
-        end: parseInt(end, 10),
-        contents: content,
+        start: start,
+        end: end,
+        contents: pContent,
         rank: rank,
       };
       setResult((prevResult) => [...prevResult, newResult]);
     }
-  }, [content]);
+  }, [pContent]);
 
   useEffect(() => {
-    if (!isChoosing && currentWordIndex >= quizWords.length - 1) {
+    //resultに渡す
+    if (!isChoosing && currentWordIndex >= content.length - 1) {
       setTimeout(() => {
-        saveResultToServer();
+        // saveResultToServer();
+
         console.log("saving result:", result);
         router.push({
-          pathname: "/testresults",
+          pathname: "/buttleresults",
           query: {
             book: book,
             mode: mode,
             start: start,
             end: end,
             score: score,
-            content: JSON.stringify(content),
+            content: JSON.stringify(pContent),
+            pScore: pScore,
+            gScore: gScore,
+            gName: question?.name,
+            quizResultId: quizResultId,
           },
         });
       }, 2000);
@@ -291,50 +400,115 @@ export default function Test() {
     if (score <= 5) return "C";
     if (score <= 7) return "B";
     if (score <= 9) return "A";
-
-    // スコアが10の場合、responseTimeを確認
     const fastResponses = results.filter((c) => c.responseTime < 5000).length;
     if (fastResponses === 10) return "SS";
     if (fastResponses >= 5) return "S";
-    return "A"; // デフォルトでAを返す
+    return "A";
   };
 
   const handleChoice = (choice: string) => {
     if (!isChoosing) return;
 
+    let newColors = { ...circleColors };
     setSelectedChoice(choice);
     const endTime = Date.now();
     const responseTime = endTime - startTime;
-    const isCorrect = currentWord?.meaning === choice;
-
-    console.log("chices:", [...choices]);
-    console.log("chice:", choice);
+    const currentContent = content[currentWordIndex];
+    const isCorrect = currentContent.correctAnswer === choice;
 
     const newContent: content = {
-      question: currentWord!.word,
-      choices: [...choices],
+      ...currentContent,
       selectedChoice: choice,
       isCorrect: isCorrect,
       responseTime: responseTime,
-      correctAnswer: currentWord!.meaning,
-      extra: currentWord?.extra || {},
     };
-    setContent((prevContent) => [...prevContent, newContent]);
+    setPContent((prevContent) => [
+      ...prevContent.slice(0, currentWordIndex),
+      newContent,
+      ...prevContent.slice(currentWordIndex + 1),
+    ]);
     setIsChoosing(false);
+
+    if (isCorrect == true && gContent[currentWordIndex].isCorrect == true) {
+      if (responseTime <= gContent[currentWordIndex].responseTime) {
+        setPlayerImage("/images/d_circle.png");
+        setGhostImage("/images/circle.png");
+        setPScore(pScore + 2);
+        setGScore(gScore + 1);
+        newColors = {
+          leftSmall: "#6246ea",
+          large: "#6246ea",
+          rightSmall: "#ff8e3c",
+        };
+      } else {
+        setPlayerImage("/images/circle.png");
+        setGhostImage("/images/d_circle.png");
+        setPScore(pScore + 1);
+        setGScore(gScore + 2);
+        newColors = {
+          leftSmall: "#6246ea",
+          large: "#ff8e3c",
+          rightSmall: "#ff8e3c",
+        };
+      }
+    } else if (
+      isCorrect == true &&
+      gContent[currentWordIndex].isCorrect == false
+    ) {
+      setPlayerImage("/images/d_circle.png");
+      setGhostImage("/images/cross.png");
+      setPScore(pScore + 2);
+      setGScore(gScore + 0);
+      newColors = {
+        leftSmall: "#6246ea",
+        large: "#6246ea",
+        rightSmall: "#ddd",
+      };
+    } else if (
+      isCorrect == false &&
+      gContent[currentWordIndex].isCorrect == true
+    ) {
+      setPlayerImage("/images/cross.png");
+      setGhostImage("/images/d_circle.png");
+      setPScore(pScore + 0);
+      setGScore(gScore + 2);
+      newColors = {
+        leftSmall: "#ddd",
+        large: "#ff8e3c",
+        rightSmall: "#ff8e3c",
+      };
+    } else if (
+      isCorrect == false &&
+      gContent[currentWordIndex].isCorrect == false
+    ) {
+      setPlayerImage("/images/cross.png");
+      setGhostImage("/images/cross.png");
+      setPScore(pScore + 0);
+      setGScore(gScore + 0);
+    }
+
+    setCircleColors(newColors);
 
     if (isCorrect) {
       setScore(score + 1);
     }
 
     const nextIndex = currentWordIndex + 1;
-    if (nextIndex < quizWords.length) {
+    if (nextIndex < content.length) {
       setTimeout(() => {
-        pickWord(nextIndex);
+        pickQuestion(nextIndex);
       }, 2000);
     }
   };
 
   function getChoiceClass(choice: string) {
+    if (selectedChoice === "") {
+      if (choice === currentWord?.meaning) {
+        return `${styles.choice} ${styles.correct}`;
+      }
+      return styles.choice;
+    }
+
     if (!selectedChoice) return styles.choice;
     if (choice === currentWord?.meaning)
       return `${styles.choice} ${styles.correct}`;
@@ -361,9 +535,9 @@ export default function Test() {
     <div className={styles.container}>
       {countdown === 0 && (
         <>
-          <h1>{`${displayBookName} ${start}～${end}`}</h1>
-          <p>{`${currentWordIndex + 1}/${quizWords.length} 問目`}</p>
-          <div className={styles.progressBarContainer}>
+          <h1>{`${displayBookName} ${start}～${end} VS ${question?.name}`}</h1>
+          <p>{`${currentWordIndex + 1}/${content.length} 問目`}</p>
+          {/* <div className={styles.progressBarContainer}>
             <div
               className={styles.progressBar}
               style={{
@@ -371,102 +545,143 @@ export default function Test() {
                 backgroundColor: timerProgress > 50 ? "#6246ea" : "#ff8e3c",
               }}
             />
+          </div> */}
+          <div
+            className={styles.scoresContainer}
+            style={{ position: "relative" }}
+          >
+            <div className={styles.pImgContainer}>
+              <img
+                src={playerImage}
+                alt="Player"
+                className={styles.playerImage}
+              />
+            </div>
+
+            <div
+              className={styles.powerBarContainer}
+              style={{ position: "relative" }}
+            >
+              <div
+                className={styles.powerBarPlayer}
+                style={{
+                  width: `${
+                    pScore + gScore > 0
+                      ? (pScore * 100) / (pScore + gScore)
+                      : 50
+                  }%`,
+                  // height: pScore >= gScore ? "15px" : "10px",
+                }}
+              >
+                <div className={styles.scoreLabelPlayer}>{pScore}点</div>
+              </div>
+              <div
+                className={styles.powerBarGhost}
+                style={{
+                  width: `${
+                    pScore + gScore > 0
+                      ? (gScore * 100) / (pScore + gScore)
+                      : 50
+                  }%`,
+                  // height: gScore > pScore ? "15px" : "10px",
+                }}
+              >
+                <div className={styles.scoreLabelGhost}>{gScore}点</div>
+              </div>
+            </div>
+
+            <div className={styles.gImgContainer}>
+              <img
+                src={ghostImage}
+                alt="Player"
+                className={styles.ghostImage}
+              />
+            </div>
+          </div>
+          <div className={styles.nameContainer}>
+            <div className={styles.leftText}>あなた</div>
+            <div className={styles.rightText}>{`${question?.name}`}</div>
           </div>
           {currentWord && (
             <>
               <p>{`${currentWord.word}`}</p>
-              <ul>
-                {choices.map((choice, index) => (
-                  <li
-                    key={index}
-                    className={getChoiceClass(choice)}
-                    onClick={() => handleChoice(choice)}
-                  >
-                    {choice}
-                  </li>
-                ))}
-              </ul>
+              <div className={styles.feedbackContainer}>
+                <div className={styles.ChoicesContainer}>
+                  <ul>
+                    {choices.map((choice, index) => (
+                      <li
+                        key={index}
+                        className={getChoiceClass(choice)}
+                        onClick={() => handleChoice(choice)}
+                      >
+                        {choice}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+              <li
+                key="unknown"
+                className={styles.idk}
+                onClick={() => handleChoice("")}
+              >
+                わからない
+              </li>
             </>
           )}
         </>
       )}
-
-      {!hasStarted && (
-        <div>
-          <h1>{`${displayBookName} ${start}～${end}`}</h1>
-          <button
-            onClick={() =>
-              router.push(`/chapter?state=test&book=${book}&mode=${mode}`)
-            }
-          >
-            範囲選択に戻る
-          </button>
-          テストモードではあなたのゴーストが記録され，誰もがあなたと対戦することができるようになります！
-          <div className={styles.tabs}>
-            <button
-              onClick={() => setActiveTab("registered")}
-              className={
-                activeTab === "registered"
-                  ? styles.activeTab
-                  : styles.inactiveTab
-              }
-            >
-              テストしたことがある人
-            </button>
-            <button
-              onClick={() => setActiveTab("new")}
-              className={
-                activeTab === "new" ? styles.activeTab : styles.inactiveTab
-              }
-            >
-              はじめてテストをする人
-            </button>
-          </div>
-          {activeTab === "new" ? (
-            <div className={styles.tabcontents}>
-              公開する名前
-              <input
-                type="text"
-                placeholder="名前を入力してください"
-                value={inputName}
-                onChange={handleInputChange}
-              />
-            </div>
-          ) : (
-            <div className={styles.tabcontents}>
-              公開する名前
-              <select
-                value={selectedName}
-                onChange={handleSelectChange}
-                onBlur={handleSelectChange}
-              >
-                <option value="">名前を選択してください</option>
-                {userList.map((user, index) => (
-                  <option key={index} value={user}>
-                    {user}
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
-          {warning && <div className={styles.warning}>{warning}</div>}
-          <button onClick={handleStartQuiz}>テストを始める</button>
-          {/* {warning && <div className={styles.warning}>{warning}</div>} */}
-          {/* <button onClick={handleStartQuiz}>クイズを始める</button> */}
+      {/* {!hasStarted && (
+        <div className={styles.fullScreen}>
+          <input
+            type="text"
+            placeholder="名前を入力してください"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+          />
+          <button onClick={handleStartQuiz}>クイズを始める</button>
         </div>
-      )}
-      {countdown > 0 && hasStarted && (
+      )} */}
+      {countdown > 0 && (
         <div className={styles.fullScreen}>
           <div className={styles.countdownText}>
+            {`相手より早く正解で+2点\n正解で+1点\n\n`}
             {mode === "fillBrackets"
               ? " ( ) に入る単語を選んで！"
               : mode === "EtoJ"
               ? " 日本語の意味を選んで！"
               : ""}
           </div>
-          <div className={styles.countdownNumber}>{countdown}</div>
+          <div
+            className={styles.countdownNumber}
+            style={{ fontSize: hasStarted ? "300px" : "70px" }}
+          >
+            {hasStarted === true ? countdown : "Loading..."}
+          </div>
         </div>
       )}
+      {/* <div className={styles.circleContainer}>
+        <div className={styles.playerNameText}>あなた</div>
+        <div
+          className={styles.circle}
+          style={{ backgroundColor: circleColors.leftSmall }}
+        >
+          <div className={`${styles.circleText}`}>+1</div>
+        </div>
+        <div
+          className={`${styles.circle} ${styles.largeCircle}`}
+          style={{ backgroundColor: circleColors.large }}
+        >
+          <div className={`${styles.circleText}`}>ボーナス+1</div>
+        </div>
+        <div
+          className={styles.circle}
+          style={{ backgroundColor: circleColors.rightSmall }}
+        >
+          <div className={`${styles.circleText}`}>+1</div>
+        </div>
+        <div className={styles.ghostNameText}>{question?.name}</div>
+      </div> */}
     </div>
   );
 }

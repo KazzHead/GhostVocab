@@ -135,8 +135,69 @@
   text-align: left;
 }
 
+.scoresContainer {
+  display: flex;
+}
+
+.imgWrap {
+  width: 20%;
+  /* height: 30px; */
+}
+
+.pImgContainer {
+  aspect-ratio: 1 / 1;
+  width: 20%;
+  /* height: 30px; */
+  border: #6246ea solid 3px;
+  display: flex;
+}
+
+.gImgContainer {
+  aspect-ratio: 1 / 1;
+  width: 20%;
+  /* height: 30px; */
+  border: #ff8e3c solid 3px;
+  display: flex;
+}
+
+.imgWrap p {
+  font-size: small;
+}
+
+.playerImage {
+  width: 90%;
+  height: 90%;
+}
+
+.ghostImage {
+  width: 90%;
+  height: 90%;
+}
+
+.nameContainer {
+  display: flex;
+  justify-content: space-between; /* 左右に要素を配置 */
+  align-items: center; /* 縦方向の中央揃え */
+  width: 100%; /* コンテナの幅を設定 */
+}
+
+.leftText {
+  text-align: left;
+  color: #6246ea;
+}
+
+.rightText {
+  text-align: right;
+  color: #ff8e3c;
+}
+
+.powerBarWrap {
+  width: 60%;
+  /* height: 30px; */
+}
+
 .powerBarContainer {
-  width: 100%;
+  width: 60%;
   height: 20px;
   background-color: #ddd; /* 背景色 */
   display: flex;

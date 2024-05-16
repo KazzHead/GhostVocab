@@ -26,11 +26,14 @@ npx prisma studio
 
 
 SELECT * FROM pg_tables WHERE schemaname = 'public';
+SELECT * FROM "Contents";
 
 
+-- トランザクション開始
 BEGIN;
 
-DELETE FROM users WHERE user_id = 5;
+DELETE FROM "Contents" WHERE "quizResultId" = 1;
+DELETE FROM "QuizResult" WHERE id = 1;
 
 -- 確認した後でコミットする
 COMMIT;

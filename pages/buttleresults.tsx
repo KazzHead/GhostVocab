@@ -18,15 +18,17 @@ const Results = () => {
   console.log("content:", content);
   const resultsArray: content[] = content ? JSON.parse(content as string) : [];
   console.log("resultsArray:", resultsArray);
-  const { book, mode, start, end, pScore, gScore, gName } = router.query as {
-    book: string;
-    mode: string;
-    start: string;
-    end: string;
-    pScore: string;
-    gScore: string;
-    gName: string;
-  };
+  const { book, mode, start, end, pScore, gScore, gName, quizResultId } =
+    router.query as {
+      book: string;
+      mode: string;
+      start: string;
+      end: string;
+      pScore: string;
+      gScore: string;
+      gName: string;
+      quizResultId: string;
+    };
   const displayBookName = folderDisplayNameMap[book];
 
   const calculateRank = (score: number, results: content[]) => {
@@ -55,11 +57,7 @@ const Results = () => {
           : `${gName} に敗北...`}
       </h1>
       <button
-        onClick={() =>
-          router.push(
-            `/study?book=${book}&mode=${mode}&start=${start}&end=${end}`
-          )
-        }
+        onClick={() => router.push(`/buttle?quizResultId=${quizResultId}`)}
       >
         もう一度挑戦
       </button>

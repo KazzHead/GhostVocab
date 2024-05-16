@@ -95,6 +95,9 @@ export default function Test() {
   // const [quizResultId, setQuizResultId] = useState(1);
   const quizResultId = router.query.quizResultId as string;
 
+  const [playerImage, setPlayerImage] = useState("/images/none.png");
+  const [ghostImage, setGhostImage] = useState("/images/none.png");
+
   const [circleColors, setCircleColors] = useState({
     leftSmall: "#ddd",
     large: "#ddd",
@@ -173,6 +176,7 @@ export default function Test() {
             "----setColor----:",
             gContent[currentWordIndex].responseTime
           );
+          setGhostImage("/images/d_circle.png");
           setCircleColors({
             leftSmall: "#ddd",
             large: "#ff8e3c",
@@ -201,6 +205,9 @@ export default function Test() {
       meaning: currentContent.correctAnswer,
       extra: currentContent.extra,
     };
+
+    setPlayerImage("/images/none.png");
+    setGhostImage("/images/none.png");
 
     setCurrentWord(wordObject);
     setChoices(currentContent.choices);
@@ -348,14 +355,14 @@ export default function Test() {
 
   useEffect(() => {
     if (!isChoosing && currentWordIndex >= content.length - 1) {
-      const rank = calculateRank(score, content);
+      const rank = calculateRank(score, pContent);
       const newResult: result = {
         name: username,
         book: book,
         mode: mode,
         start: start,
         end: end,
-        contents: content,
+        contents: pContent,
         rank: rank,
       };
       setResult((prevResult) => [...prevResult, newResult]);
@@ -377,10 +384,11 @@ export default function Test() {
             start: start,
             end: end,
             score: score,
-            content: JSON.stringify(content),
+            content: JSON.stringify(pContent),
             pScore: pScore,
             gScore: gScore,
             gName: question?.name,
+            quizResultId: quizResultId,
           },
         });
       }, 2000);
@@ -423,6 +431,8 @@ export default function Test() {
 
     if (isCorrect == true && gContent[currentWordIndex].isCorrect == true) {
       if (responseTime <= gContent[currentWordIndex].responseTime) {
+        setPlayerImage("/images/d_circle.png");
+        setGhostImage("/images/circle.png");
         setPScore(pScore + 2);
         setGScore(gScore + 1);
         newColors = {
@@ -431,6 +441,8 @@ export default function Test() {
           rightSmall: "#ff8e3c",
         };
       } else {
+        setPlayerImage("/images/circle.png");
+        setGhostImage("/images/d_circle.png");
         setPScore(pScore + 1);
         setGScore(gScore + 2);
         newColors = {
@@ -443,6 +455,8 @@ export default function Test() {
       isCorrect == true &&
       gContent[currentWordIndex].isCorrect == false
     ) {
+      setPlayerImage("/images/d_circle.png");
+      setGhostImage("/images/cross.png");
       setPScore(pScore + 2);
       setGScore(gScore + 0);
       newColors = {
@@ -454,6 +468,8 @@ export default function Test() {
       isCorrect == false &&
       gContent[currentWordIndex].isCorrect == true
     ) {
+      setPlayerImage("/images/cross.png");
+      setGhostImage("/images/d_circle.png");
       setPScore(pScore + 0);
       setGScore(gScore + 2);
       newColors = {
@@ -465,6 +481,8 @@ export default function Test() {
       isCorrect == false &&
       gContent[currentWordIndex].isCorrect == false
     ) {
+      setPlayerImage("/images/cross.png");
+      setGhostImage("/images/cross.png");
       setPScore(pScore + 0);
       setGScore(gScore + 0);
     }
@@ -529,31 +547,60 @@ export default function Test() {
             />
           </div> */}
           <div
-            className={styles.powerBarContainer}
+            className={styles.scoresContainer}
             style={{ position: "relative" }}
           >
-            <div
-              className={styles.powerBarPlayer}
-              style={{
-                width: `${
-                  pScore + gScore > 0 ? (pScore * 100) / (pScore + gScore) : 50
-                }%`,
-                // height: pScore >= gScore ? "15px" : "10px",
-              }}
-            >
-              <div className={styles.scoreLabelPlayer}>{pScore}点</div>
+            <div className={styles.pImgContainer}>
+              <img
+                src={playerImage}
+                alt="Player"
+                className={styles.playerImage}
+              />
             </div>
+
             <div
-              className={styles.powerBarGhost}
-              style={{
-                width: `${
-                  pScore + gScore > 0 ? (gScore * 100) / (pScore + gScore) : 50
-                }%`,
-                // height: gScore > pScore ? "15px" : "10px",
-              }}
+              className={styles.powerBarContainer}
+              style={{ position: "relative" }}
             >
-              <div className={styles.scoreLabelGhost}>{gScore}点</div>
+              <div
+                className={styles.powerBarPlayer}
+                style={{
+                  width: `${
+                    pScore + gScore > 0
+                      ? (pScore * 100) / (pScore + gScore)
+                      : 50
+                  }%`,
+                  // height: pScore >= gScore ? "15px" : "10px",
+                }}
+              >
+                <div className={styles.scoreLabelPlayer}>{pScore}点</div>
+              </div>
+              <div
+                className={styles.powerBarGhost}
+                style={{
+                  width: `${
+                    pScore + gScore > 0
+                      ? (gScore * 100) / (pScore + gScore)
+                      : 50
+                  }%`,
+                  // height: gScore > pScore ? "15px" : "10px",
+                }}
+              >
+                <div className={styles.scoreLabelGhost}>{gScore}点</div>
+              </div>
             </div>
+
+            <div className={styles.gImgContainer}>
+              <img
+                src={ghostImage}
+                alt="Player"
+                className={styles.ghostImage}
+              />
+            </div>
+          </div>
+          <div className={styles.nameContainer}>
+            <div className={styles.leftText}>あなた</div>
+            <div className={styles.rightText}>{`${question?.name}`}</div>
           </div>
           {currentWord && (
             <>
@@ -613,7 +660,7 @@ export default function Test() {
           </div>
         </div>
       )}
-      <div className={styles.circleContainer}>
+      {/* <div className={styles.circleContainer}>
         <div className={styles.playerNameText}>あなた</div>
         <div
           className={styles.circle}
@@ -634,7 +681,7 @@ export default function Test() {
           <div className={`${styles.circleText}`}>+1</div>
         </div>
         <div className={styles.ghostNameText}>{question?.name}</div>
-      </div>
+      </div> */}
     </div>
   );
 }
