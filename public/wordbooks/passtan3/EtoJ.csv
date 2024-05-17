@@ -1,8 +1,8 @@
-look	見える、見る
+look	l--- 見える、見る
 take	かかる、乗る、持っていく、受ける
 make	AをBにする、作る、行う
-see	見える、見る、会う
-watch	見る
+see	s-- 見える、見る、会う
+watch	w---- 見る
 give	AにBを与える
 work	働く、作動する、作業する
 call	AをBと呼ぶ、電話をする
@@ -1192,7 +1192,7 @@ not A but B	AではなくB
 on the other hand	一方では
 so many~	とてもたくさんの
 take a break	休憩を取る
-take a look at ~	～を見る
+take a look at ~	【4語】～を見る
 take off	（飛行機が）離陸する
 the number of ~	～の数
 throw away~	〜を捨てる
