@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { folderDisplayNameMap } from "../utils/folderDisplayNameMap";
-import styles from "../styles/index.module.css"; // スタイルシートのインポート（使用していない場合は省略可）
+import styles from "../styles/index.module.css";
 
 interface QuizResult {
   id: number;
@@ -16,7 +16,9 @@ interface QuizResult {
 const QuizResultsList: React.FC = () => {
   const router = useRouter();
   const [quizResults, setQuizResults] = useState<QuizResult[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(true); // ローディング状態のステート
+  const [selectedName, setSelectedName] = useState<string>("");
+  const [selectedBook, setSelectedBook] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const fetchQuizResults = async () => {
@@ -31,12 +33,15 @@ const QuizResultsList: React.FC = () => {
       } catch (error) {
         console.error("An error occurred:", error);
       } finally {
-        setIsLoading(false); // ローディング状態を解除
+        setIsLoading(false);
       }
     };
 
     fetchQuizResults();
   }, []);
+
+  const names = [...new Set(quizResults.map((result) => result.name))];
+  const books = [...new Set(quizResults.map((result) => result.book))];
 
   const formatDate = (dateString: any) => {
     const date = new Date(dateString);
@@ -46,21 +51,51 @@ const QuizResultsList: React.FC = () => {
       day: "2-digit",
       hour: "2-digit",
       minute: "2-digit",
-      hour12: false, // 24時間表示
+      hour12: false,
     });
   };
+
+  const filteredResults = quizResults.filter(
+    (result) =>
+      (selectedName === "" || result.name === selectedName) &&
+      (selectedBook === "" || result.book === selectedBook)
+  );
 
   return (
     <div>
       <h1>ゴースト一覧</h1>
       <button onClick={() => router.push("/")}>タイトルに戻る</button>
+      <div className={styles.selectBox}>
+        <select
+          value={selectedName}
+          onChange={(e) => setSelectedName(e.target.value)}
+        >
+          <option value="">すべての名前</option>
+          {names.map((name) => (
+            <option key={name} value={name}>
+              {name}
+            </option>
+          ))}
+        </select>
+        <select
+          value={selectedBook}
+          onChange={(e) => setSelectedBook(e.target.value)}
+        >
+          <option value="">すべての単語帳</option>
+          {books.map((book) => (
+            <option key={book} value={book}>
+              {folderDisplayNameMap[book] || book}
+            </option>
+          ))}
+        </select>
+      </div>
       {isLoading ? (
         <div>
           <h1>Loading...</h1>
         </div>
       ) : (
         <ul>
-          {quizResults.map((result) => (
+          {filteredResults.map((result) => (
             <li key={result.id}>
               <span style={{ fontSize: "20px", fontWeight: "bold" }}>
                 {result.name}
