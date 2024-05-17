@@ -45,3 +45,14 @@
   background-color: #fffffe;
   text-decoration: none;
 }
+
+.selectBox {
+  width: 100%;
+  justify-content: space-between;
+}
+
+.selectBox select {
+  width: 45%;
+  height: 30px;
+  margin: 2.5%;
+}
