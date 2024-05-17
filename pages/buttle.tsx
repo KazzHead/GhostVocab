@@ -550,7 +550,7 @@ export default function Test() {
     <div className={styles.container}>
       {countdown === 0 && (
         <>
-          <h1>{`${displayBookName} ${start}～${end} VS ${question?.name}`}</h1>
+          <h1>{`${displayBookName} ${start}～${end}`}</h1>
           <p>{`${currentWordIndex + 1}/${content.length} 問目`}</p>
           {/* <div className={styles.progressBarContainer}>
             <div
