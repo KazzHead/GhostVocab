@@ -70,6 +70,8 @@ export default function Test() {
   const [score, setScore] = useState(0);
   const [pScore, setPScore] = useState(0);
   const [gScore, setGScore] = useState(0);
+  const [pAddPoint, setPAddPoint] = useState("");
+  const [gAddPoint, setGAddPoint] = useState("");
   const [winner, setWinner] = useState<string[]>([]);
 
   const [result, setResult] = useState<result[]>([]);
@@ -177,6 +179,7 @@ export default function Test() {
             gContent[currentWordIndex].responseTime
           );
           setGhostImage("/images/d_circle.png");
+          setGAddPoint("+2");
           setCircleColors({
             leftSmall: "#ddd",
             large: "#ff8e3c",
@@ -208,6 +211,8 @@ export default function Test() {
 
     setPlayerImage("/images/none.png");
     setGhostImage("/images/none.png");
+    setPAddPoint("");
+    setGAddPoint("");
 
     setCurrentWord(wordObject);
     setChoices(currentContent.choices);
@@ -435,6 +440,8 @@ export default function Test() {
         setGhostImage("/images/circle.png");
         setPScore(pScore + 2);
         setGScore(gScore + 1);
+        setPAddPoint("+2");
+        setGAddPoint("+1");
         newColors = {
           leftSmall: "#6246ea",
           large: "#6246ea",
@@ -445,6 +452,8 @@ export default function Test() {
         setGhostImage("/images/d_circle.png");
         setPScore(pScore + 1);
         setGScore(gScore + 2);
+        setPAddPoint("+1");
+        setGAddPoint("+2");
         newColors = {
           leftSmall: "#6246ea",
           large: "#ff8e3c",
@@ -459,6 +468,8 @@ export default function Test() {
       setGhostImage("/images/cross.png");
       setPScore(pScore + 2);
       setGScore(gScore + 0);
+      setPAddPoint("+2");
+      setGAddPoint("0");
       newColors = {
         leftSmall: "#6246ea",
         large: "#6246ea",
@@ -472,6 +483,8 @@ export default function Test() {
       setGhostImage("/images/d_circle.png");
       setPScore(pScore + 0);
       setGScore(gScore + 2);
+      setPAddPoint("0");
+      setGAddPoint("+2");
       newColors = {
         leftSmall: "#ddd",
         large: "#ff8e3c",
@@ -485,6 +498,8 @@ export default function Test() {
       setGhostImage("/images/cross.png");
       setPScore(pScore + 0);
       setGScore(gScore + 0);
+      setPAddPoint("0");
+      setGAddPoint("0");
     }
 
     setCircleColors(newColors);
@@ -556,6 +571,7 @@ export default function Test() {
                 alt="Player"
                 className={styles.playerImage}
               />
+              <div className={styles.pAddPointText}>{pAddPoint}</div>
             </div>
 
             <div
@@ -596,6 +612,7 @@ export default function Test() {
                 alt="Player"
                 className={styles.ghostImage}
               />
+              <div className={styles.gAddPointText}>{gAddPoint}</div>
             </div>
           </div>
           <div className={styles.nameContainer}>
