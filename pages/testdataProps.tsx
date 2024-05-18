@@ -31,7 +31,9 @@ const QuizResultDetails: React.FC<QuizResultProps> = () => {
   useEffect(() => {
     const fetchQuizResult = async () => {
       try {
-        const response = await fetch(`/api/quizResult/${quizResultId}`);
+        const response = await fetch(`/api/quizResult/${quizResultId}`, {
+          method: "GET",
+        });
         const data = await response.json();
         console.log("Fetched data:", data);
         setQuizResult(data);

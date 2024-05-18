@@ -112,7 +112,9 @@ export default function Test() {
 
   useEffect(() => {
     const fetchQuizResult = async () => {
-      const response = await fetch(`/api/quizResult/${quizResultId}`);
+      const response = await fetch(`/api/quizResult/${quizResultId}`, {
+        method: "GET",
+      });
       const data = await response.json();
       console.log("Fetched data:", data);
       // レスポンスが成功した場合のみ setQuestion を呼び出す
