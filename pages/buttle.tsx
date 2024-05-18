@@ -217,7 +217,7 @@ export default function Test() {
     setGAddPoint("");
 
     setCurrentWord(wordObject);
-    setChoices(currentContent.choices);
+    setChoices(shuffleArray(currentContent.choices));
     setCurrentWordIndex(index); // 現在の問題のインデックス
     setCircleColors({
       leftSmall: "#ddd",
@@ -229,6 +229,25 @@ export default function Test() {
 
     setSelectedChoice(null);
     setIsChoosing(true);
+  }
+
+  function shuffleArray(array: any[]) {
+    let currentIndex = array.length,
+      randomIndex;
+
+    // 配列が1つしか要素がないまで続ける
+    while (currentIndex !== 0) {
+      // 残っている要素からランダムに1つ選ぶ
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex--;
+
+      // そしてそれを現在の要素と交換する
+      [array[currentIndex], array[randomIndex]] = [
+        array[randomIndex],
+        array[currentIndex],
+      ];
+    }
+    return array;
   }
 
   // console.log("book:", book);
@@ -623,7 +642,9 @@ export default function Test() {
           </div>
           {currentWord && (
             <>
-              <p>{`${currentWord.word}`}</p>
+              <p style={{ fontSize: "18px", fontWeight: "bold" }}>
+                {`${currentWord.word}`}
+              </p>
               <div className={styles.feedbackContainer}>
                 <div className={styles.ChoicesContainer}>
                   <ul>

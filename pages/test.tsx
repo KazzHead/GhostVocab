@@ -374,7 +374,9 @@ export default function Test() {
           </div>
           {currentWord && (
             <>
-              <p>{`${currentWord.word}`}</p>
+              <p style={{ fontSize: "18px", fontWeight: "bold" }}>
+                {`${currentWord.word}`}
+              </p>
               <ul>
                 {choices.map((choice, index) => (
                   <li
