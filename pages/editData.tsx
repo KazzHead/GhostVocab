@@ -20,10 +20,23 @@ const QuizResultsList: React.FC = () => {
   const [editName, setEditName] = useState<string>("");
   const [editBook, setEditBook] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 
   useEffect(() => {
-    fetchQuizResults();
+    const password = prompt(
+      "このページを表示するにはパスワードを入力してください。"
+    );
+    if (password === "0416") {
+      setIsAuthenticated(true);
+      fetchQuizResults();
+    } else {
+      alert("パスワードが間違っています。");
+    }
   }, []);
+
+  // useEffect(() => {
+  //   fetchQuizResults();
+  // }, []);
 
   const fetchQuizResults = async () => {
     try {
@@ -81,6 +94,10 @@ const QuizResultsList: React.FC = () => {
   const cancelEdit = () => {
     setEditId(null);
   };
+
+  if (!isAuthenticated) {
+    return <div>認証が必要です。</div>;
+  }
 
   return (
     <div>

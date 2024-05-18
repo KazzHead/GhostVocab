@@ -57,7 +57,7 @@ const Results = () => {
           : `${gName} に敗北...`}
       </h1>
       <button
-        onClick={() => router.push(`/buttle?quizResultId=${quizResultId}`)}
+        onClick={() => router.push(`/battle?quizResultId=${quizResultId}`)}
       >
         もう一度挑戦
       </button>

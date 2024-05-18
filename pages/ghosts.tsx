@@ -104,7 +104,7 @@ const QuizResultsList: React.FC = () => {
                 result.end
               } \n ${formatDate(result.updatedAt)}`}
               <button
-                onClick={() => router.push(`/buttle?quizResultId=${result.id}`)}
+                onClick={() => router.push(`/battle?quizResultId=${result.id}`)}
               >
                 このゴーストに挑戦
               </button>

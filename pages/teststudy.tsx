@@ -404,7 +404,7 @@ export default function Test() {
 
         console.log("saving result:", result);
         router.push({
-          pathname: "/buttleresults",
+          pathname: "/battleresults",
           query: {
             book: book,
             mode: mode,
