@@ -14,6 +14,9 @@ export default async function handler(
       orderBy: {
         updatedAt: "desc",
       },
+      include: {
+        contents: true, // contents フィールドを含めてデータを取得
+      },
     });
 
     res.status(200).json(quizResults);

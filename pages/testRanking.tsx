@@ -1,9 +1,7 @@
-import Link from "next/link";
-import styles from "../styles/index.module.css";
-import router from "next/router";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { folderDisplayNameMap } from "../utils/folderDisplayNameMap";
+import styles from "../styles/index.module.css";
 
 interface QuizResult {
   id: number;
@@ -21,28 +19,12 @@ interface Contents {
   isCorrect: boolean;
 }
 
-interface RankingEntry {
-  rank: number;
-  name: string;
-  bookStartEnds: string[];
-}
-
-const Home = () => {
+const QuizResultsList: React.FC = () => {
   const router = useRouter();
   const [quizResults, setQuizResults] = useState<QuizResult[]>([]);
   const [selectedName, setSelectedName] = useState<string>("");
   const [selectedBook, setSelectedBook] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>(
-    {}
-  );
-
-  const handleToggle = (name: string) => {
-    setExpandedItems((prevState) => ({
-      ...prevState,
-      [name]: !prevState[name],
-    }));
-  };
 
   //quizResultsをセット
   useEffect(() => {
@@ -67,15 +49,6 @@ const Home = () => {
 
   const names = [...new Set(quizResults.map((result) => result.name))];
   const books = [...new Set(quizResults.map((result) => result.book))];
-
-  // useEffect(() => {
-  //   if (names.length > 0) {
-  //     setSelectedName(names[Math.floor(Math.random() * names.length)]);
-  //   }
-  //   if (books.length > 0) {
-  //     setSelectedBook(books[Math.floor(Math.random() * books.length)]);
-  //   }
-  // }, [isLoading]);
 
   const formatDate = (dateString: any) => {
     const date = new Date(dateString);
@@ -119,12 +92,8 @@ const Home = () => {
     return bResults.correctCount - aResults.correctCount;
   });
 
-  const rankedByCorrectAndTime = sortedByCorrectAndTime.map((result, index) => {
-    return { ranking: index + 1, ...result };
-  });
-
   //トップ3のみ抽出
-  const top3ByCorrectAndTime = rankedByCorrectAndTime.slice(0, 3);
+  const top3ByCorrectAndTime = sortedByCorrectAndTime.slice(0, 3);
 
   const aggregatedResults = filteredResults.reduce((acc, result) => {
     // クイズ結果を識別するためのキーを生成（例: "book1-0-100"）
@@ -178,64 +147,24 @@ const Home = () => {
   );
   console.log("sortedFirstPlaceCounts", sortedFirstPlaceCounts);
 
-  // 順位計算のための新しい配列を作成し、同順位を適切に処理する
-  const ranking: RankingEntry[] = [];
-  const timeRanking: RankingEntry[] = [];
-  const firstRanking: RankingEntry[] = [];
-  let currentRank = 1;
-
-  sortedFirstPlaceCounts.forEach(([name, bookStartEnds], index, array) => {
-    // 前のユーザーと同じポイントの場合、同順位にする
-    if (index > 0 && bookStartEnds.length === array[index - 1][1].length) {
-      firstRanking.push({
-        rank: firstRanking[firstRanking.length - 1].rank,
-        name,
-        bookStartEnds,
-      });
-    } else {
-      firstRanking.push({ rank: currentRank, name, bookStartEnds });
+  let rank = 1;
+  let previousCount = -1;
+  const rankedFirstPlaceCounts = sortedFirstPlaceCounts.map(
+    ([name, bookStartEnds], index) => {
+      if (bookStartEnds.length !== previousCount) {
+        rank = index + 1;
+        previousCount = bookStartEnds.length;
+      }
+      return { rank, name, bookStartEnds };
     }
-    currentRank++;
-  });
-
-  // ランキングに基づいてCSSクラスを割り当てる関数
-  const getRankClassName = (rank: number) => {
-    console.log("rank", rank);
-    switch (rank) {
-      case 1:
-        return styles.rank1;
-      case 2:
-        return styles.rank2;
-      case 3:
-        return styles.rank3;
-      default:
-        return styles.rankDefault;
-    }
-  };
+  );
 
   return (
-    <div className={styles.container}>
-      <h1>Vocubulary Quiz</h1>
-      <div className={styles.buttons}>
-        <button onClick={() => router.push("/wordbooks?state=study")}>
-          練習する
-        </button>
-        <button onClick={() => router.push("/wordbooks?state=test")}>
-          テストする
-        </button>
-        <button onClick={() => router.push("/ghosts")}>ゴーストと対戦</button>
-        <button onClick={() => router.push("/events")}>イベント</button>
-      </div>
-      <h1>ランキング</h1>
-
-      {isLoading ? (
-        <div>
-          <h1>Loading...</h1>
-        </div>
-      ) : (
-        <div>
-          <div className={styles.selectBox}>
-            {/* <select
+    <div>
+      <h1>ゴースト一覧</h1>
+      <button onClick={() => router.push("/")}>タイトルに戻る</button>
+      <div className={styles.selectBox}>
+        <select
           value={selectedName}
           onChange={(e) => setSelectedName(e.target.value)}
         >
@@ -245,75 +174,55 @@ const Home = () => {
               {name}
             </option>
           ))}
-        </select> */}
-            <div className="rankingSelectBox">
-              <select
-                value={selectedBook}
-                onChange={(e) => setSelectedBook(e.target.value)}
-              >
-                <option value="">すべての単語帳</option>
-                {books.map((book) => (
-                  <option key={book} value={book}>
-                    {folderDisplayNameMap[book] || book}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-
-          <h3>解答速度ランキング</h3>
+        </select>
+        <select
+          value={selectedBook}
+          onChange={(e) => setSelectedBook(e.target.value)}
+        >
+          <option value="">すべての単語帳</option>
+          {books.map((book) => (
+            <option key={book} value={book}>
+              {folderDisplayNameMap[book] || book}
+            </option>
+          ))}
+        </select>
+      </div>
+      {isLoading ? (
+        <div>
+          <h1>Loading...</h1>
+        </div>
+      ) : (
+        <div>
+          <h2>合計時間ランキング</h2>
           <ul>
             {top3ByCorrectAndTime.map((result) => {
               const { correctCount, totalTime } = calculateResults(
                 result.contents
               );
               return (
-                <div className={getRankClassName(result.ranking)}>
-                  <li
-                    key={result.id}
-                    // className={getRankClassName(result.ranking)}
-                  >
-                    <div>
-                      <span>
-                        {result.ranking}位 {result.name}{" "}
-                        {(totalTime / 1000).toFixed(1)}秒
-                      </span>
-                      {"\n"}
-                      {folderDisplayNameMap[result.book]} {result.start}～
-                      {result.end}
-                      {/* {correctCount}点 */}
-                    </div>
-                  </li>
-                </div>
+                <li key={result.id}>
+                  <div>
+                    {result.name} {folderDisplayNameMap[result.book]}{" "}
+                    {correctCount}点 合計{totalTime / 1000}秒
+                  </div>
+                </li>
               );
             })}
           </ul>
-
-          <h3>1位取得数ランキング</h3>
-          <ul style={{ listStyleType: "none", paddingLeft: 0 }}>
-            {firstRanking
-              .filter(({ rank }) => rank <= 3)
-              .map(({ rank, name, bookStartEnds }) => (
-                <div className={getRankClassName(rank)}>
-                  <li key={name}>
-                    <div>
-                      <span
-                        onClick={() => handleToggle(name)}
-                        style={{ cursor: "pointer" }}
-                      >
-                        {rank}位 {name} {bookStartEnds.length}冠
-                      </span>
-                      {expandedItems[name] && (
-                        <ul>
-                          {bookStartEnds.map((bookStartEnd, index) => (
-                            <li key={index}>{bookStartEnd}</li>
-                          ))}
-                        </ul>
-                      )}
-                    </div>
-                  </li>
+          <h2>選ばれた単語帳ごとのランキング上位3人</h2>
+          <ul>
+            {sortedFirstPlaceCounts.map(([name, bookStartEnds]) => (
+              <li key={name}>
+                <div>
+                  {name} {bookStartEnds.length}冠
+                  <ul>
+                    {bookStartEnds.map((bookStartEnd, index) => (
+                      <li key={index}>{bookStartEnd}</li>
+                    ))}
+                  </ul>
                 </div>
-              ))}
+              </li>
+            ))}
           </ul>
         </div>
       )}
@@ -321,4 +230,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default QuizResultsList;

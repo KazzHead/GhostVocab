@@ -80,7 +80,7 @@ const QuizResultsList: React.FC = () => {
   );
   console.log("filteredResults:", filteredResults);
 
-  const sortedResults = [...filteredResults].sort((a, b) => {
+  const sortedByCorrectAndTime = [...filteredResults].sort((a, b) => {
     const aResults = calculateResults(a.contents);
     const bResults = calculateResults(b.contents);
     if (aResults.correctCount === bResults.correctCount) {
@@ -88,6 +88,40 @@ const QuizResultsList: React.FC = () => {
     }
     return bResults.correctCount - aResults.correctCount; // 正解数で降順
   });
+
+  const top3ByCorrectAndTime = sortedByCorrectAndTime.slice(0, 3);
+
+  const aggregatedResults = quizResults.reduce((acc, result) => {
+    const key = `${result.book}-${result.start}-${result.end}`;
+    if (!acc[key]) {
+      acc[key] = {};
+    }
+    if (!acc[key][result.name]) {
+      acc[key][result.name] = calculateResults(result.contents);
+    } else {
+      const currentBest = acc[key][result.name];
+      const newResult = calculateResults(result.contents);
+      if (
+        newResult.correctCount > currentBest.correctCount ||
+        (newResult.correctCount === currentBest.correctCount &&
+          newResult.totalTime < currentBest.totalTime)
+      ) {
+        acc[key][result.name] = newResult;
+      }
+    }
+    return acc;
+  }, {} as Record<string, Record<string, { correctCount: number; totalTime: number }>>);
+
+  const sortedByBook = Object.entries(
+    aggregatedResults[selectedBook] || {}
+  ).sort(([, a], [, b]) => {
+    if (b.correctCount === a.correctCount) {
+      return a.totalTime - b.totalTime;
+    }
+    return b.correctCount - a.correctCount;
+  });
+
+  const top3ByBook = sortedByBook.slice(0, 3);
 
   return (
     <div>
@@ -122,21 +156,37 @@ const QuizResultsList: React.FC = () => {
           <h1>Loading...</h1>
         </div>
       ) : (
-        <ul>
-          {sortedResults.map((result) => {
-            const { correctCount, totalTime } = calculateResults(
-              result.contents
-            );
-            return (
-              <li key={result.id}>
+        <div>
+          <h2>正解数が多く時間が短かったランキング上位3人</h2>
+          <ul>
+            {/* {top3ByCorrectAndTime.map((result) => { */}
+            {sortedByCorrectAndTime.map((result) => {
+              const { correctCount, totalTime } = calculateResults(
+                result.contents
+              );
+              return (
+                <li key={result.id}>
+                  <div>
+                    {result.name} {folderDisplayNameMap[result.book]}{" "}
+                    {result.start}～{result.end} 正解数: {correctCount},
+                    合計時間: {totalTime / 1000}秒
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+          <h2>選ばれた単語帳ごとのランキング上位3人</h2>
+          <ul>
+            {top3ByBook.map(([name, { correctCount, totalTime }]) => (
+              <li key={name}>
                 <div>
-                  {result.name} - {folderDisplayNameMap[result.book]} - 正解数:{" "}
-                  {correctCount}, 合計時間: {totalTime / 1000}秒
+                  {name} - 正解数: {correctCount}, 合計時間: {totalTime / 1000}
+                  秒
                 </div>
               </li>
-            );
-          })}
-        </ul>
+            ))}
+          </ul>
+        </div>
       )}
     </div>
   );
