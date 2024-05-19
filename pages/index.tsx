@@ -124,7 +124,9 @@ const Home = () => {
   });
 
   //トップ3のみ抽出
-  const top3ByCorrectAndTime = rankedByCorrectAndTime.slice(0, 3);
+  const top3ByCorrectAndTime = rankedByCorrectAndTime.filter(
+    ({ ranking }) => ranking <= 3
+  );
 
   const aggregatedResults = filteredResults.reduce((acc, result) => {
     // クイズ結果を識別するためのキーを生成（例: "book1-0-100"）
@@ -261,7 +263,7 @@ const Home = () => {
             </div>
           </div>
 
-          <h3>解答速度ランキング</h3>
+          <h3>解答時間合計ランキング</h3>
           <ul>
             {top3ByCorrectAndTime.map((result) => {
               const { correctCount, totalTime } = calculateResults(
@@ -283,8 +285,7 @@ const Home = () => {
                       </span>
                       {"\n"}
                       {folderDisplayNameMap[result.book]} {result.start}～
-                      {result.end}
-                      {/* {correctCount}点 */}
+                      {result.end} {correctCount}点
                     </div>
                   </li>
                 </div>
