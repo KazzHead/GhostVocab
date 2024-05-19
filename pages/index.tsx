@@ -263,7 +263,7 @@ const Home = () => {
             </div>
           </div>
 
-          <h3>解答時間合計ランキング</h3>
+          <h3>合計解答時間ランキング</h3>
           <ul>
             {top3ByCorrectAndTime.map((result) => {
               const { correctCount, totalTime } = calculateResults(
