@@ -268,7 +268,10 @@ const Home = () => {
                 result.contents
               );
               return (
-                <div className={getRankClassName(result.ranking)}>
+                <div
+                  key={result.id}
+                  className={getRankClassName(result.ranking)}
+                >
                   <li
                     key={result.id}
                     // className={getRankClassName(result.ranking)}
@@ -294,7 +297,7 @@ const Home = () => {
             {firstRanking
               .filter(({ rank }) => rank <= 3)
               .map(({ rank, name, bookStartEnds }) => (
-                <div className={getRankClassName(rank)}>
+                <div key="a" className={getRankClassName(rank)}>
                   <li key={name}>
                     <div>
                       <span
