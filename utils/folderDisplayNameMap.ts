@@ -7,5 +7,6 @@ export const folderDisplayNameMap: { [key: string]: string } = {
   passtanP2: "パス単 準2級 5訂版",
   passtan2: "パス単 2級 5訂版",
   passtanP1: "パス単 準1級 5訂版",
+  systan: "システム英単語 5訂版",
   kinhure: "金のフレーズ",
 };
