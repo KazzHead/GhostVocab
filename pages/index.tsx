@@ -217,7 +217,7 @@ const Home = () => {
 
   return (
     <div className={styles.container}>
-      <h1>Vocubulary Quiz</h1>
+      <h1>Vocabulary Quiz</h1>
       <div className={styles.buttons}>
         <button onClick={() => router.push("/wordbooks?state=study")}>
           練習する

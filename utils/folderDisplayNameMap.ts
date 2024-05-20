@@ -1,6 +1,6 @@
 export const folderDisplayNameMap: { [key: string]: string } = {
-  target1900: "ターゲット1900",
-  target1200: "ターゲット1200",
+  target1900: "ターゲット1900  6訂版",
+  target1200: "ターゲット1200  6訂版",
   LEAP: "LEAP",
   passtan4: "パス単 4級 4訂版",
   passtan3: "パス単 3級 5訂版",
