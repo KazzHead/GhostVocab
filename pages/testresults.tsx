@@ -39,13 +39,27 @@ const Results = () => {
     return "A"; // デフォルトでAを返す
   };
 
+  const calculateTime = (results: content[]) => {
+    if (!results) {
+      return { totalTime: 0 };
+    }
+    const totalTime = results.reduce(
+      (total, content) => total + content.responseTime,
+      0
+    );
+    console.log("totalTime;", totalTime);
+    return { totalTime };
+  };
+
   const rank = calculateRank(Number(score), resultsArray);
+  const { totalTime } = calculateTime(resultsArray);
 
   return (
     <div>
       <h1>{`${displayBookName} ${start}～${end}`}</h1>
       <h1>
-        得点: {score} /10 {rank}ランク
+        得点: {score} /10 {(totalTime / 1000).toFixed(1)}秒{"\n"}
+        {rank}ランク
       </h1>
       <p>あなたのゴーストが記録されました！</p>
       <button
