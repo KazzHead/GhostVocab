@@ -124,7 +124,9 @@ const Home = () => {
   });
 
   //トップ3のみ抽出
-  const top3ByCorrectAndTime = rankedByCorrectAndTime.slice(0, 3);
+  const top3ByCorrectAndTime = rankedByCorrectAndTime.filter(
+    ({ ranking }) => ranking <= 3
+  );
 
   const aggregatedResults = filteredResults.reduce((acc, result) => {
     // クイズ結果を識別するためのキーを生成（例: "book1-0-100"）
@@ -215,7 +217,7 @@ const Home = () => {
 
   return (
     <div className={styles.container}>
-      <h1>Vocubulary Quiz</h1>
+      <h1>Vocabulary Quiz</h1>
       <div className={styles.buttons}>
         <button onClick={() => router.push("/wordbooks?state=study")}>
           練習する
@@ -246,7 +248,7 @@ const Home = () => {
             </option>
           ))}
         </select> */}
-            <div className="rankingSelectBox">
+            <div className={styles.rankingSelectBox}>
               <select
                 value={selectedBook}
                 onChange={(e) => setSelectedBook(e.target.value)}
@@ -261,7 +263,7 @@ const Home = () => {
             </div>
           </div>
 
-          <h3>解答速度ランキング</h3>
+          <h3>合計解答時間ランキング</h3>
           <ul>
             {top3ByCorrectAndTime.map((result) => {
               const { correctCount, totalTime } = calculateResults(
@@ -283,8 +285,7 @@ const Home = () => {
                       </span>
                       {"\n"}
                       {folderDisplayNameMap[result.book]} {result.start}～
-                      {result.end}
-                      {/* {correctCount}点 */}
+                      {result.end} {correctCount}点
                     </div>
                   </li>
                 </div>
@@ -297,13 +298,14 @@ const Home = () => {
             {firstRanking
               .filter(({ rank }) => rank <= 3)
               .map(({ rank, name, bookStartEnds }) => (
-                <div key="a" className={getRankClassName(rank)}>
+                <div
+                  key="ranking"
+                  className={getRankClassName(rank)}
+                  onClick={() => handleToggle(name)}
+                >
                   <li key={name}>
                     <div>
-                      <span
-                        onClick={() => handleToggle(name)}
-                        style={{ cursor: "pointer" }}
-                      >
+                      <span>
                         {rank}位 {name} {bookStartEnds.length}冠
                       </span>
                       {expandedItems[name] && (

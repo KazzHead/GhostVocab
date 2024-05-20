@@ -248,7 +248,7 @@ const Home = () => {
             </option>
           ))}
         </select> */}
-            <div className="rankingSelectBox">
+            <div className={styles.rankingSelectBox}>
               <select
                 value={selectedBook}
                 onChange={(e) => setSelectedBook(e.target.value)}
@@ -298,13 +298,14 @@ const Home = () => {
             {firstRanking
               .filter(({ rank }) => rank <= 3)
               .map(({ rank, name, bookStartEnds }) => (
-                <div key="a" className={getRankClassName(rank)}>
+                <div
+                  key="ranking"
+                  className={getRankClassName(rank)}
+                  onClick={() => handleToggle(name)}
+                >
                   <li key={name}>
                     <div>
-                      <span
-                        onClick={() => handleToggle(name)}
-                        style={{ cursor: "pointer" }}
-                      >
+                      <span>
                         {rank}位 {name} {bookStartEnds.length}冠
                       </span>
                       {expandedItems[name] && (
