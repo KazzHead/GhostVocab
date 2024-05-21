@@ -217,7 +217,16 @@ const Home = () => {
 
   return (
     <div className={styles.container}>
-      <h1>Vocabulary Quiz</h1>
+      <div className={styles.titleBox}>
+        <img
+          src="/images/outlined_ghost.png"
+          style={{
+            width: "30px",
+          }}
+        ></img>
+        <div className={styles.titleText}>Ghost Vocab</div>
+      </div>
+
       <div className={styles.buttons}>
         <button onClick={() => router.push("/wordbooks?state=study")}>
           練習する

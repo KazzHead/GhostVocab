@@ -1,4 +1,14 @@
-/* index.module.css */
+.titleBox {
+  display: flex;
+}
+
+.titleText {
+  width: auto;
+  margin-left: 10px;
+  font-size: 30px;
+  font-weight: bold;
+}
+
 .container {
   box-sizing: border-box;
   padding: 20px;
