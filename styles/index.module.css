@@ -182,3 +182,8 @@
     background-position: 0% 50%;
   }
 }
+
+.bookimages img {
+  width: 120px;
+  margin: 10px;
+}
