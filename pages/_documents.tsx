@@ -29,13 +29,11 @@ export default class Document extends NextDocument {
             color="#000000"
           />
           <link rel="shortcut icon" href="/favicons/favicon.ico" />{" "}
-          //IE8以下にも対応したい場合
           <meta name="msapplication-TileColor" content="#ffffff" />
           <meta
             name="msapplication-config"
             content="/favicons/browserconfig.xml"
           />{" "}
-          //Windows8/10のスタート画面のピン留め画像に対応したい場合
           <meta name="theme-color" content="#ffffff" />
         </Head>
         <body>
