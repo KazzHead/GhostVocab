@@ -24,27 +24,23 @@ npx prisma generate
 
 npx prisma studio
 
-
-SELECT * FROM pg_tables WHERE schemaname = 'public';
-SELECT * FROM "Contents";
+prisma migrate dev  これで全データ消える
 
 
--- トランザクション開始
-BEGIN;
-
-DELETE FROM "Contents" WHERE "quizResultId" = 1;
-DELETE FROM "QuizResult" WHERE id = 1;
-
--- 確認した後でコミットする
-COMMIT;
-
--- もし削除をやり直したい場合はロールバックする
-ROLLBACK;
+pg_dump -h ep-late-heart-a1m4ufkb-pooler.ap-southeast-1.aws.neon.tech -d verceldb -U default -W -f backup_file.sql
+PASSWORD 3dRuK7FAyibz
 
 
+mkdir -p prisma/migrations/0_init
 
+ npx prisma migrate diff --from-empty --to-schema-datamodel prisma/schema.prisma --script > prisma/migrations/0_init/migration.sql
 
-npm run dev        
+MIGRATIONS.sql
+shift ctrl P
+エンコードを変更
+windows1252
+
+npm run dev        npx prisma migrate resolve --applied 0_init
 
 オプションやフラグ、メニューを追加した
 Add -enable-experimental-nested-generic-types frontend flag

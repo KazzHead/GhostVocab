@@ -17,7 +17,7 @@ model QuizResult {
   start     Int
   end       Int
   rank      String
-  updatedAt DateTime   @updatedAt
+  updatedAt DateTime 
   contents  Contents[]
 }
 
