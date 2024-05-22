@@ -23,6 +23,7 @@ export default async function handler(
           start: item.start,
           end: item.end,
           rank: item.rank,
+          updatedAt: new Date(),
           contents: {
             create: item.contents.map((content: any) => ({
               question: content.question,
