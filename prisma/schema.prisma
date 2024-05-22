@@ -6,30 +6,30 @@ datasource db {
   provider          = "postgresql"
   url               = env("POSTGRES_PRISMA_URL")
   directUrl         = env("POSTGRES_URL_NON_POOLING")
-  shadowDatabaseUrl = env("POSTGRES_URL_NON_POOLING") 
+  shadowDatabaseUrl = env("POSTGRES_URL_NON_POOLING")
 }
 
 model QuizResult {
-  id            Int      @id @default(autoincrement())
-  name          String
-  book          String
-  mode          String
-  start         Int
-  end           Int
-  rank          String
-  contents      Contents[]
-  updatedAt     DateTime @updatedAt
+  id        Int        @id @default(autoincrement())
+  name      String
+  book      String
+  mode      String
+  start     Int
+  end       Int
+  rank      String
+  updatedAt DateTime   @updatedAt
+  contents  Contents[]
 }
 
 model Contents {
-  id            Int      @id @default(autoincrement())
-  quizResultId   Int       // QuizResultへの参照ID
-  quizResult     QuizResult @relation(fields: [quizResultId], references: [id])
-  question      String
-  choices       String[]
+  id             Int        @id @default(autoincrement())
+  quizResultId   Int
+  question       String
+  choices        String[]
   selectedChoice String
-  isCorrect     Boolean
-  responseTime  Int
-  correctAnswer String
-  extra         Json
+  isCorrect      Boolean
+  responseTime   Int
+  correctAnswer  String
+  extra          Json
+  quizResult     QuizResult @relation(fields: [quizResultId], references: [id])
 }

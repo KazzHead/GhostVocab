@@ -226,7 +226,7 @@ const Home = () => {
         ></img>
         <div className={styles.titleText}>Ghost Vocab</div>
       </div>
-
+      操作ミスで今までのデータが全部消えてしまいました．残してくれた人たちごめんなさい…
       <div className={styles.buttons}>
         <button onClick={() => router.push("/wordbooks?state=study")}>
           練習する
@@ -238,7 +238,6 @@ const Home = () => {
         <button onClick={() => router.push("/events")}>イベント</button>
       </div>
       <h1>ランキング</h1>
-
       {isLoading ? (
         <div>
           <h1>Loading...</h1>
