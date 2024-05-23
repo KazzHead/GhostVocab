@@ -231,33 +231,6 @@ const Home = () => {
     );
   };
 
-  const ghostButton = (mode: string) => {
-    const [path, setPath] = useState<string>("");
-    const [imgPath, setImgPath] = useState<string>("");
-
-    switch (mode) {
-      case "study":
-        setPath("/wordbooks?state=study");
-        setImgPath("/images/purple_ghost.png");
-      case "test":
-        setPath("/wordbooks?state=test");
-        setImgPath("/images/red_ghost.png");
-      case "ghosts":
-        setPath("/ghosts");
-        setImgPath("/images/green_ghost.png");
-      case "events":
-        setPath("/events");
-        setImgPath("/images/yellow_ghost.png");
-    }
-
-    return (
-      <div
-        className="styles.ghostButton"
-        onClick={() => router.push(path)}
-      ></div>
-    );
-  };
-
   return (
     <div className={styles.container}>
       <div className={styles.titleBox}>
