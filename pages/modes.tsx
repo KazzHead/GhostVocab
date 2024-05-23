@@ -52,7 +52,15 @@ const Modes: React.FC<ModesProps> = ({
   const router = useRouter();
   return (
     <div className={styles.container}>
-      <h1>{displayName}</h1>
+      <div className={styles.titleBox}>
+        <img
+          key={bookName}
+          src={`/images/${bookName}.jpg`}
+          style={{ width: "50px" }}
+        ></img>
+        <div className={styles.titleText}> {displayName}</div>
+      </div>
+
       <button onClick={() => router.push(`/wordbooks?state=${state}`)}>
         単語帳選択に戻る
       </button>

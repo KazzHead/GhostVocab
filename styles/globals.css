@@ -1,6 +1,5 @@
 html {
   min-height: 100%;
-
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
@@ -65,9 +64,9 @@ li {
 } */
 
 button {
-  display: block; /* ブロックレベル要素として扱う */
-  width: 90%; /* 同じ幅、例えば全体の80% */
-  margin: 20px auto; /* 上下のマージンと自動で中央揃え */
+  display: block;
+  width: 90%;
+  margin: 20px auto;
   background-color: #6246ea;
   color: #fffffe;
   border: none;
@@ -76,6 +75,12 @@ button {
   cursor: pointer;
   border-radius: 5px;
   text-decoration: none;
+  box-shadow: 0 5px #3f3473;
+}
+
+button:active {
+  transform: translateY(5px);
+  box-shadow: none;
 }
 
 *:disabled {
