@@ -4,6 +4,7 @@ import router from "next/router";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { folderDisplayNameMap } from "../utils/folderDisplayNameMap";
+import { url } from "inspector";
 
 interface QuizResult {
   id: number;
@@ -64,14 +65,6 @@ const Home = () => {
 
     fetchQuizResults();
   }, []);
-
-  useEffect(() => {
-    if (quizResults.length > 0) {
-      const randomBook =
-        quizResults[Math.floor(Math.random() * quizResults.length)].book;
-      setSelectedBook(randomBook);
-    }
-  }, [quizResults]);
 
   const getMonthRange = (date: Date) => {
     const startOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
@@ -136,6 +129,13 @@ const Home = () => {
   const top3ByCorrectAndTime = rankedByCorrectAndTime.filter(
     ({ ranking }) => ranking <= 3
   );
+  useEffect(() => {
+    if (quizResults.length > 0) {
+      const randomBook =
+        quizResults[Math.floor(Math.random() * quizResults.length)].book;
+      setSelectedBook(randomBook);
+    }
+  }, [quizResults]);
 
   const aggregatedResults = filteredResults.reduce((acc, result) => {
     const key = `${result.book}-${result.start}-${result.end}`;
@@ -231,6 +231,33 @@ const Home = () => {
     );
   };
 
+  const ghostButton = (mode: string) => {
+    const [path, setPath] = useState<string>("");
+    const [imgPath, setImgPath] = useState<string>("");
+
+    switch (mode) {
+      case "study":
+        setPath("/wordbooks?state=study");
+        setImgPath("/images/purple_ghost.png");
+      case "test":
+        setPath("/wordbooks?state=test");
+        setImgPath("/images/red_ghost.png");
+      case "ghosts":
+        setPath("/ghosts");
+        setImgPath("/images/green_ghost.png");
+      case "events":
+        setPath("/events");
+        setImgPath("/images/yellow_ghost.png");
+    }
+
+    return (
+      <div
+        className="styles.ghostButton"
+        onClick={() => router.push(path)}
+      ></div>
+    );
+  };
+
   return (
     <div className={styles.container}>
       <div className={styles.titleBox}>
@@ -243,7 +270,37 @@ const Home = () => {
         <div className={styles.titleText}>Ghost Vocab</div>
       </div>
       操作ミスで今までのデータが全部消えてしまいました．残してくれた人たちごめんなさい…
-      <div className={styles.buttons}>
+      <div className={styles.ghostButtonsBox}>
+        <div
+          className={styles.purpleGhostButton}
+          onClick={() => router.push("/wordbooks?state=study")}
+          style={{
+            backgroundImage: "url(/images/purple_ghost.png)",
+          }}
+        ></div>
+        <div
+          className={styles.redGhostButton}
+          onClick={() => router.push("/wordbooks?state=test")}
+          style={{
+            backgroundImage: "url(/images/red_ghost.png)",
+          }}
+        ></div>{" "}
+        <div
+          className={styles.greenGhostButton}
+          onClick={() => router.push("/ghosts")}
+          style={{
+            backgroundImage: "url(/images/green_ghost.png)",
+          }}
+        ></div>{" "}
+        <div
+          className={styles.yellowGhostButton}
+          onClick={() => router.push("/events")}
+          style={{
+            backgroundImage: "url(/images/yellow_ghost.png)",
+          }}
+        ></div>
+      </div>
+      {/* <div className={styles.buttons}>
         <button onClick={() => router.push("/wordbooks?state=study")}>
           練習する
         </button>
@@ -252,7 +309,7 @@ const Home = () => {
         </button>
         <button onClick={() => router.push("/ghosts")}>ゴーストと対戦</button>
         <button onClick={() => router.push("/events")}>イベント</button>
-      </div>
+      </div> */}
       <h2>月間ランキング</h2>
       {isLoading ? (
         <div>

@@ -224,3 +224,85 @@
   border-radius: 0;
   margin-left: 20px;
 }
+
+.ghostButtonsBox {
+  width: 80%;
+  max-width: 500px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 10px;
+  margin: 10px 0;
+}
+
+.purpleGhostButton {
+  border-radius: 50% 50% 0 50%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1/1;
+  width: 100%;
+  height: auto;
+  box-shadow: 0 5px #3f3473;
+}
+
+.purpleGhostButton:active {
+  transform: translateY(5px);
+  box-shadow: none;
+}
+
+.redGhostButton {
+  border-radius: 50% 50% 50% 0;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1/1;
+  width: 100%;
+  height: auto;
+  box-shadow: 0 5px #733434;
+}
+
+.redGhostButton:active {
+  transform: translateY(5px);
+  box-shadow: none;
+}
+
+.greenGhostButton {
+  border-radius: 50% 0 50% 50%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1/1;
+  width: 100%;
+  height: auto;
+  box-shadow: 0 5px #347362;
+}
+
+.greenGhostButton:active {
+  transform: translateY(5px);
+  box-shadow: none;
+}
+
+.yellowGhostButton {
+  border-radius: 0 50% 50% 50%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1/1;
+  width: 100%;
+  height: auto;
+  box-shadow: 0 5px #735734;
+}
+
+.yellowGhostButton:active {
+  transform: translateY(5px);
+  box-shadow: none;
+}
