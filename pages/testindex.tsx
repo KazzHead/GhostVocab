@@ -128,6 +128,13 @@ const Home = () => {
   const top3ByCorrectAndTime = rankedByCorrectAndTime.filter(
     ({ ranking }) => ranking <= 3
   );
+  useEffect(() => {
+    if (quizResults.length > 0) {
+      const randomBook =
+        quizResults[Math.floor(Math.random() * quizResults.length)].book;
+      setSelectedBook(randomBook);
+    }
+  }, [quizResults]);
 
   const aggregatedResults = filteredResults.reduce((acc, result) => {
     const key = `${result.book}-${result.start}-${result.end}`;

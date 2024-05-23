@@ -65,6 +65,14 @@ const Home = () => {
     fetchQuizResults();
   }, []);
 
+  useEffect(() => {
+    if (quizResults.length > 0) {
+      const randomBook =
+        quizResults[Math.floor(Math.random() * quizResults.length)].book;
+      setSelectedBook(randomBook);
+    }
+  }, [quizResults]);
+
   const getMonthRange = (date: Date) => {
     const startOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
     const endOfMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0);
