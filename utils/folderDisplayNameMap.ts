@@ -12,4 +12,5 @@ export const folderDisplayNameMap: { [key: string]: string } = {
   stock3000: "Stock3000",
   systan: "システム英単語 5訂版",
   kinhure: "金のフレーズ",
+  SPI: "SPI 単語",
 };

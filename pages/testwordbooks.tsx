@@ -5,6 +5,7 @@ import styles from "../styles/index.module.css";
 import { useRouter } from "next/router";
 import { GetStaticProps } from "next";
 import { folderDisplayNameMap } from "../utils/folderDisplayNameMap";
+import React, { useEffect, useState } from "react";
 
 interface Wordbook {
   name: string;
@@ -38,9 +39,19 @@ const Wordbooks: React.FC<WordbooksProps> = ({ wordbooks }) => {
   const { state } = router.query as {
     state: string;
   };
+  const [title, setTitle] = useState<string>("単語帳");
+
+  useEffect(() => {
+    if (state === "study") {
+      setTitle("練習する");
+    } else if (state === "test") {
+      setTitle("テストする");
+    }
+  }, [state]);
+
   return (
     <div className={styles.container}>
-      <h1>単語帳</h1>
+      <h1>{title}</h1>
       <button onClick={() => router.push("/")}>タイトルに戻る</button>
       <div className={styles.bookimages}>
         {wordbooks.map((book) => (
@@ -50,17 +61,7 @@ const Wordbooks: React.FC<WordbooksProps> = ({ wordbooks }) => {
             onClick={() =>
               router.push(`/modes?state=${state}&book=${book.name}`)
             }
-          >
-            {/* {book.displayName} */}
-          </img>
-          // <button
-          //   key={book.name}
-          //   onClick={() =>
-          //     router.push(`/modes?state=${state}&book=${book.name}`)
-          //   }
-          // >
-          //   {book.displayName}
-          // </button>
+          ></img>
         ))}
       </div>
     </div>
