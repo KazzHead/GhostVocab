@@ -3,8 +3,11 @@ git init
 git add *
 git commit -m "first commit"
 git branch -M main
-git remote add origin https://github.com/KazzHead/vocablary_test.git
+git remote add origin https://github.com/KazzHead/quiz_app.git
 git push -u origin main
+
+git config --global user.email "onlybluebookoff@gmail.com"
+git config --global user.name "KazzHead"  
 
 cd C:\Users\onlyb\quiz_app
 git add *

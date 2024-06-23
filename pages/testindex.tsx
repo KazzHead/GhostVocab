@@ -37,7 +37,8 @@ const Home = () => {
   const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>(
     {}
   );
-  const [currentMonth, setCurrentMonth] = useState<Date>(new Date(2024, 4)); // 初期値を2024年5月に設定
+  // const [currentMonth, setCurrentMonth] = useState<Date>(new Date(2024, 4));
+  const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
 
   const handleToggle = (name: string) => {
     setExpandedItems((prevState) => ({

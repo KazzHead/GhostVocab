@@ -242,7 +242,6 @@ const Home = () => {
         ></img>
         <div className={styles.titleText}>Ghost Vocab</div>
       </div>
-      操作ミスで今までのデータが全部消えてしまいました．残してくれた人たちごめんなさい…
       <div className={styles.ghostButtonsBox}>
         <div
           className={styles.purpleGhostButton}
