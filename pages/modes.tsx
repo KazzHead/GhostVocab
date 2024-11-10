@@ -53,11 +53,6 @@ const Modes: React.FC<ModesProps> = ({
   return (
     <div className={styles.container}>
       <div className={styles.titleBox}>
-        <img
-          key={bookName}
-          src={`/images/${bookName}.jpg`}
-          style={{ width: "50px" }}
-        ></img>
         <div className={styles.titleText}> {displayName}</div>
       </div>
 

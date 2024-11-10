@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-//import styles from "C:/Users/onlyb/quiz-app/styles/index.module.css";
+//import styles from "C:/Users/onlyb/quizApp/styles/index.module.css";
 import styles from "../styles/Quiz.module.css";
 import { useRouter } from "next/router";
 import { folderDisplayNameMap } from "../utils/folderDisplayNameMap";
@@ -9,20 +9,6 @@ interface Word {
   meaning: string;
   extra: string[];
 }
-
-// interface Result {
-//   name: string;
-//   book: string;
-//   mode: string;
-//   start: number;
-//   end: number;
-//   question: string;
-//   choices: string[];
-//   selectedChoice: string;
-//   isCorrect: boolean;
-//   responseTime: number;
-//   extra: string[];
-// }
 
 interface question {
   id: number;
@@ -85,16 +71,9 @@ export default function Test() {
   const [mode, setMode] = useState("");
   const [start, setStart] = useState(0);
   const [end, setEnd] = useState(0);
-  // const { book, mode, start, end } = router.query as {
-  //   book: string;
-  //   mode: string;
-  //   start: string;
-  //   end: string;
-  // };
   const [startTime, setStartTime] = useState<number>(0);
   const [countdown, setCountdown] = useState(3);
 
-  // const [quizResultId, setQuizResultId] = useState(1);
   const quizResultId = router.query.quizResultId as string;
 
   const [playerImage, setPlayerImage] = useState("/images/none.png");
@@ -139,28 +118,6 @@ export default function Test() {
       setHasStarted(true);
     }
   }, [question]);
-
-  // useEffect(() => {
-  //   console.log("----start----");
-  //   if (currentWordIndex) {
-  //     setTimeout(() => {
-  //       if (
-  //         isChoosing == true &&
-  //         gContent[currentWordIndex].isCorrect == true
-  //       ) {
-  //         console.log(
-  //           "----setColor----:",
-  //           gContent[currentWordIndex].responseTime
-  //         );
-  //         setCircleColors({
-  //           leftSmall: "#ddd",
-  //           large: "#ff8e3c",
-  //           rightSmall: "#ff8e3c",
-  //         });
-  //       }
-  //     }, gContent[currentWordIndex].responseTime);
-  //   }
-  // }, [startTime]);
 
   useEffect(() => {
     console.log("----start----");
@@ -250,22 +207,6 @@ export default function Test() {
     return array;
   }
 
-  // console.log("book:", book);
-  // console.log("mode:", mode);
-  // console.log("start:", start);
-  // console.log("end:", end);
-  // useEffect(() => {
-  //   console.log("currentWord changed");
-  // }, [currentWord]);
-  // useEffect(() => {
-  //   console.log("hasStarted changed:", hasStarted);
-  // }, [hasStarted]);
-  // useEffect(() => {
-  //   console.log("currentWordIndex changed:", currentWordIndex);
-  // }, [currentWordIndex]);
-  // useEffect(() => {
-  //   console.log("choices changed");
-  // }, [choices]);
   useEffect(() => {
     console.log("result changed:", result);
   }, [result]);
@@ -278,9 +219,7 @@ export default function Test() {
   useEffect(() => {
     console.log("gContent changed:", gContent);
   }, [gContent]);
-  // useEffect(() => {
-  //   console.log("question changed:", question);
-  // }, [question]);
+
   useEffect(() => {
     console.log("pScore changed:", pScore);
   }, [pScore]);
@@ -293,12 +232,6 @@ export default function Test() {
   useEffect(() => {
     console.log("currentWord changed:", currentWord);
   }, [currentWord]);
-  // useEffect(() => {
-  //   console.log("allWords changed:", allWords);
-  // }, [allWords]);
-  // useEffect(() => {
-  //   console.log("quizWords changed:", quizWords);
-  // }, [quizWords]);
 
   useEffect(() => {
     // 3秒カウントダウンを管理
@@ -315,22 +248,6 @@ export default function Test() {
   const handleStartQuiz = () => {
     setHasStarted(true);
   };
-
-  // useEffect(() => {
-  //   if (book && mode && start && end) {
-  //     fetch(`/api/words?book=${book}&mode=${mode}&start=${start}&end=${end}`)
-  //       .then((response) => response.json())
-  //       .then((data) => {
-  //         setAllWords(data);
-  //         const selectedIndices = new Set<number>();
-  //         while (selectedIndices.size < 10) {
-  //           selectedIndices.add(Math.floor(Math.random() * data.length));
-  //         }
-  //         setQuizWords(Array.from(selectedIndices).map((index) => data[index]));
-  //         // pickWord(0);
-  //       });
-  //   }
-  // }, [question]);
 
   useEffect(() => {
     if (countdown == 0) {
@@ -573,15 +490,6 @@ export default function Test() {
         <>
           <h1>{`${displayBookName} ${start}～${end}`}</h1>
           <p>{`${currentWordIndex + 1}/${content.length} 問目`}</p>
-          {/* <div className={styles.progressBarContainer}>
-            <div
-              className={styles.progressBar}
-              style={{
-                width: `${timerProgress}%`,
-                backgroundColor: timerProgress > 50 ? "#6246ea" : "#ff8e3c",
-              }}
-            />
-          </div> */}
           <div
             className={styles.scoresContainer}
             style={{ position: "relative" }}
@@ -671,17 +579,6 @@ export default function Test() {
           )}
         </>
       )}
-      {/* {!hasStarted && (
-        <div className={styles.fullScreen}>
-          <input
-            type="text"
-            placeholder="名前を入力してください"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          />
-          <button onClick={handleStartQuiz}>クイズを始める</button>
-        </div>
-      )} */}
       {countdown > 0 && (
         <div className={styles.fullScreen}>
           <div className={styles.countdownText}>
@@ -700,28 +597,6 @@ export default function Test() {
           </div>
         </div>
       )}
-      {/* <div className={styles.circleContainer}>
-        <div className={styles.playerNameText}>あなた</div>
-        <div
-          className={styles.circle}
-          style={{ backgroundColor: circleColors.leftSmall }}
-        >
-          <div className={`${styles.circleText}`}>+1</div>
-        </div>
-        <div
-          className={`${styles.circle} ${styles.largeCircle}`}
-          style={{ backgroundColor: circleColors.large }}
-        >
-          <div className={`${styles.circleText}`}>ボーナス+1</div>
-        </div>
-        <div
-          className={styles.circle}
-          style={{ backgroundColor: circleColors.rightSmall }}
-        >
-          <div className={`${styles.circleText}`}>+1</div>
-        </div>
-        <div className={styles.ghostNameText}>{question?.name}</div>
-      </div> */}
     </div>
   );
 }

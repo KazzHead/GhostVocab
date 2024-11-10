@@ -1,10 +1,7 @@
-import Link from "next/link";
 import styles from "../styles/index.module.css";
-import router from "next/router";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { folderDisplayNameMap } from "../utils/folderDisplayNameMap";
-import { url } from "inspector";
 
 interface QuizResult {
   id: number;
@@ -219,7 +216,7 @@ const Home = () => {
     setCurrentMonth((prev) => {
       const newDate = new Date(prev.getFullYear(), prev.getMonth() - 1);
       if (newDate < new Date(2024, 4)) {
-        return prev; // 2024年5月より前には戻さない
+        return prev;
       }
       return newDate;
     });
@@ -272,16 +269,6 @@ const Home = () => {
           }}
         ></div>
       </div>
-      {/* <div className={styles.buttons}>
-        <button onClick={() => router.push("/wordbooks?state=study")}>
-          練習する
-        </button>
-        <button onClick={() => router.push("/wordbooks?state=test")}>
-          テストする
-        </button>
-        <button onClick={() => router.push("/ghosts")}>ゴーストと対戦</button>
-        <button onClick={() => router.push("/events")}>イベント</button>
-      </div> */}
       <h2>月間ランキング</h2>
       {isLoading ? (
         <div>

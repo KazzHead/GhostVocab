@@ -5,6 +5,7 @@ export const folderDisplayNameMap: { [key: string]: string } = {
   targetj1000: "英熟語ターゲット1000  5訂版",
   LEAP: "LEAP",
   passtan4: "パス単 4級 4訂版",
+  passtan5: "パス単 5級 5訂版",
   passtan3: "パス単 3級 5訂版",
   passtanP2: "パス単 準2級 5訂版",
   passtan2: "パス単 2級 5訂版",

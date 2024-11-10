@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-//import styles from "C:/Users/onlyb/quiz-app/styles/index.module.css";
+//import styles from "C:/Users/onlyb/quizApp/styles/index.module.css";
 import styles from "../styles/Quiz.module.css";
 import { useRouter } from "next/router";
 import { folderDisplayNameMap } from "../utils/folderDisplayNameMap";

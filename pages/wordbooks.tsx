@@ -55,13 +55,14 @@ const Wordbooks: React.FC<WordbooksProps> = ({ wordbooks }) => {
       <button onClick={() => router.push("/")}>タイトルに戻る</button>
       <div className={styles.bookimages}>
         {wordbooks.map((book) => (
-          <img
+          <button
             key={book.name}
-            src={`/images/${book.name}.jpg`}
             onClick={() =>
               router.push(`/modes?state=${state}&book=${book.name}`)
             }
-          ></img>
+          >
+            {book.displayName}
+          </button>
         ))}
       </div>
     </div>
