@@ -8,9 +8,6 @@
   width: 100%;
   max-width: 800px;
   margin: auto;
-  /* display: flex;
-  flex-direction: column;
-  align-items: center; */
   text-align: left;
   text-decoration: none;
 }
@@ -219,7 +216,6 @@
 
 .powerBarWrap {
   width: 60%;
-  /* height: 30px; */
 }
 
 .powerBarContainer {
@@ -314,4 +310,53 @@
   width: 80%;
   box-sizing: border-box;
   border-radius: 5px;
+}
+
+.soundBox {
+  display: flex;
+  position: absolute;
+  padding: 10px;
+  left: 10px;
+  top: 10px;
+  align-items: center;
+  justify-content: flex-start;
+  color: black;
+  font-size: 10px;
+}
+
+.toggleButton {
+  display: inline-block;
+  position: relative;
+  width: 50px;
+  height: 30px;
+  margin-left: 5px;
+  border-radius: 50px;
+  background-color: #dddddd;
+  cursor: pointer;
+  transition: background-color 0.4s;
+}
+
+.toggleButton:has(:checked) {
+  background-color: #6246ea;
+}
+
+.toggleButton::after {
+  position: absolute;
+  top: 2px; /*(boxHeight-circleHeight)/2*/
+  left: 2px; /*(boxHeight-circleHeight)/2*/
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  box-shadow: 0 0 5px rgb(0 0 0 / 20%);
+  background-color: #fff;
+  content: "";
+  transition: left 0.4s;
+}
+
+.toggleButton:has(:checked)::after {
+  left: 22px; /*boxWidth-circleWidth-(boxHeight-circleHeight)/2*/
+}
+
+.toggleButton input {
+  display: none;
 }

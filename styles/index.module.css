@@ -173,7 +173,6 @@
   margin: 0;
 }
 
-/* Default ranking style */
 .rankDefault {
   color: #2b2c34;
 }
@@ -305,4 +304,100 @@
 .yellowGhostButton:active {
   transform: translateY(5px);
   box-shadow: none;
+}
+
+.achievementTable {
+  width: 100%;
+  font-size: 5px;
+  table-layout: fixed;
+}
+
+.achievementTable th {
+  background-color: #6246ea;
+  color: white;
+}
+
+.achievementTable tr {
+  background-color: #f5f5f5;
+}
+
+.achievementTable tr:nth-child(even) {
+  background-color: #f5f5f5;
+}
+
+.notAttempted {
+  font-size: 10px;
+  color: #2b2c34;
+}
+
+.fastest {
+  font-size: 10px;
+  background: linear-gradient(
+    45deg,
+    #dab939 0%,
+    #ffd632 45%,
+    #fee9a0 70%,
+    #daaf08 85%,
+    #daaf08 90% 100%
+  );
+  background-size: 800% 400%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  animation: gradient 5s infinite cubic-bezier(0.62, 0.28, 0.23, 0.99) both;
+}
+
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 100% 50%;
+  }
+}
+
+.attempted {
+  font-size: 10px;
+  color: #6246ea;
+}
+
+.tooltipContainer {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.tooltipContainer .tooltip {
+  visibility: hidden;
+  width: auto;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 0;
+  transition: opacity 0.3s;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.tooltipContainer:hover .tooltip {
+  visibility: visible;
+  opacity: 1;
+}
+
+.tooltipContainer .tooltip::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: black transparent transparent transparent;
 }
