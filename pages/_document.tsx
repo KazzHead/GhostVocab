@@ -29,7 +29,6 @@ export default class Document extends NextDocument {
             color="#000000"
           />
           <link rel="shortcut icon" href="/favicons/favicon.ico" />{" "}
-          <title>Ghost Vocab</title>
           <meta name="msapplication-TileColor" content="#ffffff" />
           <meta
             name="msapplication-config"
