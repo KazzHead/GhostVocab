@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import { folderDisplayNameMap } from "../utils/folderDisplayNameMap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faVolumeUp, faVolumeMute } from "@fortawesome/free-solid-svg-icons";
+import Head from "next/head";
 
 interface Word {
   word: string;
@@ -283,89 +284,94 @@ export default function Test() {
   };
 
   return (
-    <div className={styles.container}>
-      {countdown === 0 && (
-        <>
-          {mode === "EtoJ" && (
-            <div className={styles.soundBox}>
-              <FontAwesomeIcon
-                icon={isSoundOn ? faVolumeUp : faVolumeMute}
-                size="2x"
-              />
-              <label className={styles.toggleButton}>
-                <input
-                  type="checkbox"
-                  checked={isSoundOn}
-                  onChange={handleMuteChange}
+    <>
+      <Head>
+        <title>練習</title>
+      </Head>
+      <div className={styles.container}>
+        {countdown === 0 && (
+          <>
+            {mode === "EtoJ" && (
+              <div className={styles.soundBox}>
+                <FontAwesomeIcon
+                  icon={isSoundOn ? faVolumeUp : faVolumeMute}
+                  size="2x"
                 />
-              </label>
-            </div>
-          )}
-          <h1>{`${displayBookName} ${start}～${end}`}</h1>
-          <p>{`${currentWordIndex + 1}/${quizWords.length} 問目`}</p>
-          <div className={styles.progressBarContainer}>
-            <div
-              className={styles.progressBar}
-              style={{
-                width: `${timerProgress}%`,
-                backgroundColor: timerProgress > 50 ? "#6246ea" : "#ff8e3c",
-              }}
-            />
-          </div>
-          {currentWord && (
-            <>
-              <p style={{ fontSize: "18px", fontWeight: "bold" }}>
-                {`${currentWord.word}`}
-              </p>
-              <ul>
-                {choices.map((choice, index) => (
-                  <li
-                    key={index}
-                    className={getChoiceClass(choice)}
-                    onClick={() => handleChoice(choice)}
-                  >
-                    {choice}
-                  </li>
-                ))}
-              </ul>
-              <li
-                key="unknown"
-                className={styles.idk}
-                onClick={() => handleChoice("")}
-              >
-                わからない
-              </li>
-            </>
-          )}
-        </>
-      )}
-      {countdown > 0 && hasStarted && (
-        <div className={styles.fullScreen}>
-          {mode === "EtoJ" && (
-            <div className={styles.soundBox}>
-              <FontAwesomeIcon
-                icon={isSoundOn ? faVolumeUp : faVolumeMute}
-                size="2x"
+                <label className={styles.toggleButton}>
+                  <input
+                    type="checkbox"
+                    checked={isSoundOn}
+                    onChange={handleMuteChange}
+                  />
+                </label>
+              </div>
+            )}
+            <h1>{`${displayBookName} ${start}～${end}`}</h1>
+            <p>{`${currentWordIndex + 1}/${quizWords.length} 問目`}</p>
+            <div className={styles.progressBarContainer}>
+              <div
+                className={styles.progressBar}
+                style={{
+                  width: `${timerProgress}%`,
+                  backgroundColor: timerProgress > 50 ? "#6246ea" : "#ff8e3c",
+                }}
               />
-              <label className={styles.toggleButton}>
-                <input
-                  type="checkbox"
-                  checked={isSoundOn}
-                  onChange={handleMuteChange}
-                />
-              </label>
             </div>
-          )}
-          <div className={styles.countdownText}>
-            {mode === "fillBrackets"
-              ? " ( ) に入る単語を選んで！"
-              : mode === "EtoJ"
-              ? " 日本語の意味を選んで！"
-              : ""}
+            {currentWord && (
+              <>
+                <p style={{ fontSize: "18px", fontWeight: "bold" }}>
+                  {`${currentWord.word}`}
+                </p>
+                <ul>
+                  {choices.map((choice, index) => (
+                    <li
+                      key={index}
+                      className={getChoiceClass(choice)}
+                      onClick={() => handleChoice(choice)}
+                    >
+                      {choice}
+                    </li>
+                  ))}
+                </ul>
+                <li
+                  key="unknown"
+                  className={styles.idk}
+                  onClick={() => handleChoice("")}
+                >
+                  わからない
+                </li>
+              </>
+            )}
+          </>
+        )}
+        {countdown > 0 && hasStarted && (
+          <div className={styles.fullScreen}>
+            {mode === "EtoJ" && (
+              <div className={styles.soundBox}>
+                <FontAwesomeIcon
+                  icon={isSoundOn ? faVolumeUp : faVolumeMute}
+                  size="2x"
+                />
+                <label className={styles.toggleButton}>
+                  <input
+                    type="checkbox"
+                    checked={isSoundOn}
+                    onChange={handleMuteChange}
+                  />
+                </label>
+              </div>
+            )}
+            <div className={styles.countdownText}>
+              {mode === "fillBrackets"
+                ? " ( ) に入る単語を選んで！"
+                : mode === "EtoJ"
+                ? " 日本語の意味を選んで！"
+                : ""}
+            </div>
+            <div className={styles.countdownNumber}>{countdown}</div>
           </div>
-          <div className={styles.countdownNumber}>{countdown}</div>
-        </div>
-      )}
-    </div>
+        )}
+      </div>
+    </>
   );
 }

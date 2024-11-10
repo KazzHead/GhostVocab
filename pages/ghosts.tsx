@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { folderDisplayNameMap } from "../utils/folderDisplayNameMap";
 import styles from "../styles/index.module.css";
+import Head from "next/head";
 
 interface QuizResult {
   id: number;
@@ -62,57 +63,64 @@ const QuizResultsList: React.FC = () => {
   );
 
   return (
-    <div>
-      <h1>ゴースト一覧</h1>
-      <button onClick={() => router.push("/")}>タイトルに戻る</button>
-      <div className={styles.selectBox}>
-        <select
-          value={selectedName}
-          onChange={(e) => setSelectedName(e.target.value)}
-        >
-          <option value="">すべての名前</option>
-          {names.map((name) => (
-            <option key={name} value={name}>
-              {name}
-            </option>
-          ))}
-        </select>
-        <select
-          value={selectedBook}
-          onChange={(e) => setSelectedBook(e.target.value)}
-        >
-          <option value="">すべての単語帳</option>
-          {books.map((book) => (
-            <option key={book} value={book}>
-              {folderDisplayNameMap[book] || book}
-            </option>
-          ))}
-        </select>
-      </div>
-      {isLoading ? (
-        <div>
-          <h1>Loading...</h1>
+    <>
+      <head>
+        <title>ゴースト一覧</title>
+      </head>
+      <div>
+        <h1>ゴースト一覧</h1>
+        <button onClick={() => router.push("/")}>タイトルに戻る</button>
+        <div className={styles.selectBox}>
+          <select
+            value={selectedName}
+            onChange={(e) => setSelectedName(e.target.value)}
+          >
+            <option value="">すべての名前</option>
+            {names.map((name) => (
+              <option key={name} value={name}>
+                {name}
+              </option>
+            ))}
+          </select>
+          <select
+            value={selectedBook}
+            onChange={(e) => setSelectedBook(e.target.value)}
+          >
+            <option value="">すべての単語帳</option>
+            {books.map((book) => (
+              <option key={book} value={book}>
+                {folderDisplayNameMap[book] || book}
+              </option>
+            ))}
+          </select>
         </div>
-      ) : (
-        <ul>
-          {filteredResults.map((result) => (
-            <li key={result.id}>
-              <span style={{ fontSize: "20px", fontWeight: "bold" }}>
-                {result.name}
-              </span>
-              {`\n${folderDisplayNameMap[result.book]} ${result.start}～${
-                result.end
-              } \n ${formatDate(result.updatedAt)}`}
-              <button
-                onClick={() => router.push(`/battle?quizResultId=${result.id}`)}
-              >
-                このゴーストに挑戦
-              </button>
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
+        {isLoading ? (
+          <div>
+            <h1>Loading...</h1>
+          </div>
+        ) : (
+          <ul>
+            {filteredResults.map((result) => (
+              <li key={result.id}>
+                <span style={{ fontSize: "20px", fontWeight: "bold" }}>
+                  {result.name}
+                </span>
+                {`\n${folderDisplayNameMap[result.book]} ${result.start}～${
+                  result.end
+                } \n ${formatDate(result.updatedAt)}`}
+                <button
+                  onClick={() =>
+                    router.push(`/battle?quizResultId=${result.id}`)
+                  }
+                >
+                  このゴーストに挑戦
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </>
   );
 };
 

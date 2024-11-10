@@ -1,6 +1,7 @@
 import { useRouter } from "next/router";
 import "../styles/index.module.css";
 import { folderDisplayNameMap } from "../utils/folderDisplayNameMap";
+import Head from "next/head";
 
 interface content {
   question: string; // 問題文
@@ -55,39 +56,44 @@ const Results = () => {
   const { totalTime } = calculateTime(resultsArray);
 
   return (
-    <div>
-      <h1>{`${displayBookName} ${start}～${end}`}</h1>
-      <h1>
-        得点: {score} /10 {(totalTime / 1000).toFixed(1)}秒{"\n"}
-        {rank}ランク
-      </h1>
-      <p>あなたのゴーストが記録されました！</p>
-      <button
-        onClick={() =>
-          router.push(
-            `/test?book=${book}&mode=${mode}&start=${start}&end=${end}`
-          )
-        }
-      >
-        もう一度挑戦
-      </button>
-      <button
-        onClick={() =>
-          router.push(`/chapter?state=test&book=${book}&mode=${mode}`)
-        }
-      >
-        範囲選択に戻る
-      </button>
-      <ul>
-        {resultsArray.map((content, index) => (
-          <li key={index}>
-            {`${index + 1}. ${content.isCorrect ? "◯" : "✕"} ${
-              content.question
-            } \n${content.correctAnswer} ${content.extra?.join(", ")}`}
-          </li>
-        ))}
-      </ul>
-    </div>
+    <>
+      <Head>
+        <title>テスト結果</title>
+      </Head>
+      <div>
+        <h1>{`${displayBookName} ${start}～${end}`}</h1>
+        <h1>
+          得点: {score} /10 {(totalTime / 1000).toFixed(1)}秒{"\n"}
+          {rank}ランク
+        </h1>
+        <p>あなたのゴーストが記録されました！</p>
+        <button
+          onClick={() =>
+            router.push(
+              `/test?book=${book}&mode=${mode}&start=${start}&end=${end}`
+            )
+          }
+        >
+          もう一度挑戦
+        </button>
+        <button
+          onClick={() =>
+            router.push(`/chapter?state=test&book=${book}&mode=${mode}`)
+          }
+        >
+          範囲選択に戻る
+        </button>
+        <ul>
+          {resultsArray.map((content, index) => (
+            <li key={index}>
+              {`${index + 1}. ${content.isCorrect ? "◯" : "✕"} ${
+                content.question
+              } \n${content.correctAnswer} ${content.extra?.join(", ")}`}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </>
   );
 };
 

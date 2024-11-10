@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-//import styles from "C:/Users/onlyb/quiz-app/styles/index.module.css";
+import Head from "next/head";
 import styles from "../styles/Quiz.module.css";
 import { useRouter } from "next/router";
 import { folderDisplayNameMap } from "../utils/folderDisplayNameMap";
@@ -532,6 +532,9 @@ export default function Test() {
     <div className={styles.container}>
       {countdown === 0 && (
         <>
+          <Head>
+            <title>バトル</title>
+          </Head>
           {mode === "EtoJ" && (
             <div className={styles.soundBox}>
               <FontAwesomeIcon

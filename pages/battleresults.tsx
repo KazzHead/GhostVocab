@@ -1,6 +1,7 @@
 import { useRouter } from "next/router";
 import "../styles/index.module.css";
 import { folderDisplayNameMap } from "../utils/folderDisplayNameMap";
+import Head from "next/head";
 
 interface content {
   question: string; // 問題文
@@ -47,31 +48,38 @@ const Results = () => {
   const rank = calculateRank(Number(score), resultsArray);
 
   return (
-    <div>
-      <h1>{`あなた |  ${pScore} : ${gScore}  | ${gName}`}</h1>
-      <h1>
-        {parseInt(pScore) > parseInt(gScore)
-          ? `${gName} に勝利！`
-          : parseInt(pScore) == parseInt(gScore)
-          ? "引き分け"
-          : `${gName} に敗北...`}
-      </h1>
-      <button
-        onClick={() => router.push(`/battle?quizResultId=${quizResultId}`)}
-      >
-        もう一度挑戦
-      </button>
-      <button onClick={() => router.push("/ghosts")}>ゴースト選択に戻る</button>
-      <ul>
-        {resultsArray.map((content, index) => (
-          <li key={index}>
-            {`${index + 1}. ${content.isCorrect ? "◯" : "✕"} ${
-              content.question
-            } \n${content.correctAnswer} ${content.extra?.join(", ")}`}
-          </li>
-        ))}
-      </ul>
-    </div>
+    <>
+      <Head>
+        <title>バトル結果</title>
+      </Head>
+      <div>
+        <h1>{`あなた |  ${pScore} : ${gScore}  | ${gName}`}</h1>
+        <h1>
+          {parseInt(pScore) > parseInt(gScore)
+            ? `${gName} に勝利！`
+            : parseInt(pScore) == parseInt(gScore)
+            ? "引き分け"
+            : `${gName} に敗北...`}
+        </h1>
+        <button
+          onClick={() => router.push(`/battle?quizResultId=${quizResultId}`)}
+        >
+          もう一度挑戦
+        </button>
+        <button onClick={() => router.push("/ghosts")}>
+          ゴースト選択に戻る
+        </button>
+        <ul>
+          {resultsArray.map((content, index) => (
+            <li key={index}>
+              {`${index + 1}. ${content.isCorrect ? "◯" : "✕"} ${
+                content.question
+              } \n${content.correctAnswer} ${content.extra?.join(", ")}`}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </>
   );
 };
 

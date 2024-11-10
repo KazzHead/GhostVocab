@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import Link from "next/link";
+import Head from "next/head";
 import styles from "../styles/index.module.css";
 import { useRouter } from "next/router";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
@@ -51,30 +51,35 @@ const Modes: React.FC<ModesProps> = ({
 }) => {
   const router = useRouter();
   return (
-    <div className={styles.container}>
-      <div className={styles.titleBox}>
-        <div className={styles.titleText}> {displayName}</div>
-      </div>
+    <>
+      <Head>
+        <title>モード選択</title>
+      </Head>
+      <div className={styles.container}>
+        <div className={styles.titleBox}>
+          <div className={styles.titleText}> {displayName}</div>
+        </div>
 
-      <button onClick={() => router.push(`/wordbooks?state=${state}`)}>
-        単語帳選択に戻る
-      </button>
-      {modes.map((mode) => (
-        <button
-          key={mode.name.replace(".csv", "")}
-          onClick={() =>
-            router.push(
-              `/chapter?state=${state}&book=${bookName}&mode=${mode.name.replace(
-                ".csv",
-                ""
-              )}`
-            )
-          }
-        >
-          {mode.displayName}
+        <button onClick={() => router.push(`/wordbooks?state=${state}`)}>
+          単語帳選択に戻る
         </button>
-      ))}
-    </div>
+        {modes.map((mode) => (
+          <button
+            key={mode.name.replace(".csv", "")}
+            onClick={() =>
+              router.push(
+                `/chapter?state=${state}&book=${bookName}&mode=${mode.name.replace(
+                  ".csv",
+                  ""
+                )}`
+              )
+            }
+          >
+            {mode.displayName}
+          </button>
+        ))}
+      </div>
+    </>
   );
 };
 

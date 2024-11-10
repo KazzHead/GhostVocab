@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import Link from "next/link";
+import Head from "next/head";
 import styles from "../styles/index.module.css";
 import { useRouter } from "next/router";
 import { GetStaticProps } from "next";
@@ -50,22 +50,27 @@ const Wordbooks: React.FC<WordbooksProps> = ({ wordbooks }) => {
   }, [state]);
 
   return (
-    <div className={styles.container}>
-      <h1>{title}</h1>
-      <button onClick={() => router.push("/")}>タイトルに戻る</button>
-      <div className={styles.bookimages}>
-        {wordbooks.map((book) => (
-          <button
-            key={book.name}
-            onClick={() =>
-              router.push(`/modes?state=${state}&book=${book.name}`)
-            }
-          >
-            {book.displayName}
-          </button>
-        ))}
+    <>
+      <Head>
+        <title>単語帳選択</title>
+      </Head>
+      <div className={styles.container}>
+        <h1>{title}</h1>
+        <button onClick={() => router.push("/")}>タイトルに戻る</button>
+        <div className={styles.bookimages}>
+          {wordbooks.map((book) => (
+            <button
+              key={book.name}
+              onClick={() =>
+                router.push(`/modes?state=${state}&book=${book.name}`)
+              }
+            >
+              {book.displayName}
+            </button>
+          ))}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

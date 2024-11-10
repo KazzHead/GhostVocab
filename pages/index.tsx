@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Head from "next/head";
 import styles from "../styles/index.module.css";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
@@ -410,195 +410,200 @@ const Home = () => {
   };
 
   return (
-    <div className={styles.container}>
-      <div className={styles.titleBox}>
-        <img
-          src="/images/outlined_ghost.png"
-          style={{
-            width: "30px",
-          }}
-        ></img>
-        <div className={styles.titleText}>Ghost Vocab</div>
-      </div>
-      <div className={styles.ghostButtonsBox}>
-        <div
-          className={styles.purpleGhostButton}
-          onClick={() => router.push("/wordbooks?state=study")}
-          style={{
-            backgroundImage: "url(/images/purple_ghost.png)",
-          }}
-        ></div>
-        <div
-          className={styles.redGhostButton}
-          onClick={() => router.push("/wordbooks?state=test")}
-          style={{
-            backgroundImage: "url(/images/red_ghost.png)",
-          }}
-        ></div>{" "}
-        <div
-          className={styles.greenGhostButton}
-          onClick={() => router.push("/ghosts")}
-          style={{
-            backgroundImage: "url(/images/green_ghost.png)",
-          }}
-        ></div>{" "}
-        <div
-          className={styles.yellowGhostButton}
-          onClick={() => router.push("/events")}
-          style={{
-            backgroundImage: "url(/images/yellow_ghost.png)",
-          }}
-        ></div>
-      </div>
-      <h2>月間ランキング</h2>
-
-      {isLoading ? (
-        <div>
-          <h1>Loading...</h1>
+    <>
+      <Head>
+        <title>Ghost Vocab</title>
+      </Head>
+      <div className={styles.container}>
+        <div className={styles.titleBox}>
+          <img
+            src="/images/outlined_ghost.png"
+            style={{
+              width: "30px",
+            }}
+          ></img>
+          <div className={styles.titleText}>Ghost Vocab</div>
         </div>
-      ) : (
-        <div>
-          <div className={styles.monthControls}>
-            <div
-              className={styles.leftTriangle}
-              onClick={handlePreviousMonth}
-            ></div>
-            <span>
-              {currentMonth.toLocaleString("ja-JP", {
-                year: "numeric",
-                month: "long",
-              })}
-            </span>
-            <div
-              className={styles.rightTriangle}
-              onClick={handleNextMonth}
-            ></div>
-          </div>
-          <div className={styles.selectBox}>
-            <div className={styles.rankingSelectBox}>
-              <select
-                value={selectedBook}
-                onChange={(e) => setSelectedBook(e.target.value)}
-              >
-                <option value="">すべての単語帳</option>
-                {books.map((book) => (
-                  <option key={book} value={book}>
-                    {folderDisplayNameMap[book] || book}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
+        <div className={styles.ghostButtonsBox}>
+          <div
+            className={styles.purpleGhostButton}
+            onClick={() => router.push("/wordbooks?state=study")}
+            style={{
+              backgroundImage: "url(/images/purple_ghost.png)",
+            }}
+          ></div>
+          <div
+            className={styles.redGhostButton}
+            onClick={() => router.push("/wordbooks?state=test")}
+            style={{
+              backgroundImage: "url(/images/red_ghost.png)",
+            }}
+          ></div>{" "}
+          <div
+            className={styles.greenGhostButton}
+            onClick={() => router.push("/ghosts")}
+            style={{
+              backgroundImage: "url(/images/green_ghost.png)",
+            }}
+          ></div>{" "}
+          <div
+            className={styles.yellowGhostButton}
+            onClick={() => router.push("/events")}
+            style={{
+              backgroundImage: "url(/images/yellow_ghost.png)",
+            }}
+          ></div>
+        </div>
+        <h2>月間ランキング</h2>
 
-          {users.length > 0 && ranges.length > 0 ? (
-            <table className={styles.achievementTable}>
-              <thead>
-                <tr>
-                  <th>ユーザー</th>
-                  {ranges.map((range) => (
-                    <th key={range}>{range}</th>
+        {isLoading ? (
+          <div>
+            <h1>Loading...</h1>
+          </div>
+        ) : (
+          <div>
+            <div className={styles.monthControls}>
+              <div
+                className={styles.leftTriangle}
+                onClick={handlePreviousMonth}
+              ></div>
+              <span>
+                {currentMonth.toLocaleString("ja-JP", {
+                  year: "numeric",
+                  month: "long",
+                })}
+              </span>
+              <div
+                className={styles.rightTriangle}
+                onClick={handleNextMonth}
+              ></div>
+            </div>
+            <div className={styles.selectBox}>
+              <div className={styles.rankingSelectBox}>
+                <select
+                  value={selectedBook}
+                  onChange={(e) => setSelectedBook(e.target.value)}
+                >
+                  <option value="">すべての単語帳</option>
+                  {books.map((book) => (
+                    <option key={book} value={book}>
+                      {folderDisplayNameMap[book] || book}
+                    </option>
                   ))}
-                </tr>
-              </thead>
-              <tbody>
-                {users.map((user) => (
-                  <tr key={user}>
-                    <td>{user}</td>
+                </select>
+              </div>
+            </div>
+
+            {users.length > 0 && ranges.length > 0 ? (
+              <table className={styles.achievementTable}>
+                <thead>
+                  <tr>
+                    <th>ユーザー</th>
                     {ranges.map((range) => (
-                      <td key={range} style={{ textAlign: "center" }}>
-                        {userRangeMap[user][range] === "fastest" ||
-                        userRangeMap[user][range] === "attempted" ? (
-                          <div className={styles.tooltipContainer}>
-                            <span
-                              className={
-                                userRangeMap[user][range] === "fastest"
-                                  ? styles.fastest
-                                  : styles.attempted
-                              }
-                            >
-                              {userRangeMap[user][range] === "fastest"
-                                ? "★"
-                                : "●"}
-                            </span>
-                            <div className={styles.tooltip}>
-                              {getTimeForUserRange(user, range)
-                                ? `${(
-                                    getTimeForUserRange(user, range)! / 1000
-                                  ).toFixed(1)}秒`
-                                : "-"}
-                            </div>
-                          </div>
-                        ) : userRangeMap[user][range] === "notAttempted" ? (
-                          <span className={styles.notAttempted}>-</span>
-                        ) : (
-                          "-"
-                        )}
-                      </td>
+                      <th key={range}>{range}</th>
                     ))}
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          ) : (
-            ""
-          )}
+                </thead>
+                <tbody>
+                  {users.map((user) => (
+                    <tr key={user}>
+                      <td>{user}</td>
+                      {ranges.map((range) => (
+                        <td key={range} style={{ textAlign: "center" }}>
+                          {userRangeMap[user][range] === "fastest" ||
+                          userRangeMap[user][range] === "attempted" ? (
+                            <div className={styles.tooltipContainer}>
+                              <span
+                                className={
+                                  userRangeMap[user][range] === "fastest"
+                                    ? styles.fastest
+                                    : styles.attempted
+                                }
+                              >
+                                {userRangeMap[user][range] === "fastest"
+                                  ? "★"
+                                  : "●"}
+                              </span>
+                              <div className={styles.tooltip}>
+                                {getTimeForUserRange(user, range)
+                                  ? `${(
+                                      getTimeForUserRange(user, range)! / 1000
+                                    ).toFixed(1)}秒`
+                                  : "-"}
+                              </div>
+                            </div>
+                          ) : userRangeMap[user][range] === "notAttempted" ? (
+                            <span className={styles.notAttempted}>-</span>
+                          ) : (
+                            "-"
+                          )}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            ) : (
+              ""
+            )}
 
-          <h3>合計解答時間ランキング</h3>
-          <ul>
-            {top3ByCorrectAndTime.map((result) => {
-              const { correctCount, totalTime } = calculateResults(
-                result.contents
-              );
-              return (
-                <div
-                  key={result.id}
-                  className={getRankClassName(result.ranking)}
-                >
-                  <li>
-                    <div>
-                      <span>
-                        {result.ranking}位 {result.name} {correctCount}点{" "}
-                        {(totalTime / 1000).toFixed(1)}秒
-                      </span>
-                      {"\n"}
-                      {folderDisplayNameMap[result.book]} {result.start}～
-                      {result.end}
-                    </div>
-                  </li>
-                </div>
-              );
-            })}
-          </ul>
-          <h3>1位取得数ランキング</h3>
-          <ul style={{ listStyleType: "none", paddingLeft: 0 }}>
-            {firstRanking
-              .filter(({ rank }) => rank <= 3)
-              .map(({ rank, name, bookStartEnds }) => (
-                <div
-                  key={name}
-                  className={getRankClassName(rank)}
-                  onClick={() => handleToggle(name)}
-                >
-                  <li>
-                    <div>
-                      <span>
-                        {rank}位 {name} {bookStartEnds.length}冠
-                      </span>
-                      {expandedItems[name] && (
-                        <ul>
-                          {bookStartEnds.map((bookStartEnd, index) => (
-                            <li key={index}>{bookStartEnd}</li>
-                          ))}
-                        </ul>
-                      )}
-                    </div>
-                  </li>
-                </div>
-              ))}
-          </ul>
-        </div>
-      )}
-    </div>
+            <h3>合計解答時間ランキング</h3>
+            <ul>
+              {top3ByCorrectAndTime.map((result) => {
+                const { correctCount, totalTime } = calculateResults(
+                  result.contents
+                );
+                return (
+                  <div
+                    key={result.id}
+                    className={getRankClassName(result.ranking)}
+                  >
+                    <li>
+                      <div>
+                        <span>
+                          {result.ranking}位 {result.name} {correctCount}点{" "}
+                          {(totalTime / 1000).toFixed(1)}秒
+                        </span>
+                        {"\n"}
+                        {folderDisplayNameMap[result.book]} {result.start}～
+                        {result.end}
+                      </div>
+                    </li>
+                  </div>
+                );
+              })}
+            </ul>
+            <h3>1位取得数ランキング</h3>
+            <ul style={{ listStyleType: "none", paddingLeft: 0 }}>
+              {firstRanking
+                .filter(({ rank }) => rank <= 3)
+                .map(({ rank, name, bookStartEnds }) => (
+                  <div
+                    key={name}
+                    className={getRankClassName(rank)}
+                    onClick={() => handleToggle(name)}
+                  >
+                    <li>
+                      <div>
+                        <span>
+                          {rank}位 {name} {bookStartEnds.length}冠
+                        </span>
+                        {expandedItems[name] && (
+                          <ul>
+                            {bookStartEnds.map((bookStartEnd, index) => (
+                              <li key={index}>{bookStartEnd}</li>
+                            ))}
+                          </ul>
+                        )}
+                      </div>
+                    </li>
+                  </div>
+                ))}
+            </ul>
+          </div>
+        )}
+      </div>
+    </>
   );
 };
 

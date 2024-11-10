@@ -5,6 +5,7 @@ import router, { useRouter } from "next/router";
 import { folderDisplayNameMap } from "../utils/folderDisplayNameMap";
 import { fileDisplayNameMap } from "../utils/fileDisplayNameMap";
 import styles from "../styles/index.module.css";
+import Head from "next/head";
 
 interface ChapterProps {
   state: string;
@@ -71,24 +72,29 @@ const Chapter: React.FC<ChapterProps> = ({
   };
 
   return (
-    <div className={styles.container}>
-      <h1>{`${displayBookName} \n${displayModeName}`}</h1>
-      <button
-        onClick={() => router.push(`/modes?state=${state}&book=${bookName}`)}
-      >
-        モード選択に戻る
-      </button>
-      <div className={styles.buttons}>
-        {ranges.map((range, index) => (
-          <button
-            key={index}
-            onClick={() => handleRangeClick(range.start, range.end)}
-          >
-            {`${range.start}～${range.end}`}
-          </button>
-        ))}
+    <>
+      <Head>
+        <title>範囲選択</title>
+      </Head>
+      <div className={styles.container}>
+        <h1>{`${displayBookName} \n${displayModeName}`}</h1>
+        <button
+          onClick={() => router.push(`/modes?state=${state}&book=${bookName}`)}
+        >
+          モード選択に戻る
+        </button>
+        <div className={styles.buttons}>
+          {ranges.map((range, index) => (
+            <button
+              key={index}
+              onClick={() => handleRangeClick(range.start, range.end)}
+            >
+              {`${range.start}～${range.end}`}
+            </button>
+          ))}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
