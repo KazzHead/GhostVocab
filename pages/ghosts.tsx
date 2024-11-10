@@ -64,9 +64,9 @@ const QuizResultsList: React.FC = () => {
 
   return (
     <>
-      <head>
+      <Head>
         <title>ゴースト一覧</title>
-      </head>
+      </Head>
       <div>
         <h1>ゴースト一覧</h1>
         <button onClick={() => router.push("/")}>タイトルに戻る</button>
