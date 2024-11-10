@@ -1,3 +1,4 @@
+import Link from "next/link";
 import styles from "../styles/index.module.css";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
@@ -25,16 +26,20 @@ interface RankingEntry {
   bookStartEnds: string[];
 }
 
+interface RankedQuizResult extends QuizResult {
+  ranking: number;
+}
+
 const Home = () => {
   const router = useRouter();
   const [quizResults, setQuizResults] = useState<QuizResult[]>([]);
-  const [selectedName, setSelectedName] = useState<string>("");
   const [selectedBook, setSelectedBook] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>(
     {}
   );
-  const [currentMonth, setCurrentMonth] = useState<Date>(new Date(2024, 4)); // 初期値を2024年5月に設定
+  const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
+  const [bookWordCount, setBookWordCount] = useState<number>(0);
 
   const handleToggle = (name: string) => {
     setExpandedItems((prevState) => ({
@@ -63,6 +68,33 @@ const Home = () => {
     fetchQuizResults();
   }, []);
 
+  // 選択された単語帳の単語数を取得
+  useEffect(() => {
+    const fetchBookWordCount = async () => {
+      if (selectedBook === "") {
+        setBookWordCount(0);
+        return;
+      }
+
+      try {
+        const response = await fetch(`/wordbooks/${selectedBook}/EtoJ.csv`);
+        if (response.ok) {
+          const csvText = await response.text();
+          const lineCount = csvText.trim().split("\n").length;
+          setBookWordCount(lineCount);
+        } else {
+          console.error("Failed to fetch CSV file");
+          setBookWordCount(0);
+        }
+      } catch (error) {
+        console.error("An error occurred while fetching CSV:", error);
+        setBookWordCount(0);
+      }
+    };
+
+    fetchBookWordCount();
+  }, [selectedBook]);
+
   const getMonthRange = (date: Date) => {
     const startOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
     const endOfMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0);
@@ -77,20 +109,7 @@ const Home = () => {
       new Date(result.updatedAt) <= endOfMonth
   );
 
-  const names = [...new Set(monthlyQuizResults.map((result) => result.name))];
   const books = [...new Set(monthlyQuizResults.map((result) => result.book))];
-
-  const formatDate = (dateString: any) => {
-    const date = new Date(dateString);
-    return date.toLocaleString("ja-JP", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: false,
-    });
-  };
 
   const calculateResults = (contents: Contents[]) => {
     if (!contents) {
@@ -105,12 +124,57 @@ const Home = () => {
   };
 
   const filteredResults = monthlyQuizResults.filter(
-    (result) =>
-      (selectedName === "" || result.name === selectedName) &&
-      (selectedBook === "" || result.book === selectedBook)
+    (result) => selectedBook === "" || result.book === selectedBook
   );
 
-  const sortedByCorrectAndTime = [...filteredResults].sort((a, b) => {
+  // ユーザーと範囲ごとのタイムデータを保持
+  const userRangeTimes: Record<
+    string,
+    Record<string, { totalTime: number; correctCount: number }>
+  > = {};
+
+  // 各ユーザーのベスト記録を取得
+  const bestResultsByName: Record<string, QuizResult> = {};
+  filteredResults.forEach((result) => {
+    const name = result.name;
+    const resultStats = calculateResults(result.contents);
+
+    // ユーザーと範囲ごとのタイムを格納
+    const range = `${result.start}～${result.end}`;
+    if (!userRangeTimes[name]) {
+      userRangeTimes[name] = {};
+    }
+    if (
+      !userRangeTimes[name][range] ||
+      resultStats.correctCount > userRangeTimes[name][range].correctCount ||
+      (resultStats.correctCount === userRangeTimes[name][range].correctCount &&
+        resultStats.totalTime < userRangeTimes[name][range].totalTime)
+    ) {
+      userRangeTimes[name][range] = {
+        totalTime: resultStats.totalTime,
+        correctCount: resultStats.correctCount,
+      };
+    }
+
+    if (!bestResultsByName[name]) {
+      bestResultsByName[name] = result;
+    } else {
+      const currentBestStats = calculateResults(
+        bestResultsByName[name].contents
+      );
+      if (
+        resultStats.correctCount > currentBestStats.correctCount ||
+        (resultStats.correctCount === currentBestStats.correctCount &&
+          resultStats.totalTime < currentBestStats.totalTime)
+      ) {
+        bestResultsByName[name] = result;
+      }
+    }
+  });
+
+  const uniqueBestResults = Object.values(bestResultsByName);
+
+  const sortedBestResults = uniqueBestResults.sort((a, b) => {
     const aResults = calculateResults(a.contents);
     const bResults = calculateResults(b.contents);
     if (aResults.correctCount === bResults.correctCount) {
@@ -119,51 +183,79 @@ const Home = () => {
     return bResults.correctCount - aResults.correctCount;
   });
 
-  const rankedByCorrectAndTime = sortedByCorrectAndTime.map((result, index) => {
-    return { ranking: index + 1, ...result };
+  // ランキングを計算（同点・同タイムの場合は同順位）
+  const rankedResults: RankedQuizResult[] = [];
+  let currentRank = 1;
+
+  sortedBestResults.forEach((result, index) => {
+    const resultStats = calculateResults(result.contents);
+    if (index > 0) {
+      const prevResultStats = calculateResults(
+        sortedBestResults[index - 1].contents
+      );
+      if (
+        resultStats.correctCount === prevResultStats.correctCount &&
+        resultStats.totalTime === prevResultStats.totalTime
+      ) {
+        // 同点・同タイムの場合、currentRankを更新しない
+      } else {
+        currentRank = index + 1;
+      }
+    }
+    const rankedResult: RankedQuizResult = {
+      ...result,
+      ranking: currentRank,
+    };
+    rankedResults.push(rankedResult);
   });
 
-  const top3ByCorrectAndTime = rankedByCorrectAndTime.filter(
+  const top3ByCorrectAndTime = rankedResults.filter(
     ({ ranking }) => ranking <= 3
   );
-  useEffect(() => {
-    if (quizResults.length > 0) {
-      const randomBook =
-        quizResults[Math.floor(Math.random() * quizResults.length)].book;
-      setSelectedBook(randomBook);
-    }
-  }, [quizResults]);
 
-  const aggregatedResults = filteredResults.reduce((acc, result) => {
-    const key = `${result.book}-${result.start}-${result.end}`;
+  const aggregatedResults = filteredResults.reduce(
+    (acc, result) => {
+      const key = `${result.book}-${result.start}-${result.end}`;
 
-    if (!acc[key]) {
-      acc[key] = {
-        name: result.name,
-        book: result.book,
-        start: result.start,
-        end: result.end,
-        ...calculateResults(result.contents),
-      };
-    } else {
-      const currentBest = acc[key];
-      const newResult = calculateResults(result.contents);
-      if (
-        newResult.correctCount > currentBest.correctCount ||
-        (newResult.correctCount === currentBest.correctCount &&
-          newResult.totalTime < currentBest.totalTime)
-      ) {
+      if (!acc[key]) {
         acc[key] = {
           name: result.name,
           book: result.book,
           start: result.start,
           end: result.end,
-          ...newResult,
+          ...calculateResults(result.contents),
         };
+      } else {
+        const currentBest = acc[key];
+        const newResult = calculateResults(result.contents);
+        if (
+          newResult.correctCount > currentBest.correctCount ||
+          (newResult.correctCount === currentBest.correctCount &&
+            newResult.totalTime < currentBest.totalTime)
+        ) {
+          acc[key] = {
+            name: result.name,
+            book: result.book,
+            start: result.start,
+            end: result.end,
+            ...newResult,
+          };
+        }
       }
-    }
-    return acc;
-  }, {} as Record<string, { name: string; book: string; start: number; end: number; correctCount: number; totalTime: number }>);
+      return acc;
+    },
+    {} as Record<
+      string,
+      {
+        name: string;
+        book: string;
+        start: number;
+        end: number;
+        correctCount: number;
+        totalTime: number;
+      }
+    >
+  );
 
   const firstPlaceCounts = Object.values(aggregatedResults).reduce(
     (acc, { name, book, start, end }) => {
@@ -180,10 +272,8 @@ const Home = () => {
     ([, a], [, b]) => b.length - a.length
   );
 
-  const ranking: RankingEntry[] = [];
-  const timeRanking: RankingEntry[] = [];
   const firstRanking: RankingEntry[] = [];
-  let currentRank = 1;
+  currentRank = 1;
 
   sortedFirstPlaceCounts.forEach(([name, bookStartEnds], index, array) => {
     if (index > 0 && bookStartEnds.length === array[index - 1][1].length) {
@@ -199,7 +289,6 @@ const Home = () => {
   });
 
   const getRankClassName = (rank: number) => {
-    console.log("rank", rank);
     switch (rank) {
       case 1:
         return styles.rank1;
@@ -223,9 +312,101 @@ const Home = () => {
   };
 
   const handleNextMonth = () => {
-    setCurrentMonth(
-      (prev) => new Date(prev.getFullYear(), prev.getMonth() + 1)
-    );
+    setCurrentMonth((prev) => {
+      const newDate = new Date(prev.getFullYear(), prev.getMonth() + 1);
+      const now = new Date();
+      const currentMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+      if (newDate > currentMonthStart) {
+        return prev;
+      }
+      return newDate;
+    });
+  };
+
+  // ユーザーと範囲のリストを取得
+  const users = [...new Set(filteredResults.map((result) => result.name))];
+
+  // 全ての範囲を生成
+  const ranges: string[] = [];
+  const rangeSize = 100; // 範囲のサイズ
+  if (bookWordCount > 0 && selectedBook !== "") {
+    for (let i = 0; i < bookWordCount; i += rangeSize) {
+      const start = i + 1;
+      const end = Math.min(i + rangeSize, bookWordCount);
+      ranges.push(`${start}～${end}`);
+    }
+  }
+
+  // 各範囲ごとに最速タイムのユーザーを特定
+  const fastestResultsByRange: Record<
+    string,
+    { name: string; totalTime: number; correctCount: number }
+  > = {};
+
+  filteredResults.forEach((result) => {
+    const range = `${result.start}～${result.end}`;
+    const { totalTime, correctCount } = calculateResults(result.contents);
+
+    if (!fastestResultsByRange[range]) {
+      fastestResultsByRange[range] = {
+        name: result.name,
+        totalTime,
+        correctCount,
+      };
+    } else {
+      const currentFastest = fastestResultsByRange[range];
+      if (
+        correctCount > currentFastest.correctCount ||
+        (correctCount === currentFastest.correctCount &&
+          totalTime < currentFastest.totalTime)
+      ) {
+        fastestResultsByRange[range] = {
+          name: result.name,
+          totalTime,
+          correctCount,
+        };
+      }
+    }
+  });
+
+  // ユーザーごとの取り組んだ範囲をマッピング
+  const userRangeMap: Record<
+    string,
+    Record<string, "fastest" | "attempted" | "notAttempted">
+  > = {};
+
+  // ユーザーごとに初期化
+  users.forEach((user) => {
+    userRangeMap[user] = {};
+    ranges.forEach((range) => {
+      userRangeMap[user][range] = "notAttempted"; // 初期値を 'notAttempted'
+    });
+  });
+
+  // ユーザーごとの状態を設定
+  filteredResults.forEach((result) => {
+    const user = result.name;
+    const range = `${result.start}～${result.end}`;
+    if (userRangeMap[user] && userRangeMap[user][range] !== undefined) {
+      const fastestResult = fastestResultsByRange[range];
+      if (fastestResult && fastestResult.name === user) {
+        userRangeMap[user][range] = "fastest";
+      } else {
+        userRangeMap[user][range] = "attempted";
+      }
+    }
+  });
+
+  // ユーザーと範囲からタイムを取得する関数を追加
+  const getTimeForUserRange = (user: string, range: string) => {
+    if (
+      userRangeTimes[user] &&
+      userRangeTimes[user][range] &&
+      userRangeTimes[user][range].totalTime
+    ) {
+      return userRangeTimes[user][range].totalTime;
+    }
+    return null;
   };
 
   return (
@@ -270,6 +451,7 @@ const Home = () => {
         ></div>
       </div>
       <h2>月間ランキング</h2>
+
       {isLoading ? (
         <div>
           <h1>Loading...</h1>
@@ -307,6 +489,60 @@ const Home = () => {
               </select>
             </div>
           </div>
+
+          {users.length > 0 && ranges.length > 0 ? (
+            <table className={styles.achievementTable}>
+              <thead>
+                <tr>
+                  <th>ユーザー</th>
+                  {ranges.map((range) => (
+                    <th key={range}>{range}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {users.map((user) => (
+                  <tr key={user}>
+                    <td>{user}</td>
+                    {ranges.map((range) => (
+                      <td key={range} style={{ textAlign: "center" }}>
+                        {userRangeMap[user][range] === "fastest" ||
+                        userRangeMap[user][range] === "attempted" ? (
+                          <div className={styles.tooltipContainer}>
+                            <span
+                              className={
+                                userRangeMap[user][range] === "fastest"
+                                  ? styles.fastest
+                                  : styles.attempted
+                              }
+                            >
+                              {userRangeMap[user][range] === "fastest"
+                                ? "★"
+                                : "●"}
+                            </span>
+                            <div className={styles.tooltip}>
+                              {getTimeForUserRange(user, range)
+                                ? `${(
+                                    getTimeForUserRange(user, range)! / 1000
+                                  ).toFixed(1)}秒`
+                                : "-"}
+                            </div>
+                          </div>
+                        ) : userRangeMap[user][range] === "notAttempted" ? (
+                          <span className={styles.notAttempted}>-</span>
+                        ) : (
+                          "-"
+                        )}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            ""
+          )}
+
           <h3>合計解答時間ランキング</h3>
           <ul>
             {top3ByCorrectAndTime.map((result) => {
@@ -321,12 +557,12 @@ const Home = () => {
                   <li>
                     <div>
                       <span>
-                        {result.ranking}位 {result.name}{" "}
+                        {result.ranking}位 {result.name} {correctCount}点{" "}
                         {(totalTime / 1000).toFixed(1)}秒
                       </span>
                       {"\n"}
                       {folderDisplayNameMap[result.book]} {result.start}～
-                      {result.end} {correctCount}点
+                      {result.end}
                     </div>
                   </li>
                 </div>
@@ -339,7 +575,7 @@ const Home = () => {
               .filter(({ rank }) => rank <= 3)
               .map(({ rank, name, bookStartEnds }) => (
                 <div
-                  key="ranking"
+                  key={name}
                   className={getRankClassName(rank)}
                   onClick={() => handleToggle(name)}
                 >

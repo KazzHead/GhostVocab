@@ -1,8 +1,10 @@
 import { useState, useEffect, useRef } from "react";
-//import styles from "C:/Users/onlyb/quizApp/styles/index.module.css";
+//import styles from "C:/Users/onlyb/quiz-app/styles/index.module.css";
 import styles from "../styles/Quiz.module.css";
 import { useRouter } from "next/router";
 import { folderDisplayNameMap } from "../utils/folderDisplayNameMap";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faVolumeUp, faVolumeMute } from "@fortawesome/free-solid-svg-icons";
 
 interface Word {
   word: string;
@@ -71,9 +73,16 @@ export default function Test() {
   const [mode, setMode] = useState("");
   const [start, setStart] = useState(0);
   const [end, setEnd] = useState(0);
+  // const { book, mode, start, end } = router.query as {
+  //   book: string;
+  //   mode: string;
+  //   start: string;
+  //   end: string;
+  // };
   const [startTime, setStartTime] = useState<number>(0);
   const [countdown, setCountdown] = useState(3);
 
+  // const [quizResultId, setQuizResultId] = useState(1);
   const quizResultId = router.query.quizResultId as string;
 
   const [playerImage, setPlayerImage] = useState("/images/none.png");
@@ -87,7 +96,14 @@ export default function Test() {
 
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
+  const [isSoundOn, setisSoundOn] = useState(false);
+
   const displayBookName = folderDisplayNameMap[book];
+
+  let synth: SpeechSynthesis | null = null;
+  if (typeof window !== "undefined") {
+    synth = window.speechSynthesis;
+  }
 
   useEffect(() => {
     const fetchQuizResult = async () => {
@@ -219,7 +235,9 @@ export default function Test() {
   useEffect(() => {
     console.log("gContent changed:", gContent);
   }, [gContent]);
-
+  // useEffect(() => {
+  //   console.log("question changed:", question);
+  // }, [question]);
   useEffect(() => {
     console.log("pScore changed:", pScore);
   }, [pScore]);
@@ -349,6 +367,10 @@ export default function Test() {
     return "A";
   };
 
+  function handleMuteChange(event: React.ChangeEvent<HTMLInputElement>) {
+    setisSoundOn(event.target.checked);
+  }
+
   const handleChoice = (choice: string) => {
     if (!isChoosing) return;
 
@@ -446,6 +468,28 @@ export default function Test() {
       setScore(score + 1);
     }
 
+    if (currentWord && isSoundOn && synth) {
+      const utterThis = new SpeechSynthesisUtterance(currentWord.word);
+
+      var voices = synth.getVoices();
+
+      const targetVoice = voices.find(
+        (voice) => voice.name === "Karen" || voice.name === "Google US English"
+      );
+      if (targetVoice) {
+        utterThis.voice = targetVoice;
+        console.log(
+          `Using specified voice: ${targetVoice.name} (${targetVoice.lang})`
+        );
+      } else {
+        console.warn(
+          "指定された英語の音声が見つかりませんでした。デフォルトの音声を使用します。"
+        );
+      }
+      utterThis.lang = "en-US";
+      synth.speak(utterThis);
+    }
+
     const nextIndex = currentWordIndex + 1;
     if (nextIndex < content.length) {
       setTimeout(() => {
@@ -488,8 +532,24 @@ export default function Test() {
     <div className={styles.container}>
       {countdown === 0 && (
         <>
+          {mode === "EtoJ" && (
+            <div className={styles.soundBox}>
+              <FontAwesomeIcon
+                icon={isSoundOn ? faVolumeUp : faVolumeMute}
+                size="2x"
+              />
+              <label className={styles.toggleButton}>
+                <input
+                  type="checkbox"
+                  checked={isSoundOn}
+                  onChange={handleMuteChange}
+                />
+              </label>
+            </div>
+          )}
           <h1>{`${displayBookName} ${start}～${end}`}</h1>
           <p>{`${currentWordIndex + 1}/${content.length} 問目`}</p>
+
           <div
             className={styles.scoresContainer}
             style={{ position: "relative" }}
@@ -528,7 +588,6 @@ export default function Test() {
                       ? (gScore * 100) / (pScore + gScore)
                       : 50
                   }%`,
-                  // height: gScore > pScore ? "15px" : "10px",
                 }}
               >
                 <div className={styles.scoreLabelGhost}>{gScore}点</div>
@@ -579,8 +638,24 @@ export default function Test() {
           )}
         </>
       )}
+
       {countdown > 0 && (
         <div className={styles.fullScreen}>
+          {mode === "EtoJ" && (
+            <div className={styles.soundBox}>
+              <FontAwesomeIcon
+                icon={isSoundOn ? faVolumeUp : faVolumeMute}
+                size="2x"
+              />
+              <label className={styles.toggleButton}>
+                <input
+                  type="checkbox"
+                  checked={isSoundOn}
+                  onChange={handleMuteChange}
+                />
+              </label>
+            </div>
+          )}
           <div className={styles.countdownText}>
             {`相手より早く正解で+2点\n正解で+1点\n\n`}
             {mode === "fillBrackets"

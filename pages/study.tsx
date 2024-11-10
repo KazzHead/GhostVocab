@@ -1,28 +1,15 @@
 import { useState, useEffect, useRef } from "react";
-//import styles from "C:/Users/onlyb/quizApp/styles/index.module.css";
 import styles from "../styles/Quiz.module.css";
 import { useRouter } from "next/router";
 import { folderDisplayNameMap } from "../utils/folderDisplayNameMap";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faVolumeUp, faVolumeMute } from "@fortawesome/free-solid-svg-icons";
 
 interface Word {
   word: string;
   meaning: string;
   extra: string[];
 }
-
-// interface Result {
-//   name: string;
-//   book: string;
-//   mode: string;
-//   start: number;
-//   end: number;
-//   question: string;
-//   choices: string[];
-//   selectedChoice: string;
-//   isCorrect: boolean;
-//   responseTime: number;
-//   extra: string[];
-// }
 
 interface result {
   name: string;
@@ -67,41 +54,20 @@ export default function Test() {
   };
   const [startTime, setStartTime] = useState<number>(0);
   const [countdown, setCountdown] = useState(3);
+  const [isSoundOn, setisSoundOn] = useState(false);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
-
   const displayBookName = folderDisplayNameMap[book];
+  let synth: SpeechSynthesis | null = null;
+  if (typeof window !== "undefined") {
+    synth = window.speechSynthesis;
+  }
 
-  // console.log("book:", book);
-  // console.log("mode:", mode);
-  // console.log("start:", start);
-  // console.log("end:", end);
-  // useEffect(() => {
-  //   console.log("currentWord changed");
-  // }, [currentWord]);
-  // useEffect(() => {
-  //   console.log("hasStarted changed:", hasStarted);
-  // }, [hasStarted]);
-  // useEffect(() => {
-  //   console.log("currentWordIndex changed:", currentWordIndex);
-  // }, [currentWordIndex]);
-  // useEffect(() => {
-  //   console.log("choices changed");
-  // }, [choices]);
   useEffect(() => {
     console.log("result changed:", result);
   }, [result]);
   useEffect(() => {
     console.log("content changed:", content);
   }, [content]);
-  // useEffect(() => {
-  //   console.log("isChoosing changed");
-  // }, [isChoosing]);
-  // useEffect(() => {
-  //   console.log("allWords changed:", allWords);
-  // }, [allWords]);
-  // useEffect(() => {
-  //   console.log("quizWords changed:", quizWords);
-  // }, [quizWords]);
 
   useEffect(() => {
     // クイズのカウントダウンを管理
@@ -112,10 +78,6 @@ export default function Test() {
       return () => clearInterval(timer);
     }
   }, [hasStarted, countdown]);
-
-  const handleStartQuiz = () => {
-    setHasStarted(true);
-  };
 
   useEffect(() => {
     if (book && mode && start && end) {
@@ -135,7 +97,6 @@ export default function Test() {
 
   useEffect(() => {
     // タイマーを管理
-
     if (countdown == 0 && isChoosing && currentWord) {
       setTimerProgress(100);
       clearInterval(timerRef.current!);
@@ -158,7 +119,6 @@ export default function Test() {
     if (index >= quizWords.length || quizWords.length === 0) {
       return;
     }
-
     const word = quizWords[index];
     setCurrentWord(word);
 
@@ -229,7 +189,12 @@ export default function Test() {
     return "A"; // デフォルトでAを返す
   };
 
+  function handleMuteChange(event: React.ChangeEvent<HTMLInputElement>) {
+    setisSoundOn(event.target.checked);
+  }
+
   const handleChoice = (choice: string) => {
+    //ユーザーが選択したときの処理
     if (!isChoosing) return;
 
     setSelectedChoice(choice);
@@ -254,6 +219,28 @@ export default function Test() {
 
     if (isCorrect) {
       setScore(score + 1);
+    }
+
+    if (currentWord && isSoundOn && synth) {
+      const utterThis = new SpeechSynthesisUtterance(currentWord.word);
+
+      var voices = synth.getVoices();
+
+      const targetVoice = voices.find(
+        (voice) => voice.name === "Karen" || voice.name === "Google US English"
+      );
+      if (targetVoice) {
+        utterThis.voice = targetVoice;
+        console.log(
+          `Using specified voice: ${targetVoice.name} (${targetVoice.lang})`
+        );
+      } else {
+        console.warn(
+          "指定された英語の音声が見つかりませんでした。デフォルトの音声を使用します。"
+        );
+      }
+      utterThis.lang = "en-US";
+      synth.speak(utterThis);
     }
 
     const nextIndex = currentWordIndex + 1;
@@ -299,6 +286,21 @@ export default function Test() {
     <div className={styles.container}>
       {countdown === 0 && (
         <>
+          {mode === "EtoJ" && (
+            <div className={styles.soundBox}>
+              <FontAwesomeIcon
+                icon={isSoundOn ? faVolumeUp : faVolumeMute}
+                size="2x"
+              />
+              <label className={styles.toggleButton}>
+                <input
+                  type="checkbox"
+                  checked={isSoundOn}
+                  onChange={handleMuteChange}
+                />
+              </label>
+            </div>
+          )}
           <h1>{`${displayBookName} ${start}～${end}`}</h1>
           <p>{`${currentWordIndex + 1}/${quizWords.length} 問目`}</p>
           <div className={styles.progressBarContainer}>
@@ -337,19 +339,23 @@ export default function Test() {
           )}
         </>
       )}
-      {/* {!hasStarted && (
-        <div className={styles.fullScreen}>
-          <input
-            type="text"
-            placeholder="名前を入力してください"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          />
-          <button onClick={handleStartQuiz}>クイズを始める</button>
-        </div>
-      )} */}
       {countdown > 0 && hasStarted && (
         <div className={styles.fullScreen}>
+          {mode === "EtoJ" && (
+            <div className={styles.soundBox}>
+              <FontAwesomeIcon
+                icon={isSoundOn ? faVolumeUp : faVolumeMute}
+                size="2x"
+              />
+              <label className={styles.toggleButton}>
+                <input
+                  type="checkbox"
+                  checked={isSoundOn}
+                  onChange={handleMuteChange}
+                />
+              </label>
+            </div>
+          )}
           <div className={styles.countdownText}>
             {mode === "fillBrackets"
               ? " ( ) に入る単語を選んで！"
